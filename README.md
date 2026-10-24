@@ -27,7 +27,7 @@ internal/country/    国データ（data/countries.json を埋め込み）・検
 internal/bot/        入力の正規化・トリガー語・絵文字・返信の組み立て
 internal/app/        http.Handler（ルーティング・署名検証・イベント処理）と設定
 tools/gencountries/  Wikidata から countries.json を生成
-tools/fetchflags/    flagcdn.com から国旗 PNG を取得
+tools/fetchflags/    flagcdn.com から国旗 PNG を取得し、寸法ファイルを生成
 public/flags/        国旗画像（Workers Static Assets で配信）
 scripts/             ローカル疎通スクリプト
 ```
@@ -114,9 +114,11 @@ npx wrangler deploy
 
 ```sh
 go run ./tools/gencountries    # Wikidata に問い合わせて internal/country/data/countries.json を作り直す
-go run ./tools/fetchflags      # 足りない国旗を public/flags に取得（-force で全件取り直し）
-go test ./...                  # データの上限検査と国旗の欠落検査
+go run ./tools/fetchflags      # 足りない国旗を public/flags に取得（-force で全件取り直し）し、寸法ファイルを生成
+go test ./...                  # データの上限検査、国旗の欠落検査、寸法ファイルの鮮度検査
 ```
+
+`fetchflags` は取得と検査のあと、`public/flags` の全国旗の幅と高さを PNG のヘッダから読み、`internal/country/flagsizes_gen.go` に書き出します（出力先は `-sizes` で変更でき、空文字なら生成しません）。既定の出力先と `-dir` はリポジトリ直下からの相対パスなので、リポジトリ直下で実行してください（出力先のディレクトリがなければ失敗します）。国旗が揃っていれば取得は行わないため、ネットワークなしで再生成できます。国旗を差し替えたり国データを更新したりしたら、再実行して生成ファイルも一緒に commit します（古いままだと `go test ./...` が失敗します）。返信では、この寸法から国旗を枠（rectangle、1.51:1）いっぱいに表示したときに幅または高さが切れる割合を求め、10% 以下なら `cover`（左右や上下の細い白い筋が出ない）、それより多く切れる旗（イギリス、スイス、ネパールなど）は `contain`（白背景で全体を表示）にします。閾値は `internal/country/flag.go` の定数です。
 
 - 対象は Wikidata の主権国家（P31=Q3624078）のうち、ISO 3166-1 alpha-2 コード（P297）を持ち、解体（P576）されていないものです。クエリは `tools/gencountries/query.sparql` にあります。
 - 表示名は ja.wikipedia の記事名（記事がなければ日本語ラベル）です。クイズのボタンに使うため 20 文字（UTF-16）以内に収める必要があります。
