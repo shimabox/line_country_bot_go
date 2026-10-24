@@ -1,11 +1,14 @@
 // Command fetchflags downloads a flag PNG from Flagpedia (flagcdn.com) for
 // every country in the embedded country data into public/flags, where Workers
-// Static Assets serves them. Run it from the repository root:
+// Static Assets serves them. It then writes the pixel size of every flag to
+// internal/country/flagsizes_gen.go, which the bot uses to decide how to fit
+// a flag into the image frame. Run it from the repository root:
 //
 //	go run ./tools/fetchflags          # fetch missing files only
 //	go run ./tools/fetchflags -force   # fetch everything again
 //
-// It exits with a non-zero status and lists the codes when a download fails.
+// It exits with a non-zero status and lists the codes when a download fails
+// or a flag's size cannot be read.
 package main
 
 import (
@@ -37,15 +40,16 @@ func main() {
 	dir := flag.String("dir", "public/flags", "output directory")
 	base := flag.String("base", defaultBase, "flag CDN base URL")
 	force := flag.Bool("force", false, "download files that already exist")
+	sizes := flag.String("sizes", "internal/country/flagsizes_gen.go", "Go file to write the flag sizes to (empty to skip)")
 	flag.Parse()
 
-	if err := run(*dir, *base, *force); err != nil {
+	if err := run(*dir, *base, *force, *sizes); err != nil {
 		fmt.Fprintln(os.Stderr, "fetchflags:", err)
 		os.Exit(1)
 	}
 }
 
-func run(dir, base string, force bool) error {
+func run(dir, base string, force bool, sizesPath string) error {
 	store, err := country.Default()
 	if err != nil {
 		return err
@@ -76,6 +80,43 @@ func run(dir, base string, force bool) error {
 	}
 	if len(rep.Missing) > 0 {
 		return fmt.Errorf("missing flags: %s", strings.Join(rep.Missing, ", "))
+	}
+
+	if sizesPath == "" {
+		return nil
+	}
+	sizes, err := Sizes(dir, codes)
+	if err != nil {
+		return err
+	}
+	if err := writeSizesFile(sizesPath, sizes); err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, "fetchflags: wrote %d sizes to %s\n", len(sizes), sizesPath)
+	return nil
+}
+
+// writeSizesFile writes the sizes source to path through a temporary file. The
+// directory must already exist, so running outside the repository root fails
+// instead of creating a stray tree.
+func writeSizesFile(path string, sizes map[string]Size) error {
+	dir := filepath.Dir(path)
+	if info, err := os.Stat(dir); err != nil {
+		return fmt.Errorf("sizes output directory: %w", err)
+	} else if !info.IsDir() {
+		return fmt.Errorf("sizes output directory %s is not a directory", dir)
+	}
+	var buf bytes.Buffer
+	if err := WriteSizes(&buf, sizes); err != nil {
+		return err
+	}
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, buf.Bytes(), 0o644); err != nil {
+		return err
+	}
+	if err := os.Rename(tmp, path); err != nil {
+		os.Remove(tmp)
+		return err
 	}
 	return nil
 }

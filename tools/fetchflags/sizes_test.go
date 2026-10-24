@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/png"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -107,5 +108,34 @@ func TestWriteSizesEmpty(t *testing.T) {
 	}
 	if _, err := format.Source(buf.Bytes()); err != nil {
 		t.Errorf("output does not parse: %v", err)
+	}
+}
+
+func TestWriteSizesFile(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "flagsizes_gen.go")
+	if err := writeSizesFile(path, map[string]Size{"JP": {W: 30, H: 20}}); err != nil {
+		t.Fatalf("writeSizesFile: %v", err)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(got), `"JP": {W: 30, H: 20},`) {
+		t.Errorf("file = %s", got)
+	}
+	if _, err := os.Stat(path + ".tmp"); !os.IsNotExist(err) {
+		t.Errorf("temporary file left behind: %v", err)
+	}
+}
+
+func TestWriteSizesFileNeedsDirectory(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "missing", "flagsizes_gen.go")
+	if err := writeSizesFile(path, map[string]Size{"JP": {W: 30, H: 20}}); err == nil {
+		t.Fatal("err = nil, want failure for a missing directory")
+	}
+	if _, err := os.Stat(filepath.Join(dir, "missing")); !os.IsNotExist(err) {
+		t.Errorf("directory created: %v", err)
 	}
 }
