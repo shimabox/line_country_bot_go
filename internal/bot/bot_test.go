@@ -140,7 +140,16 @@ func TestProfileDisabledFallsBackToCountrySearch(t *testing.T) {
 	}
 }
 
+// wantImageSize is the imageSize expected for a country's flag.
+func wantImageSize(c *country.Country) string {
+	if c.FlagFitsFrame() {
+		return "cover"
+	}
+	return "contain"
+}
+
 func TestQuiz(t *testing.T) {
+	imageSizes := map[string]bool{}
 	for seed := uint64(0); seed < 30; seed++ {
 		b := newTestBot(t, seed)
 		for _, in := range []string{"クイズ", "quiz", "QUIZ"} {
@@ -152,8 +161,8 @@ func TestQuiz(t *testing.T) {
 			if tm.AltText != "この国はどこでしょうか？" || bt.Title != "クイズです" || bt.Text != "この国はどこでしょうか？" {
 				t.Errorf("texts = %q %q %q", tm.AltText, bt.Title, bt.Text)
 			}
-			if bt.ImageAspectRatio != "rectangle" || bt.ImageSize != "contain" || bt.ImageBackgroundColor != "#FFFFFF" {
-				t.Errorf("image options = %q %q %q", bt.ImageAspectRatio, bt.ImageSize, bt.ImageBackgroundColor)
+			if bt.ImageAspectRatio != "rectangle" || bt.ImageBackgroundColor != "#FFFFFF" {
+				t.Errorf("image options = %q %q", bt.ImageAspectRatio, bt.ImageBackgroundColor)
 			}
 			if len(bt.Actions) != 4 {
 				t.Fatalf("%d actions", len(bt.Actions))
@@ -206,7 +215,14 @@ func TestQuiz(t *testing.T) {
 			if got.Code != c.Code {
 				t.Errorf("Code = %s, want %s", got.Code, c.Code)
 			}
+			if want := wantImageSize(c); bt.ImageSize != want {
+				t.Errorf("%s: imageSize = %q, want %q", c.Code, bt.ImageSize, want)
+			}
+			imageSizes[bt.ImageSize] = true
 		}
+	}
+	if !imageSizes["cover"] || !imageSizes["contain"] {
+		t.Errorf("quizzes used only imageSize %v", imageSizes)
 	}
 }
 
@@ -243,7 +259,7 @@ func TestCountryHit(t *testing.T) {
 		Template: line.ButtonsTemplate{
 			ThumbnailImageURL:    "https://bot.example.com/flags/jp.png",
 			ImageAspectRatio:     "rectangle",
-			ImageSize:            "contain",
+			ImageSize:            "cover",
 			ImageBackgroundColor: "#FFFFFF",
 			Title:                "日本",
 			Text:                 "東京 / Tokyo",
@@ -255,6 +271,39 @@ func TestCountryHit(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got.Messages[2], want) {
 		t.Errorf("third =\n %#v\nwant\n %#v", got.Messages[2], want)
+	}
+}
+
+func TestCountryHitImageSize(t *testing.T) {
+	b := newTestBot(t, 1)
+	for name, want := range map[string]string{
+		"日本":   "cover",   // 3:2
+		"ブラジル": "cover",   // 10:7
+		"ドイツ":  "cover",   // 5:3
+		"イギリス": "contain", // 2:1
+		"スイス":  "contain", // 1:1
+		"ネパール": "contain", // portrait
+	} {
+		got := b.Respond(textEvent(name), opts(Profile{}))
+		if got.Kind != KindCountryHit {
+			t.Fatalf("%s: kind = %s", name, got.Kind)
+		}
+		_, bt := asButtons(t, got.Messages[2])
+		if bt.ImageSize != want {
+			t.Errorf("%s: imageSize = %q, want %q", name, bt.ImageSize, want)
+		}
+	}
+	// Every country follows FlagFitsFrame, and the frame and the background
+	// for "contain" are always set.
+	for _, c := range b.countries.All() {
+		got := b.Respond(textEvent(c.NameJA), opts(Profile{}))
+		if got.Kind != KindCountryHit || got.Code != c.Code {
+			t.Fatalf("%s: kind = %s code = %s", c.Code, got.Kind, got.Code)
+		}
+		_, bt := asButtons(t, got.Messages[2])
+		if bt.ImageSize != wantImageSize(c) || bt.ImageAspectRatio != "rectangle" || bt.ImageBackgroundColor != "#FFFFFF" {
+			t.Errorf("%s: image options = %q %q %q", c.Code, bt.ImageAspectRatio, bt.ImageSize, bt.ImageBackgroundColor)
+		}
 	}
 }
 

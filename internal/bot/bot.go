@@ -160,7 +160,7 @@ func (b *Bot) quiz(flagBaseURL string) Reply {
 		Template: line.ButtonsTemplate{
 			ThumbnailImageURL:    answer.FlagURL(flagBaseURL),
 			ImageAspectRatio:     line.ImageAspectRatioRectangle,
-			ImageSize:            line.ImageSizeContain,
+			ImageSize:            flagImageSize(answer),
 			ImageBackgroundColor: flagBackground,
 			Title:                textQuizTitle,
 			Text:                 textQuizQuestion,
@@ -211,10 +211,20 @@ func detailMessage(c *country.Country, title, imageURL string) line.Message {
 	if imageURL != "" {
 		bt.ThumbnailImageURL = imageURL
 		bt.ImageAspectRatio = line.ImageAspectRatioRectangle
-		bt.ImageSize = line.ImageSizeContain
+		bt.ImageSize = flagImageSize(c)
 		bt.ImageBackgroundColor = flagBackground
 	}
 	return line.TemplateMessage{AltText: line.TruncateUTF16(title, line.MaxAltText), Template: bt}
+}
+
+// flagImageSize fills the image frame with flags close to its shape, so no
+// thin white bars appear beside them, and shows other flags whole on the
+// white background.
+func flagImageSize(c *country.Country) string {
+	if c.FlagFitsFrame() {
+		return line.ImageSizeCover
+	}
+	return line.ImageSizeContain
 }
 
 func retryMessage() line.Message {
