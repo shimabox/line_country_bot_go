@@ -140,7 +140,8 @@ const messagesOf = (replies) => replies[0]?.json?.messages ?? [];
   const m = messagesOf(r.replies);
   record("2 text hit (日本)", r.status, r.replies,
     r.status === 200 && r.replies.length === 1 && r.replies[0].path === replyPath && m.length === 3 &&
-      m[0].text === "[日本] ですね🤔" && m[2].template?.thumbnailImageUrl?.endsWith("/flags/jp.png"));
+      m[0].text === "[日本] ですね🤔" && m[2].template?.thumbnailImageUrl?.endsWith("/flags/jp.png") &&
+      m[2].template?.imageSize === "cover");
 }
 
 // 3. Country not found
@@ -186,6 +187,15 @@ let correctData = null;
 {
   const r = await postWebhook([event("message", { message: { id: "5", type: "text", text: "日本" } })], { badSignature: true });
   record("7 invalid signature", r.status, r.replies, r.status === 400 && r.text.trim() === "Invalid signature." && r.replies.length === 0);
+}
+
+// 8. Country found whose flag is shown whole (2:1)
+{
+  const r = await postWebhook([event("message", { message: { id: "6", type: "text", text: "イギリス" } })]);
+  const m = messagesOf(r.replies);
+  record("8 text hit (イギリス)", r.status, r.replies,
+    r.status === 200 && m.length === 3 && m[2].template?.thumbnailImageUrl?.endsWith("/flags/gb.png") &&
+      m[2].template?.imageSize === "contain");
 }
 
 // Static asset

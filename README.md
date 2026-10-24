@@ -87,7 +87,7 @@ npx wrangler dev --ip 127.0.0.1 --port 8787     # 別のターミナルで
 node scripts/local-smoke.mjs http://127.0.0.1:8787
 ```
 
-`local-smoke.mjs` は返信 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と `/flags/jp.png` の配信を確かめます。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
+`local-smoke.mjs` は返信 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、`/flags/jp.png` の配信を確かめます。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
 
 ## デプロイ
 
