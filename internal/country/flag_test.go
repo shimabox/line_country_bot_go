@@ -36,3 +36,64 @@ func TestFitsFrame(t *testing.T) {
 		}
 	}
 }
+
+func TestFlagFitsFrame(t *testing.T) {
+	s, err := Default()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tests := map[string]bool{
+		"JP": true,  // 3:2
+		"BR": true,  // 10:7
+		"AR": true,  // 8:5
+		"DE": true,  // 5:3
+		"NO": true,  // 11:8
+		"GB": false, // 2:1
+		"CH": false, // 1:1
+		"NP": false, // portrait
+		"US": false, // 19:10
+		"CV": false, // 17:10
+		"MX": false, // 7:4
+		"SM": false, // 4:3
+	}
+	byCode := map[string]*Country{}
+	for _, c := range s.All() {
+		byCode[c.Code] = c
+	}
+	for code, want := range tests {
+		c := byCode[code]
+		if c == nil {
+			t.Errorf("%s not in the data", code)
+			continue
+		}
+		if got := c.FlagFitsFrame(); got != want {
+			t.Errorf("%s: FlagFitsFrame() = %v, want %v (size %+v)", code, got, want, flagSizes[code])
+		}
+	}
+	if (&Country{Code: "XA", NameJA: "未登録"}).FlagFitsFrame() {
+		t.Error("code without a size: FlagFitsFrame() = true, want false")
+	}
+}
+
+// TestFlagSizesMatchData fails when a country has no generated flag size or
+// a size belongs to no country. Run go run ./tools/fetchflags to regenerate.
+func TestFlagSizesMatchData(t *testing.T) {
+	s, err := Default()
+	if err != nil {
+		t.Fatal(err)
+	}
+	cover := 0
+	for _, c := range s.All() {
+		size, ok := flagSizes[c.Code]
+		if !ok || size.W <= 0 || size.H <= 0 {
+			t.Errorf("%s: flag size = %+v, %v", c.Code, size, ok)
+		}
+		if c.FlagFitsFrame() {
+			cover++
+		}
+	}
+	if len(flagSizes) != s.Len() {
+		t.Errorf("%d flag sizes for %d countries", len(flagSizes), s.Len())
+	}
+	t.Logf("cover %d, contain %d", cover, s.Len()-cover)
+}

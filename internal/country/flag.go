@@ -17,6 +17,15 @@ type flagSize struct {
 	W, H int
 }
 
+// FlagFitsFrame reports whether the flag can fill the image frame of the
+// buttons template ("cover") without losing more than maxCropPercent of its
+// width or height. It is false for a code without a known flag size, so the
+// flag is shown whole ("contain").
+func (c *Country) FlagFitsFrame() bool {
+	s := flagSizes[c.Code]
+	return fitsFrame(s.W, s.H)
+}
+
 // fitsFrame reports whether a w x h image fills the frame ("cover") losing at
 // most maxCropPercent of its width or height. Invalid sizes report false so
 // the image is shown whole.
