@@ -159,10 +159,7 @@ func TestCheck(t *testing.T) {
 // the embedded country data, holds files for unknown codes, or grows past the
 // size budget. Run fetchflags to fix missing files.
 func TestPublicFlagsComplete(t *testing.T) {
-	store, err := country.Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	store := country.Default()
 	var codes []string
 	for _, c := range store.All() {
 		codes = append(codes, c.Code)

@@ -10,10 +10,7 @@ import (
 // TestEmbeddedData checks the generated data set against the limits the bot
 // relies on, so a regeneration that breaks them fails here.
 func TestEmbeddedData(t *testing.T) {
-	s, err := Default()
-	if err != nil {
-		t.Fatalf("Default: %v", err)
-	}
+	s := Default()
 	if s.Len() < 190 {
 		t.Errorf("Len = %d, want >= 190", s.Len())
 	}
@@ -42,10 +39,7 @@ func TestEmbeddedData(t *testing.T) {
 }
 
 func TestEmbeddedDataLookups(t *testing.T) {
-	s, err := Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	s := Default()
 	tests := map[string]string{
 		"日本":     "JP",
 		"japan":  "JP",

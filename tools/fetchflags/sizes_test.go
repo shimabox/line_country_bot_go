@@ -116,10 +116,7 @@ func TestWriteSizesEmpty(t *testing.T) {
 // TestFlagSizesUpToDate fails when internal/country/flagsizes_gen.go does not
 // match the flags in public/flags.
 func TestFlagSizesUpToDate(t *testing.T) {
-	store, err := country.Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	store := country.Default()
 	var codes []string
 	for _, c := range store.All() {
 		codes = append(codes, c.Code)

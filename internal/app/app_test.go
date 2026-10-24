@@ -79,10 +79,7 @@ type testEnv struct {
 
 func newTestEnv(t *testing.T, env map[string]string) *testEnv {
 	t.Helper()
-	store, err := country.Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	store := country.Default()
 	vars := map[string]string{
 		EnvChannelSecret:      testSecret,
 		EnvChannelAccessToken: testToken,

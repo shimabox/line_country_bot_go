@@ -38,10 +38,7 @@ func TestFitsFrame(t *testing.T) {
 }
 
 func TestFlagFitsFrame(t *testing.T) {
-	s, err := Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	s := Default()
 	tests := map[string]bool{
 		"JP": true,  // 3:2
 		"BR": true,  // 10:7
@@ -78,10 +75,7 @@ func TestFlagFitsFrame(t *testing.T) {
 // TestFlagSizesMatchData fails when a country has no generated flag size or
 // a size belongs to no country. Run go run ./tools/fetchflags to regenerate.
 func TestFlagSizesMatchData(t *testing.T) {
-	s, err := Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	s := Default()
 	cover := 0
 	for _, c := range s.All() {
 		size, ok := flagSizes[c.Code]

@@ -50,10 +50,7 @@ func main() {
 }
 
 func run(dir, base string, force bool, sizesPath string) error {
-	store, err := country.Default()
-	if err != nil {
-		return err
-	}
+	store := country.Default()
 	codes := make([]string, 0, store.Len())
 	for _, c := range store.All() {
 		codes = append(codes, c.Code)
