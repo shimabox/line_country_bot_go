@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/shimabox/line_country_bot_go/internal/country"
 )
 
 func writePNG(t *testing.T, path string, w, h int) {
@@ -108,6 +110,34 @@ func TestWriteSizesEmpty(t *testing.T) {
 	}
 	if _, err := format.Source(buf.Bytes()); err != nil {
 		t.Errorf("output does not parse: %v", err)
+	}
+}
+
+// TestFlagSizesUpToDate fails when internal/country/flagsizes_gen.go does not
+// match the flags in public/flags.
+func TestFlagSizesUpToDate(t *testing.T) {
+	store, err := country.Default()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var codes []string
+	for _, c := range store.All() {
+		codes = append(codes, c.Code)
+	}
+	sizes, err := Sizes(filepath.Join("..", "..", "public", "flags"), codes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var want bytes.Buffer
+	if err := WriteSizes(&want, sizes); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(filepath.Join("..", "..", "internal", "country", "flagsizes_gen.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, want.Bytes()) {
+		t.Error("internal/country/flagsizes_gen.go is out of date; run go run ./tools/fetchflags from the repository root")
 	}
 }
 
