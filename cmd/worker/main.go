@@ -30,13 +30,9 @@ func (d fetchDoer) Do(r *http.Request) (*http.Response, error) {
 }
 
 func main() {
-	store, err := country.Default()
-	if err != nil {
-		panic(err)
-	}
 	workers.Serve(app.NewHandler(app.Deps{
 		Getenv:    cloudflare.Getenv,
 		Doer:      fetchDoer{client: fetch.NewClient()},
-		Countries: store,
+		Countries: country.Default(),
 	}))
 }

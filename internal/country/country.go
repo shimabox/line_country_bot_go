@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -84,75 +85,112 @@ func formatCoord(v float64) string {
 
 // Store is an immutable, indexed set of countries.
 type Store struct {
-	file   File
-	byKey  map[string]*Country // normalized name or alias
-	byName map[string]*Country // exact display name
+	countries   []*Country   // data order
+	index       []IndexEntry // sorted by Key
+	generatedAt string
+	source      string
 }
 
-// Load parses and validates a countries document and builds the indexes.
+// IndexEntry maps a normalized name or alias to a country by its position
+// in the data.
+type IndexEntry struct {
+	Key   string
+	Index int
+}
+
+func newStore(countries []*Country, index []IndexEntry, generatedAt, source string) *Store {
+	return &Store{countries: countries, index: index, generatedAt: generatedAt, source: source}
+}
+
+// Load parses and validates a countries document and builds the index.
 func Load(data []byte) (*Store, error) {
 	var f File
 	if err := json.Unmarshal(data, &f); err != nil {
 		return nil, fmt.Errorf("country: parse data: %w", err)
 	}
-	if len(f.Countries) == 0 {
-		return nil, errors.New("country: data has no countries")
+	if err := validate(f.Countries); err != nil {
+		return nil, err
 	}
+	index, err := BuildIndex(f.Countries)
+	if err != nil {
+		return nil, err
+	}
+	return newStore(f.Countries, index, f.GeneratedAt, f.Source), nil
+}
 
-	s := &Store{
-		file:   f,
-		byKey:  make(map[string]*Country, len(f.Countries)*4),
-		byName: make(map[string]*Country, len(f.Countries)),
+func validate(countries []*Country) error {
+	if len(countries) == 0 {
+		return errors.New("country: data has no countries")
 	}
-	codes := make(map[string]bool, len(f.Countries))
-	for _, c := range f.Countries {
+	codes := make(map[string]bool, len(countries))
+	for _, c := range countries {
+		if c == nil {
+			return errors.New("country: null record")
+		}
+		if !validCode(c.Code) {
+			return fmt.Errorf("country: invalid code %q", c.Code)
+		}
+		if codes[c.Code] {
+			return fmt.Errorf("country: duplicate code %s", c.Code)
+		}
+		codes[c.Code] = true
+	}
+	return nil
+}
+
+// BuildIndex returns the lookup index of countries, sorted by Key in byte
+// order (strings.Compare) without duplicates. The normalized display name
+// always finds its country. Aliases never override a display name, and an
+// alias shared by different countries is ambiguous and is left out.
+//
+// It fails when a display name normalizes to nothing or to the same key as
+// another display name.
+func BuildIndex(countries []*Country) ([]IndexEntry, error) {
+	byKey := make(map[string]int, len(countries)*4)
+	for i, c := range countries {
 		if c == nil {
 			return nil, errors.New("country: null record")
 		}
-		if !validCode(c.Code) {
-			return nil, fmt.Errorf("country: invalid code %q", c.Code)
-		}
-		if codes[c.Code] {
-			return nil, fmt.Errorf("country: duplicate code %s", c.Code)
-		}
-		codes[c.Code] = true
-		if c.NameJA == "" {
+		key := NormalizeKey(c.NameJA)
+		if key == "" {
 			return nil, fmt.Errorf("country: %s has no name_ja", c.Code)
 		}
-		key := NormalizeKey(c.NameJA)
-		if other, ok := s.byKey[key]; ok {
-			return nil, fmt.Errorf("country: %s and %s share the name %q", other.Code, c.Code, c.NameJA)
+		if j, ok := byKey[key]; ok {
+			return nil, fmt.Errorf("country: %s and %s share the name %q", countries[j].Code, c.Code, c.NameJA)
 		}
-		s.byKey[key] = c
-		s.byName[c.NameJA] = c
+		byKey[key] = i
 	}
 
-	// Aliases never override a display name. An alias shared by different
-	// countries is ambiguous and is left out of the index.
-	owners := map[string]*Country{}
+	owners := map[string]int{}
 	ambiguous := map[string]bool{}
-	for _, c := range f.Countries {
-		for _, alias := range append(append([]string{}, c.AliasesJA...), c.AliasesEN...) {
+	for i, c := range countries {
+		for _, alias := range slices.Concat(c.AliasesJA, c.AliasesEN) {
 			key := NormalizeKey(alias)
 			if key == "" {
 				continue
 			}
-			if _, isName := s.byKey[key]; isName {
+			if _, isName := byKey[key]; isName {
 				continue
 			}
-			if prev, ok := owners[key]; ok && prev != c {
+			if prev, ok := owners[key]; ok && prev != i {
 				ambiguous[key] = true
 				continue
 			}
-			owners[key] = c
+			owners[key] = i
 		}
 	}
-	for key, c := range owners {
+	for key, i := range owners {
 		if !ambiguous[key] {
-			s.byKey[key] = c
+			byKey[key] = i
 		}
 	}
-	return s, nil
+
+	index := make([]IndexEntry, 0, len(byKey))
+	for key, i := range byKey {
+		index = append(index, IndexEntry{Key: key, Index: i})
+	}
+	slices.SortFunc(index, func(a, b IndexEntry) int { return strings.Compare(a.Key, b.Key) })
+	return index, nil
 }
 
 func validCode(code string) bool {
@@ -193,30 +231,42 @@ func (s *Store) Lookup(name string) *Country {
 	if key == "" {
 		return nil
 	}
-	return s.byKey[key]
+	i, ok := slices.BinarySearchFunc(s.index, key, func(e IndexEntry, key string) int {
+		return strings.Compare(e.Key, key)
+	})
+	if !ok {
+		return nil
+	}
+	return s.countries[s.index[i].Index]
 }
 
 // ByName finds a country by its exact display name (name_ja).
+//
+// The normalized display name always finds its own country in the index, so
+// the display name matches exactly only when Lookup finds that country.
 func (s *Store) ByName(name string) *Country {
-	return s.byName[name]
+	if c := s.Lookup(name); c != nil && c.NameJA == name {
+		return c
+	}
+	return nil
 }
 
 // All returns the countries in data order. The slice must not be modified.
-func (s *Store) All() []*Country { return s.file.Countries }
+func (s *Store) All() []*Country { return s.countries }
 
 // Len returns the number of countries.
-func (s *Store) Len() int { return len(s.file.Countries) }
+func (s *Store) Len() int { return len(s.countries) }
 
 // GeneratedAt returns the generation date recorded in the data.
-func (s *Store) GeneratedAt() string { return s.file.GeneratedAt }
+func (s *Store) GeneratedAt() string { return s.generatedAt }
 
 // Source returns the data source recorded in the data.
-func (s *Store) Source() string { return s.file.Source }
+func (s *Store) Source() string { return s.source }
 
 // PickN returns n distinct countries chosen uniformly at random. When the
 // store has fewer than n countries, all of them are returned in random order.
 func (s *Store) PickN(r *rand.Rand, n int) []*Country {
-	all := s.file.Countries
+	all := s.countries
 	if n <= 0 {
 		return nil
 	}

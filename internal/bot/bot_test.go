@@ -24,10 +24,7 @@ var testProfile = Profile{
 
 func newTestBot(t *testing.T, seed uint64) *Bot {
 	t.Helper()
-	store, err := country.Default()
-	if err != nil {
-		t.Fatal(err)
-	}
+	store := country.Default()
 	return New(store, rand.New(rand.NewPCG(seed, seed)))
 }
 
