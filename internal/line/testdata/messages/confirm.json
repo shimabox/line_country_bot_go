@@ -1,0 +1,12 @@
+{
+  "type": "template",
+  "altText": "もう一度やりますか？",
+  "template": {
+    "type": "confirm",
+    "text": "もう一度やりますか？",
+    "actions": [
+      {"type": "message", "label": "いいえ", "text": "いいえ"},
+      {"type": "message", "label": "はい", "text": "クイズ"}
+    ]
+  }
+}

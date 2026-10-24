@@ -1,0 +1,15 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "message",
+      "mode": "active",
+      "timestamp": 1700000000001,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000002",
+      "deliveryContext": {"isRedelivery": false},
+      "replyToken": "reply-token-image",
+      "message": {"id": "100002", "type": "image", "contentProvider": {"type": "line"}}
+    }
+  ]
+}

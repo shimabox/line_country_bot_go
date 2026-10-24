@@ -1,0 +1,15 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "follow",
+      "mode": "active",
+      "timestamp": 1700000000003,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000004",
+      "deliveryContext": {"isRedelivery": false},
+      "replyToken": "reply-token-follow",
+      "follow": {"isUnblocked": false}
+    }
+  ]
+}

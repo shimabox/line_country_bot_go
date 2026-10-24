@@ -1,0 +1,17 @@
+{
+  "type": "template",
+  "altText": "日本",
+  "template": {
+    "type": "buttons",
+    "thumbnailImageUrl": "https://example.com/flags/jp.png",
+    "imageAspectRatio": "rectangle",
+    "imageSize": "contain",
+    "imageBackgroundColor": "#FFFFFF",
+    "title": "日本",
+    "text": "東京 / Tokyo",
+    "actions": [
+      {"type": "uri", "label": "Wikipedia", "uri": "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},
+      {"type": "uri", "label": "Google Maps", "uri": "https://www.google.com/maps/search/?api=1&query=35.68,139.76"}
+    ]
+  }
+}
