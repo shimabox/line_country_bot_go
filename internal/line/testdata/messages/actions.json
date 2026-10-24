@@ -1,5 +1,6 @@
 [
   {"type": "postback", "label": "フランス", "data": "answer=%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9&result=0"},
   {"type": "message", "label": "はい", "text": "クイズ"},
-  {"type": "uri", "label": "Wikipedia", "uri": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"}
+  {"type": "uri", "label": "Wikipedia", "uri": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"},
+  {"type": "postback", "label": "日本", "data": "answer=%E6%97%A5%E6%9C%AC&result=1", "displayText": "日本"}
 ]

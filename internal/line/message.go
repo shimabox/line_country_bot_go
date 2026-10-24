@@ -7,15 +7,16 @@ import (
 
 // Limits of the Messaging API, counted in UTF-16 code units.
 const (
-	MaxReplyMessages     = 5
-	MaxButtonsTitle      = 40
-	MaxButtonsTextImage  = 60  // buttons text when an image or title is set
-	MaxButtonsTextPlain  = 160 // buttons text without image and title
-	MaxConfirmText       = 240
-	MaxActionLabel       = 20
-	MaxPostbackData      = 300
-	MaxAltText           = 400
-	MaxTextMessageLength = 5000
+	MaxReplyMessages       = 5
+	MaxButtonsTitle        = 40
+	MaxButtonsTextImage    = 60  // buttons text when an image or title is set
+	MaxButtonsTextPlain    = 160 // buttons text without image and title
+	MaxConfirmText         = 240
+	MaxActionLabel         = 20
+	MaxPostbackData        = 300
+	MaxPostbackDisplayText = 300
+	MaxAltText             = 400
+	MaxTextMessageLength   = 5000
 )
 
 // Values for ButtonsTemplate image fields.
@@ -76,10 +77,13 @@ type ConfirmTemplate struct {
 	Actions []Action `json:"actions"`
 }
 
-// PostbackAction returns Data in a postback event when tapped.
+// PostbackAction returns Data in a postback event when tapped. A non-empty
+// DisplayText is shown in the chat as the user's message; it is not sent in
+// the event. The deprecated "text" field is not supported.
 type PostbackAction struct {
-	Label string `json:"label"`
-	Data  string `json:"data"`
+	Label       string `json:"label"`
+	Data        string `json:"data"`
+	DisplayText string `json:"displayText,omitempty"`
 }
 
 // MessageAction makes the user send Text when tapped.
