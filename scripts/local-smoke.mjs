@@ -103,7 +103,9 @@ function summarize(messages) {
           text: t.text,
           thumbnailImageUrl: t.thumbnailImageUrl,
           imageSize: t.imageSize,
-          actions: t.actions.map((a) => `${a.type}:${a.label}→${a.uri ?? a.data ?? a.text}`),
+          actions: t.actions.map(
+            (a) => `${a.type}:${a.label}→${a.uri ?? a.data ?? a.text}${a.displayText ? ` (displayText: ${a.displayText})` : ""}`,
+          ),
         };
       }
       default:
@@ -162,7 +164,8 @@ let correctData = null;
   correctData = actions.find((a) => a.data?.endsWith("result=1"))?.data ?? null;
   record("4 quiz (クイズ)", r.status, r.replies,
     r.status === 200 && m.length === 1 && actions.length === 4 && actions.every((a) => a.type === "postback") &&
-      actions.filter((a) => a.data.endsWith("result=1")).length === 1);
+      actions.filter((a) => a.data.endsWith("result=1")).length === 1 &&
+      actions.every((a) => a.displayText && a.displayText === new URLSearchParams(a.data).get("answer")));
 }
 
 // 5. Correct quiz answer
