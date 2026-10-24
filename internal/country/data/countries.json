@@ -1,0 +1,3139 @@
+{
+  "generated_at": "2026-10-24",
+  "source": "Wikidata (https://www.wikidata.org/), CC0 1.0",
+  "countries": [
+    {
+      "code": "AD",
+      "name_ja": "アンドラ",
+      "aliases_ja": [
+        "アンドラ公国"
+      ],
+      "aliases_en": [
+        "Andorra"
+      ],
+      "capital_ja": "アンドラ・ラ・ベリャ",
+      "capital_en": "Andorra la Vella",
+      "lat": 42.507222222,
+      "lon": 1.522222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%89%E3%83%A9"
+    },
+    {
+      "code": "AE",
+      "name_ja": "アラブ首長国連邦",
+      "aliases_ja": [
+        "アラブしゅちょうこくれんぽう",
+        "アラブ首長国連合",
+        "ア首連"
+      ],
+      "aliases_en": [
+        "United Arab Emirates"
+      ],
+      "capital_ja": "アブダビ",
+      "capital_en": "Abu Dhabi",
+      "lat": 24.451111111,
+      "lon": 54.396944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%A9%E3%83%96%E9%A6%96%E9%95%B7%E5%9B%BD%E9%80%A3%E9%82%A6"
+    },
+    {
+      "code": "AF",
+      "name_ja": "アフガニスタン",
+      "aliases_ja": [
+        "アフガン"
+      ],
+      "aliases_en": [
+        "Afghanistan"
+      ],
+      "capital_ja": "カーブル",
+      "capital_en": "Kabul",
+      "lat": 34.532777777,
+      "lon": 69.165833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%95%E3%82%AC%E3%83%8B%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "AG",
+      "name_ja": "アンティグア・バーブーダ",
+      "aliases_en": [
+        "Antigua and Barbuda"
+      ],
+      "capital_ja": "セイント・ジョンズ",
+      "capital_en": "St. John's",
+      "lat": 17.121111111,
+      "lon": -61.844722222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%86%E3%82%A3%E3%82%B0%E3%82%A2%E3%83%BB%E3%83%90%E3%83%BC%E3%83%96%E3%83%BC%E3%83%80"
+    },
+    {
+      "code": "AL",
+      "name_ja": "アルバニア",
+      "aliases_ja": [
+        "アルバニア共和国"
+      ],
+      "aliases_en": [
+        "Albania"
+      ],
+      "capital_ja": "ティラナ",
+      "capital_en": "Tirana",
+      "lat": 41.328333333,
+      "lon": 19.818055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%AB%E3%83%90%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "AM",
+      "name_ja": "アルメニア",
+      "aliases_ja": [
+        "アルツ",
+        "アルメニア共和国"
+      ],
+      "aliases_en": [
+        "Armenia"
+      ],
+      "capital_ja": "イェレヴァン",
+      "capital_en": "Yerevan",
+      "lat": 40.181388888,
+      "lon": 44.514444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%AB%E3%83%A1%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "AO",
+      "name_ja": "アンゴラ",
+      "aliases_ja": [
+        "アンゴラ共和国",
+        "諳喀剌"
+      ],
+      "aliases_en": [
+        "Angola"
+      ],
+      "capital_ja": "ルアンダ",
+      "capital_en": "Luanda",
+      "lat": -8.838333333,
+      "lon": 13.234444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%82%B4%E3%83%A9"
+    },
+    {
+      "code": "AR",
+      "name_ja": "アルゼンチン",
+      "aliases_ja": [
+        "アルゼンチン共和国",
+        "アルゼンチン連合",
+        "アルゼンティン",
+        "アルヘンティーナ",
+        "アージェンタイン・リパブリック",
+        "アージェンティーナ",
+        "リオ・デ・ラ・プラタ諸州連合",
+        "リオ・デ・ラ・プラタ連合州",
+        "レプブリカ・アルヘンティーナ",
+        "亜尓然丁",
+        "亜爾然丁",
+        "阿根廷"
+      ],
+      "aliases_en": [
+        "Argentina"
+      ],
+      "capital_ja": "ブエノスアイレス",
+      "capital_en": "Buenos Aires",
+      "lat": -34.599722222,
+      "lon": -58.381944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%AB%E3%82%BC%E3%83%B3%E3%83%81%E3%83%B3"
+    },
+    {
+      "code": "AT",
+      "name_ja": "オーストリア",
+      "aliases_ja": [
+        "オーストリア共和国",
+        "オーストリー"
+      ],
+      "aliases_en": [
+        "Austria"
+      ],
+      "capital_ja": "ウィーン",
+      "capital_en": "Vienna",
+      "lat": 48.208333333,
+      "lon": 16.3725,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%82%B9%E3%83%88%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "AU",
+      "name_ja": "オーストラリア",
+      "aliases_ja": [
+        "オーストラリア連邦",
+        "豪州"
+      ],
+      "aliases_en": [
+        "Australia"
+      ],
+      "capital_ja": "キャンベラ",
+      "capital_en": "Canberra",
+      "lat": -35.293055555,
+      "lon": 149.126944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%82%B9%E3%83%88%E3%83%A9%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "AZ",
+      "name_ja": "アゼルバイジャン",
+      "aliases_ja": [
+        "アゼルバイジャン共和国"
+      ],
+      "aliases_en": [
+        "Azerbaijan"
+      ],
+      "capital_ja": "バクー",
+      "capital_en": "Baku",
+      "lat": 40.366655555,
+      "lon": 49.835183333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%BC%E3%83%AB%E3%83%90%E3%82%A4%E3%82%B8%E3%83%A3%E3%83%B3"
+    },
+    {
+      "code": "BA",
+      "name_ja": "ボスニア・ヘルツェゴビナ",
+      "aliases_ja": [
+        "ボスニア・ヘルツェゴヴィナ"
+      ],
+      "aliases_en": [
+        "Bosnia and Herzegovina"
+      ],
+      "capital_ja": "サラエヴォ",
+      "capital_en": "Sarajevo",
+      "lat": 43.856388888,
+      "lon": 18.413055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9C%E3%82%B9%E3%83%8B%E3%82%A2%E3%83%BB%E3%83%98%E3%83%AB%E3%83%84%E3%82%A7%E3%82%B4%E3%83%93%E3%83%8A"
+    },
+    {
+      "code": "BB",
+      "name_ja": "バルバドス",
+      "aliases_en": [
+        "Barbados"
+      ],
+      "capital_ja": "ブリッジタウン",
+      "capital_en": "Bridgetown",
+      "lat": 13.0975,
+      "lon": -59.616666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%AB%E3%83%90%E3%83%89%E3%82%B9"
+    },
+    {
+      "code": "BD",
+      "name_ja": "バングラデシュ",
+      "aliases_ja": [
+        "バングラ",
+        "バングラディシュ",
+        "バングラディッシュ",
+        "バングラデシュ人民共和国",
+        "バングラデシュ人民共和國",
+        "バングラデッシュ",
+        "孟",
+        "孟加拉"
+      ],
+      "aliases_en": [
+        "Bangladesh"
+      ],
+      "capital_ja": "ダッカ",
+      "capital_en": "Dhaka",
+      "lat": 23.728888888,
+      "lon": 90.394444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%B3%E3%82%B0%E3%83%A9%E3%83%87%E3%82%B7%E3%83%A5"
+    },
+    {
+      "code": "BE",
+      "name_ja": "ベルギー",
+      "aliases_ja": [
+        "ベルギー王国",
+        "白耳義"
+      ],
+      "aliases_en": [
+        "Belgium"
+      ],
+      "capital_ja": "ブリュッセル",
+      "capital_en": "Brussels",
+      "lat": 50.846666666,
+      "lon": 4.351666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%AB%E3%82%AE%E3%83%BC"
+    },
+    {
+      "code": "BF",
+      "name_ja": "ブルキナファソ",
+      "aliases_ja": [
+        "ブルキナ共和国"
+      ],
+      "aliases_en": [
+        "Burkina Faso"
+      ],
+      "capital_ja": "ワガドゥグー",
+      "capital_en": "Ouagadougou",
+      "lat": 12.368611111,
+      "lon": -1.5275,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%82%AD%E3%83%8A%E3%83%95%E3%82%A1%E3%82%BD"
+    },
+    {
+      "code": "BG",
+      "name_ja": "ブルガリア",
+      "aliases_ja": [
+        "ブルガリア共和国",
+        "ブルガリヤ",
+        "勃",
+        "勃牙利"
+      ],
+      "aliases_en": [
+        "Bulgaria"
+      ],
+      "capital_ja": "ソフィア",
+      "capital_en": "Sofia",
+      "lat": 42.697886,
+      "lon": 23.321726,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%82%AC%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "BH",
+      "name_ja": "バーレーン",
+      "aliases_ja": [
+        "バーレーン王国"
+      ],
+      "aliases_en": [
+        "Bahrain"
+      ],
+      "capital_ja": "マナーマ",
+      "capital_en": "Manama",
+      "lat": 26.216666666,
+      "lon": 50.583333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%BC%E3%83%AC%E3%83%BC%E3%83%B3"
+    },
+    {
+      "code": "BI",
+      "name_ja": "ブルンジ",
+      "aliases_ja": [
+        "ブルンジ共和国",
+        "ブルンディ",
+        "ブルンディ共和国"
+      ],
+      "aliases_en": [
+        "Burundi"
+      ],
+      "capital_ja": "ギテガ",
+      "capital_en": "Gitega",
+      "lat": -3.428333333,
+      "lon": 29.925,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%83%B3%E3%82%B8"
+    },
+    {
+      "code": "BJ",
+      "name_ja": "ベナン",
+      "aliases_ja": [
+        "ベナン共和国",
+        "ベニン",
+        "貝甯"
+      ],
+      "aliases_en": [
+        "Benin"
+      ],
+      "capital_ja": "ポルトノボ",
+      "capital_en": "Porto-Novo",
+      "lat": 6.483333333,
+      "lon": 2.616666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%8A%E3%83%B3"
+    },
+    {
+      "code": "BN",
+      "name_ja": "ブルネイ",
+      "aliases_ja": [
+        "ブルネイ・ダルサラーム国"
+      ],
+      "aliases_en": [
+        "Brunei"
+      ],
+      "capital_ja": "バンダルスリブガワン",
+      "capital_en": "Bandar Seri Begawan",
+      "lat": 4.916666666,
+      "lon": 114.916666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%83%8D%E3%82%A4"
+    },
+    {
+      "code": "BO",
+      "name_ja": "ボリビア",
+      "aliases_ja": [
+        "ボリビア多民族国"
+      ],
+      "aliases_en": [
+        "Bolivia"
+      ],
+      "capital_ja": "スクレ",
+      "capital_en": "Sucre",
+      "lat": -19.0475,
+      "lon": -65.26,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9C%E3%83%AA%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "BR",
+      "name_ja": "ブラジル",
+      "aliases_ja": [
+        "ブラジル連邦共和国",
+        "伯剌西爾",
+        "伯国"
+      ],
+      "aliases_en": [
+        "Brazil"
+      ],
+      "capital_ja": "ブラジリア",
+      "capital_en": "Brasília",
+      "lat": -15.793888888,
+      "lon": -47.882777777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%A9%E3%82%B8%E3%83%AB"
+    },
+    {
+      "code": "BS",
+      "name_ja": "バハマ",
+      "aliases_ja": [
+        "バハマ国"
+      ],
+      "aliases_en": [
+        "The Bahamas"
+      ],
+      "capital_ja": "ナッソー",
+      "capital_en": "Nassau",
+      "lat": 25.078055555,
+      "lon": -77.338611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%8F%E3%83%9E"
+    },
+    {
+      "code": "BT",
+      "name_ja": "ブータン",
+      "aliases_ja": [
+        "ブータン王国"
+      ],
+      "aliases_en": [
+        "Bhutan"
+      ],
+      "capital_ja": "ティンプー",
+      "capital_en": "Thimphu",
+      "lat": 27.47135,
+      "lon": 89.63367,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%BC%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "BW",
+      "name_ja": "ボツワナ",
+      "aliases_ja": [
+        "ボツワナ共和国"
+      ],
+      "aliases_en": [
+        "Botswana"
+      ],
+      "capital_ja": "ハボローネ",
+      "capital_en": "Gaborone",
+      "lat": -24.656944444,
+      "lon": 25.908611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9C%E3%83%84%E3%83%AF%E3%83%8A"
+    },
+    {
+      "code": "BY",
+      "name_ja": "ベラルーシ",
+      "aliases_ja": [
+        "ベラルーシ共和国",
+        "ベロルシア"
+      ],
+      "aliases_en": [
+        "Belarus"
+      ],
+      "capital_ja": "ミンスク",
+      "capital_en": "Minsk",
+      "lat": 53.902246,
+      "lon": 27.561837,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%A9%E3%83%AB%E3%83%BC%E3%82%B7"
+    },
+    {
+      "code": "BZ",
+      "name_ja": "ベリーズ",
+      "aliases_en": [
+        "Belize"
+      ],
+      "capital_ja": "ベルモパン",
+      "capital_en": "Belmopan",
+      "lat": 17.25,
+      "lon": -88.7675,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%AA%E3%83%BC%E3%82%BA"
+    },
+    {
+      "code": "CA",
+      "name_ja": "カナダ",
+      "aliases_ja": [
+        "キャナダ",
+        "加奈陀"
+      ],
+      "aliases_en": [
+        "Canada"
+      ],
+      "capital_ja": "オタワ",
+      "capital_en": "Ottawa",
+      "lat": 45.424722222,
+      "lon": -75.695,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%8A%E3%83%80"
+    },
+    {
+      "code": "CD",
+      "name_ja": "コンゴ民主共和国",
+      "aliases_ja": [
+        "コンゴ"
+      ],
+      "aliases_en": [
+        "Democratic Republic of the Congo"
+      ],
+      "capital_ja": "キンシャサ",
+      "capital_en": "Kinshasa",
+      "lat": -4.321944444,
+      "lon": 15.311944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%B3%E3%82%B4%E6%B0%91%E4%B8%BB%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "CF",
+      "name_ja": "中央アフリカ共和国",
+      "aliases_ja": [
+        "中央アフリカ"
+      ],
+      "aliases_en": [
+        "Central African Republic"
+      ],
+      "capital_ja": "バンギ",
+      "capital_en": "Bangui",
+      "lat": 4.37325,
+      "lon": 18.562833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E4%B8%AD%E5%A4%AE%E3%82%A2%E3%83%95%E3%83%AA%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "CG",
+      "name_ja": "コンゴ共和国",
+      "aliases_ja": [
+        "コンゴ・ブラザヴィル"
+      ],
+      "aliases_en": [
+        "Republic of the Congo"
+      ],
+      "capital_ja": "ブラザヴィル",
+      "capital_en": "Brazzaville",
+      "lat": -4.269444444,
+      "lon": 15.271111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%B3%E3%82%B4%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "CH",
+      "name_ja": "スイス",
+      "aliases_ja": [
+        "スイス連邦",
+        "ホルディリディア"
+      ],
+      "aliases_en": [
+        "Switzerland"
+      ],
+      "capital_ja": "ベルン",
+      "capital_en": "Bern",
+      "lat": 46.94798,
+      "lon": 7.44743,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%82%A4%E3%82%B9"
+    },
+    {
+      "code": "CI",
+      "name_ja": "コートジボワール",
+      "aliases_ja": [
+        "コートジボアール",
+        "コートジボワール共和国"
+      ],
+      "aliases_en": [
+        "Ivory Coast"
+      ],
+      "capital_ja": "ヤムスクロ",
+      "capital_en": "Yamoussoukro",
+      "lat": 6.816111111,
+      "lon": -5.274166666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%BC%E3%83%88%E3%82%B8%E3%83%9C%E3%83%AF%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "CL",
+      "name_ja": "チリ",
+      "aliases_ja": [
+        "チリ共和国"
+      ],
+      "aliases_en": [
+        "Chile"
+      ],
+      "capital_ja": "サンティアゴ",
+      "capital_en": "Santiago",
+      "lat": -33.4375,
+      "lon": -70.65,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%AA"
+    },
+    {
+      "code": "CM",
+      "name_ja": "カメルーン",
+      "aliases_ja": [
+        "カメルーン共和国"
+      ],
+      "aliases_en": [
+        "Cameroon"
+      ],
+      "capital_ja": "ヤウンデ",
+      "capital_en": "Yaoundé",
+      "lat": 3.857777777,
+      "lon": 11.518055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%A1%E3%83%AB%E3%83%BC%E3%83%B3"
+    },
+    {
+      "code": "CN",
+      "name_ja": "中華人民共和国",
+      "aliases_ja": [
+        "中国"
+      ],
+      "aliases_en": [
+        "People's Republic of China"
+      ],
+      "capital_ja": "北京",
+      "capital_en": "Beijing",
+      "lat": 39.90403,
+      "lon": 116.407526,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E4%B8%AD%E8%8F%AF%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "CO",
+      "name_ja": "コロンビア",
+      "aliases_ja": [
+        "コロンビア共和国"
+      ],
+      "aliases_en": [
+        "Colombia"
+      ],
+      "capital_ja": "ボゴタ",
+      "capital_en": "Bogotá",
+      "lat": 4.60971,
+      "lon": -74.08175,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%AD%E3%83%B3%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "CR",
+      "name_ja": "コスタリカ",
+      "aliases_ja": [
+        "コスタリカ共和国",
+        "🇨🇷"
+      ],
+      "aliases_en": [
+        "Costa Rica"
+      ],
+      "capital_ja": "サンホセ",
+      "capital_en": "San José",
+      "lat": 9.932738888,
+      "lon": -84.079613888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%B9%E3%82%BF%E3%83%AA%E3%82%AB"
+    },
+    {
+      "code": "CU",
+      "name_ja": "キューバ",
+      "aliases_ja": [
+        "キューバ共和国"
+      ],
+      "aliases_en": [
+        "Cuba"
+      ],
+      "capital_ja": "ハバナ",
+      "capital_en": "Havana",
+      "lat": 23.136666666,
+      "lon": -82.358888888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A5%E3%83%BC%E3%83%90"
+    },
+    {
+      "code": "CV",
+      "name_ja": "カーボベルデ",
+      "aliases_ja": [
+        "カーボヴェルデ共和国",
+        "カーボ・ヴェルデ",
+        "夏麦論"
+      ],
+      "aliases_en": [
+        "Cape Verde"
+      ],
+      "capital_ja": "プライア",
+      "capital_en": "Praia",
+      "lat": 14.917719444,
+      "lon": -23.509155555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%BC%E3%83%9C%E3%83%99%E3%83%AB%E3%83%87"
+    },
+    {
+      "code": "CY",
+      "name_ja": "キプロス",
+      "aliases_ja": [
+        "キプロス共和国"
+      ],
+      "aliases_en": [
+        "Cyprus"
+      ],
+      "capital_ja": "ニコシア",
+      "capital_en": "Nicosia",
+      "lat": 35.1725,
+      "lon": 33.365,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%97%E3%83%AD%E3%82%B9"
+    },
+    {
+      "code": "CZ",
+      "name_ja": "チェコ",
+      "aliases_ja": [
+        "チェコ共和国"
+      ],
+      "aliases_en": [
+        "Czech Republic"
+      ],
+      "capital_ja": "プラハ",
+      "capital_en": "Prague",
+      "lat": 50.0875,
+      "lon": 14.421388888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%82%A7%E3%82%B3"
+    },
+    {
+      "code": "DE",
+      "name_ja": "ドイツ",
+      "aliases_ja": [
+        "ドイツ連邦共和国",
+        "独国"
+      ],
+      "aliases_en": [
+        "Germany"
+      ],
+      "capital_ja": "ベルリン",
+      "capital_en": "Berlin",
+      "lat": 52.516666666,
+      "lon": 13.383333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%89%E3%82%A4%E3%83%84"
+    },
+    {
+      "code": "DJ",
+      "name_ja": "ジブチ",
+      "aliases_ja": [
+        "ジブチ共和国"
+      ],
+      "aliases_en": [
+        "Djibouti"
+      ],
+      "capital_ja": "ジブチ",
+      "capital_en": "Djibouti",
+      "lat": 11.595,
+      "lon": 43.148055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%96%E3%83%81"
+    },
+    {
+      "code": "DM",
+      "name_ja": "ドミニカ国",
+      "aliases_en": [
+        "Dominica"
+      ],
+      "capital_ja": "ロゾー",
+      "capital_en": "Roseau",
+      "lat": 15.3,
+      "lon": -61.383333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%89%E3%83%9F%E3%83%8B%E3%82%AB%E5%9B%BD"
+    },
+    {
+      "code": "DO",
+      "name_ja": "ドミニカ共和国",
+      "aliases_en": [
+        "Dominican Republic"
+      ],
+      "capital_ja": "サント・ドミンゴ",
+      "capital_en": "Santo Domingo",
+      "lat": 18.4625,
+      "lon": -69.936111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%89%E3%83%9F%E3%83%8B%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "DZ",
+      "name_ja": "アルジェリア",
+      "aliases_ja": [
+        "アルジェリア民主人民共和国",
+        "阿爾及",
+        "阿爾及利亜"
+      ],
+      "aliases_en": [
+        "Algeria"
+      ],
+      "capital_ja": "アルジェ",
+      "capital_en": "Algiers",
+      "lat": 36.776388888,
+      "lon": 3.058611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%AB%E3%82%B8%E3%82%A7%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "EC",
+      "name_ja": "エクアドル",
+      "aliases_ja": [
+        "エクアドル共和国"
+      ],
+      "aliases_en": [
+        "Ecuador"
+      ],
+      "capital_ja": "キト",
+      "capital_en": "Quito",
+      "lat": -0.22,
+      "lon": -78.5125,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%AF%E3%82%A2%E3%83%89%E3%83%AB"
+    },
+    {
+      "code": "EE",
+      "name_ja": "エストニア",
+      "aliases_ja": [
+        "エストニア共和国",
+        "エストラント"
+      ],
+      "aliases_en": [
+        "Estonia"
+      ],
+      "capital_ja": "タリン",
+      "capital_en": "Tallinn",
+      "lat": 59.437222222,
+      "lon": 24.745,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%B9%E3%83%88%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "EG",
+      "name_ja": "エジプト",
+      "aliases_ja": [
+        "エジプト・アラブ共和国",
+        "ミスライム",
+        "ミスル",
+        "埃",
+        "埃及",
+        "埃国"
+      ],
+      "aliases_en": [
+        "Egypt"
+      ],
+      "capital_ja": "カイロ",
+      "capital_en": "Cairo",
+      "lat": 30.044444444,
+      "lon": 31.235833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%B8%E3%83%97%E3%83%88"
+    },
+    {
+      "code": "ER",
+      "name_ja": "エリトリア",
+      "aliases_ja": [
+        "エリトリア国",
+        "エリトレア"
+      ],
+      "aliases_en": [
+        "Eritrea"
+      ],
+      "capital_ja": "アスマラ",
+      "capital_en": "Asmara",
+      "lat": 15.333333333,
+      "lon": 38.916666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%83%AA%E3%83%88%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "ES",
+      "name_ja": "スペイン",
+      "aliases_ja": [
+        "イスパニア",
+        "エスパーニャ",
+        "スペイン国",
+        "スペイン王国",
+        "西班牙",
+        "西班牙王国"
+      ],
+      "aliases_en": [
+        "Spain"
+      ],
+      "capital_ja": "マドリード",
+      "capital_en": "Madrid",
+      "lat": 40.416944444,
+      "lon": -3.703333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%9A%E3%82%A4%E3%83%B3"
+    },
+    {
+      "code": "ET",
+      "name_ja": "エチオピア",
+      "aliases_ja": [
+        "エチオピア連邦民主共和国",
+        "エティオピア",
+        "哀提伯"
+      ],
+      "aliases_en": [
+        "Ethiopia"
+      ],
+      "capital_ja": "アディスアベバ",
+      "capital_en": "Addis Ababa",
+      "lat": 9.035833333,
+      "lon": 38.7525,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%83%81%E3%82%AA%E3%83%94%E3%82%A2"
+    },
+    {
+      "code": "FI",
+      "name_ja": "フィンランド",
+      "aliases_ja": [
+        "フィンランド共和国"
+      ],
+      "aliases_en": [
+        "Finland"
+      ],
+      "capital_ja": "ヘルシンキ",
+      "capital_en": "Helsinki",
+      "lat": 60.170833333,
+      "lon": 24.9375,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%B3%E3%83%A9%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "FJ",
+      "name_ja": "フィジー",
+      "aliases_ja": [
+        "フィジー共和国",
+        "フィジー諸島共和国"
+      ],
+      "aliases_en": [
+        "Fiji"
+      ],
+      "capital_ja": "スバ",
+      "capital_en": "Suva",
+      "lat": -18.133333333,
+      "lon": 178.433333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%82%B8%E3%83%BC"
+    },
+    {
+      "code": "FM",
+      "name_ja": "ミクロネシア連邦",
+      "aliases_ja": [
+        "ミクロネシア"
+      ],
+      "aliases_en": [
+        "Federated States of Micronesia"
+      ],
+      "capital_ja": "パリキール",
+      "capital_en": "Palikir",
+      "lat": 6.917777777,
+      "lon": 158.185,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9F%E3%82%AF%E3%83%AD%E3%83%8D%E3%82%B7%E3%82%A2%E9%80%A3%E9%82%A6"
+    },
+    {
+      "code": "FR",
+      "name_ja": "フランス",
+      "aliases_ja": [
+        "フランス共和国",
+        "仏",
+        "仏国",
+        "仏蘭西",
+        "佛",
+        "佛蘭西",
+        "法朗西"
+      ],
+      "aliases_en": [
+        "France"
+      ],
+      "capital_ja": "パリ",
+      "capital_en": "Paris",
+      "lat": 48.856666666,
+      "lon": 2.352222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"
+    },
+    {
+      "code": "GA",
+      "name_ja": "ガボン",
+      "aliases_ja": [
+        "ガボン共和国",
+        "加蓬"
+      ],
+      "aliases_en": [
+        "Gabon"
+      ],
+      "capital_ja": "リーブルヴィル",
+      "capital_en": "Libreville",
+      "lat": 0.407777777,
+      "lon": 9.440277777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AC%E3%83%9C%E3%83%B3"
+    },
+    {
+      "code": "GB",
+      "name_ja": "イギリス",
+      "aliases_ja": [
+        "イギリス王国",
+        "エゲレス",
+        "グレートブリテン及び北アイルランド連合王国",
+        "大不列顛",
+        "英吉利",
+        "英国",
+        "連合王国"
+      ],
+      "aliases_en": [
+        "United Kingdom"
+      ],
+      "capital_ja": "ロンドン",
+      "capital_en": "London",
+      "lat": 51.507222222,
+      "lon": -0.1275,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%AE%E3%83%AA%E3%82%B9"
+    },
+    {
+      "code": "GD",
+      "name_ja": "グレナダ",
+      "aliases_en": [
+        "Grenada"
+      ],
+      "capital_ja": "セントジョージズ",
+      "capital_en": "St. George's",
+      "lat": 12.0525,
+      "lon": -61.753055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B0%E3%83%AC%E3%83%8A%E3%83%80"
+    },
+    {
+      "code": "GE",
+      "name_ja": "ジョージア",
+      "aliases_ja": [
+        "グルジア",
+        "サカルトベロ",
+        "サカルトヴェロ",
+        "ジョルジア",
+        "ジョージア (国)",
+        "ジョージア国"
+      ],
+      "aliases_en": [
+        "Georgia"
+      ],
+      "capital_ja": "トビリシ",
+      "capital_en": "Tbilisi",
+      "lat": 41.7225,
+      "lon": 44.7925,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A7%E3%83%BC%E3%82%B8%E3%82%A2_(%E5%9B%BD)"
+    },
+    {
+      "code": "GH",
+      "name_ja": "ガーナ",
+      "aliases_ja": [
+        "ガーナ共和国"
+      ],
+      "aliases_en": [
+        "Ghana"
+      ],
+      "capital_ja": "アクラ",
+      "capital_en": "Accra",
+      "lat": 5.55602,
+      "lon": -0.1969,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AC%E3%83%BC%E3%83%8A"
+    },
+    {
+      "code": "GM",
+      "name_ja": "ガンビア",
+      "aliases_ja": [
+        "ガンビア・イスラム共和国",
+        "ガンビア共和国",
+        "岡比亜"
+      ],
+      "aliases_en": [
+        "The Gambia"
+      ],
+      "capital_ja": "バンジュール",
+      "capital_en": "Banjul",
+      "lat": 13.453055555,
+      "lon": -16.5775,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AC%E3%83%B3%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "GN",
+      "name_ja": "ギニア",
+      "aliases_ja": [
+        "ギニア・コナクリ",
+        "ギニア共和国",
+        "ギニー",
+        "ギネ",
+        "幾内亜",
+        "銀名"
+      ],
+      "aliases_en": [
+        "Guinea"
+      ],
+      "capital_ja": "コナクリ",
+      "capital_en": "Conakry",
+      "lat": 9.509166666,
+      "lon": -13.712222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AE%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "GQ",
+      "name_ja": "赤道ギニア",
+      "aliases_ja": [
+        "赤道ギニア共和国"
+      ],
+      "aliases_en": [
+        "Equatorial Guinea"
+      ],
+      "capital_ja": "ラパス",
+      "capital_en": "Ciudad de la Paz",
+      "lat": 1.591666666,
+      "lon": 10.822222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E8%B5%A4%E9%81%93%E3%82%AE%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "GR",
+      "name_ja": "ギリシャ",
+      "aliases_ja": [
+        "ギリシア",
+        "ギリシャ共和国",
+        "希",
+        "希臘"
+      ],
+      "aliases_en": [
+        "Greece"
+      ],
+      "capital_ja": "アテネ",
+      "capital_en": "Athens",
+      "lat": 37.984166666,
+      "lon": 23.728055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AE%E3%83%AA%E3%82%B7%E3%83%A3"
+    },
+    {
+      "code": "GT",
+      "name_ja": "グアテマラ",
+      "aliases_ja": [
+        "グアテマラ共和国"
+      ],
+      "aliases_en": [
+        "Guatemala"
+      ],
+      "capital_ja": "グアテマラシティ",
+      "capital_en": "Guatemala City",
+      "lat": 14.641666666,
+      "lon": -90.513333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B0%E3%82%A2%E3%83%86%E3%83%9E%E3%83%A9"
+    },
+    {
+      "code": "GW",
+      "name_ja": "ギニアビサウ",
+      "aliases_ja": [
+        "ギニアビサウ共和国",
+        "ギニアビサオ",
+        "幾内亜美須"
+      ],
+      "aliases_en": [
+        "Guinea-Bissau"
+      ],
+      "capital_ja": "ビサウ",
+      "capital_en": "Bissau",
+      "lat": 11.86,
+      "lon": -15.583333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AE%E3%83%8B%E3%82%A2%E3%83%93%E3%82%B5%E3%82%A6"
+    },
+    {
+      "code": "GY",
+      "name_ja": "ガイアナ",
+      "aliases_ja": [
+        "ガイアナ共和国",
+        "ガイアナ協同共和国"
+      ],
+      "aliases_en": [
+        "Guyana"
+      ],
+      "capital_ja": "ジョージタウン",
+      "capital_en": "Georgetown",
+      "lat": 6.805833333,
+      "lon": -58.150833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AC%E3%82%A4%E3%82%A2%E3%83%8A"
+    },
+    {
+      "code": "HN",
+      "name_ja": "ホンジュラス",
+      "aliases_ja": [
+        "ホンジュラス共和国"
+      ],
+      "aliases_en": [
+        "Honduras"
+      ],
+      "capital_ja": "テグシガルパ",
+      "capital_en": "Tegucigalpa",
+      "lat": 14.105783333,
+      "lon": -87.204705555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9B%E3%83%B3%E3%82%B8%E3%83%A5%E3%83%A9%E3%82%B9"
+    },
+    {
+      "code": "HR",
+      "name_ja": "クロアチア",
+      "aliases_ja": [
+        "クロアチア共和国"
+      ],
+      "aliases_en": [
+        "Croatia"
+      ],
+      "capital_ja": "ザグレブ",
+      "capital_en": "Zagreb",
+      "lat": 45.813055555,
+      "lon": 15.977222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AD%E3%82%A2%E3%83%81%E3%82%A2"
+    },
+    {
+      "code": "HT",
+      "name_ja": "ハイチ",
+      "aliases_ja": [
+        "ハイチ共和国"
+      ],
+      "aliases_en": [
+        "Haiti"
+      ],
+      "capital_ja": "ポルトープランス",
+      "capital_en": "Port-au-Prince",
+      "lat": 18.546944444,
+      "lon": -72.340277777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%82%A4%E3%83%81"
+    },
+    {
+      "code": "HU",
+      "name_ja": "ハンガリー",
+      "aliases_en": [
+        "Hungary"
+      ],
+      "capital_ja": "ブダペスト",
+      "capital_en": "Budapest",
+      "lat": 47.498333333,
+      "lon": 19.040833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%83%B3%E3%82%AC%E3%83%AA%E3%83%BC"
+    },
+    {
+      "code": "ID",
+      "name_ja": "インドネシア",
+      "aliases_ja": [
+        "インドネシア共和国"
+      ],
+      "aliases_en": [
+        "Indonesia"
+      ],
+      "capital_ja": "ジャカルタ",
+      "capital_en": "Jakarta",
+      "lat": -6.175277777,
+      "lon": 106.826944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%B3%E3%83%89%E3%83%8D%E3%82%B7%E3%82%A2"
+    },
+    {
+      "code": "IE",
+      "name_ja": "アイルランド",
+      "aliases_ja": [
+        "アイリッシュ",
+        "アイルランド共和国",
+        "エーラ",
+        "エール共和国",
+        "ヒベルニア",
+        "愛蘭"
+      ],
+      "aliases_en": [
+        "Ireland"
+      ],
+      "capital_ja": "ダブリン",
+      "capital_en": "Dublin",
+      "lat": 53.349722222,
+      "lon": -6.260277777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%A4%E3%83%AB%E3%83%A9%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "IL",
+      "name_ja": "イスラエル",
+      "aliases_ja": [
+        "イスラエル国"
+      ],
+      "aliases_en": [
+        "Israel"
+      ],
+      "capital_ja": "エルサレム",
+      "capital_en": "Jerusalem",
+      "lat": 31.776679,
+      "lon": 35.234156,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%B9%E3%83%A9%E3%82%A8%E3%83%AB"
+    },
+    {
+      "code": "IN",
+      "name_ja": "インド",
+      "aliases_ja": [
+        "インディア",
+        "インド共和国",
+        "インド国",
+        "バーラト",
+        "ブハラトゥ",
+        "印",
+        "印度",
+        "天竺"
+      ],
+      "aliases_en": [
+        "India"
+      ],
+      "capital_ja": "ニューデリー",
+      "capital_en": "New Delhi",
+      "lat": 28.613888888,
+      "lon": 77.208888888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "IQ",
+      "name_ja": "イラク",
+      "aliases_ja": [
+        "イラク共和国"
+      ],
+      "aliases_en": [
+        "Iraq"
+      ],
+      "capital_ja": "バグダード",
+      "capital_en": "Baghdad",
+      "lat": 33.315277777,
+      "lon": 44.366111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%A9%E3%82%AF"
+    },
+    {
+      "code": "IR",
+      "name_ja": "イラン",
+      "aliases_ja": [
+        "イラン・イスラム共和国"
+      ],
+      "aliases_en": [
+        "Iran"
+      ],
+      "capital_ja": "テヘラン",
+      "capital_en": "Tehran",
+      "lat": 35.688888888,
+      "lon": 51.389722222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%A9%E3%83%B3"
+    },
+    {
+      "code": "IS",
+      "name_ja": "アイスランド",
+      "aliases_ja": [
+        "アイスランド共和国"
+      ],
+      "aliases_en": [
+        "Iceland"
+      ],
+      "capital_ja": "レイキャヴィーク",
+      "capital_en": "Reykjavík",
+      "lat": 64.1475,
+      "lon": -21.935,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%A4%E3%82%B9%E3%83%A9%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "IT",
+      "name_ja": "イタリア",
+      "aliases_ja": [
+        "イタリア共和国"
+      ],
+      "aliases_en": [
+        "Italy"
+      ],
+      "capital_ja": "ローマ",
+      "capital_en": "Rome",
+      "lat": 41.893055555,
+      "lon": 12.482777777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%BF%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "JM",
+      "name_ja": "ジャマイカ",
+      "aliases_en": [
+        "Jamaica"
+      ],
+      "capital_ja": "キングストン",
+      "capital_en": "Kingston",
+      "lat": 17.971388888,
+      "lon": -76.793055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A3%E3%83%9E%E3%82%A4%E3%82%AB"
+    },
+    {
+      "code": "JO",
+      "name_ja": "ヨルダン",
+      "aliases_ja": [
+        "ヨルダン・ハシェミット王国"
+      ],
+      "aliases_en": [
+        "Jordan"
+      ],
+      "capital_ja": "アンマン",
+      "capital_en": "Amman",
+      "lat": 31.930983,
+      "lon": 35.926084,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A8%E3%83%AB%E3%83%80%E3%83%B3"
+    },
+    {
+      "code": "JP",
+      "name_ja": "日本",
+      "aliases_ja": [
+        "あきつしま",
+        "おおやしま",
+        "しきしま",
+        "しんしゅう",
+        "にっぽん",
+        "にっぽんこく",
+        "にほん",
+        "にほんこく",
+        "ひいずるくに",
+        "ふそう",
+        "ジャパン",
+        "大八州",
+        "扶木之地",
+        "扶桑",
+        "扶桑国",
+        "敷島",
+        "日出る国",
+        "日本国",
+        "榑木之地",
+        "瑞穂国",
+        "神州",
+        "秋津島",
+        "葦原中国"
+      ],
+      "aliases_en": [
+        "Japan"
+      ],
+      "capital_ja": "東京",
+      "capital_en": "Tokyo",
+      "lat": 35.689444444,
+      "lon": 139.691666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"
+    },
+    {
+      "code": "KE",
+      "name_ja": "ケニア",
+      "aliases_ja": [
+        "ケニア共和国",
+        "ケニヤ"
+      ],
+      "aliases_en": [
+        "Kenya"
+      ],
+      "capital_ja": "ナイロビ",
+      "capital_en": "Nairobi",
+      "lat": -1.286388888,
+      "lon": 36.817222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B1%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "KG",
+      "name_ja": "キルギス",
+      "aliases_ja": [
+        "キルギス共和国"
+      ],
+      "aliases_en": [
+        "Kyrgyzstan"
+      ],
+      "capital_ja": "ビシュケク",
+      "capital_en": "Bishkek",
+      "lat": 42.866666666,
+      "lon": 74.566666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AB%E3%82%AE%E3%82%B9"
+    },
+    {
+      "code": "KH",
+      "name_ja": "カンボジア",
+      "aliases_ja": [
+        "カンボジア王国"
+      ],
+      "aliases_en": [
+        "Cambodia"
+      ],
+      "capital_ja": "プノンペン",
+      "capital_en": "Phnom Penh",
+      "lat": 11.569583333,
+      "lon": 104.921027777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%B3%E3%83%9C%E3%82%B8%E3%82%A2"
+    },
+    {
+      "code": "KI",
+      "name_ja": "キリバス",
+      "aliases_ja": [
+        "キリバス共和国"
+      ],
+      "aliases_en": [
+        "Kiribati"
+      ],
+      "capital_ja": "サウス・タラワ",
+      "capital_en": "South Tarawa",
+      "lat": 1.333333333,
+      "lon": 172.966666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AA%E3%83%90%E3%82%B9"
+    },
+    {
+      "code": "KM",
+      "name_ja": "コモロ",
+      "aliases_ja": [
+        "コモロ連合",
+        "科摩羅"
+      ],
+      "aliases_en": [
+        "Comoros"
+      ],
+      "capital_ja": "モロニ",
+      "capital_en": "Moroni",
+      "lat": -11.703611111,
+      "lon": 43.253611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%A2%E3%83%AD"
+    },
+    {
+      "code": "KN",
+      "name_ja": "セントクリストファー・ネイビス",
+      "aliases_ja": [
+        "セントキッツ・ネイビス",
+        "セントキッツ・ネビス",
+        "セントキッツ・ネービス",
+        "セントクリストファーネイビス",
+        "セントクリストファーネビス",
+        "セントクリストファーネヴィス",
+        "セントクリストファーネービス",
+        "セントクリストファー・ネイビス連邦",
+        "セントクリストファー・ネイヴィス",
+        "セントクリストファー・ネビス",
+        "セントクリストファー・ネービス",
+        "セントクリストファー・ネーヴィス",
+        "セントクリッストファー・ネイビス"
+      ],
+      "aliases_en": [
+        "Saint Kitts and Nevis"
+      ],
+      "capital_ja": "バセテール",
+      "capital_en": "Basseterre",
+      "lat": 17.298333333,
+      "lon": -62.734166666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%B3%E3%83%88%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%88%E3%83%95%E3%82%A1%E3%83%BC%E3%83%BB%E3%83%8D%E3%82%A4%E3%83%93%E3%82%B9"
+    },
+    {
+      "code": "KP",
+      "name_ja": "朝鮮民主主義人民共和国",
+      "aliases_ja": [
+        "DPRK",
+        "北朝鮮"
+      ],
+      "aliases_en": [
+        "North Korea"
+      ],
+      "capital_ja": "平壌",
+      "capital_en": "Pyongyang",
+      "lat": 39.016666666,
+      "lon": 125.7475,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E6%9C%9D%E9%AE%AE%E6%B0%91%E4%B8%BB%E4%B8%BB%E7%BE%A9%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "KR",
+      "name_ja": "大韓民国",
+      "aliases_ja": [
+        "南朝鮮",
+        "韓国"
+      ],
+      "aliases_en": [
+        "South Korea"
+      ],
+      "capital_ja": "ソウル",
+      "capital_en": "Seoul",
+      "lat": 37.56,
+      "lon": 126.99,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E5%A4%A7%E9%9F%93%E6%B0%91%E5%9B%BD"
+    },
+    {
+      "code": "KW",
+      "name_ja": "クウェート",
+      "aliases_ja": [
+        "クウェイト",
+        "クウェート国"
+      ],
+      "aliases_en": [
+        "Kuwait"
+      ],
+      "capital_ja": "クウェート",
+      "capital_en": "Kuwait City",
+      "lat": 29.375,
+      "lon": 47.98,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AF%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%88"
+    },
+    {
+      "code": "KZ",
+      "name_ja": "カザフスタン",
+      "aliases_ja": [
+        "カザフスタン共和国"
+      ],
+      "aliases_en": [
+        "Kazakhstan"
+      ],
+      "capital_ja": "アスタナ",
+      "capital_en": "Astana",
+      "lat": 51.133333333,
+      "lon": 71.433333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%B6%E3%83%95%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "LA",
+      "name_ja": "ラオス",
+      "aliases_ja": [
+        "ラオス人民民主共和国"
+      ],
+      "aliases_en": [
+        "Laos"
+      ],
+      "capital_ja": "ヴィエンチャン",
+      "capital_en": "Vientiane",
+      "lat": 17.98,
+      "lon": 102.63,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A9%E3%82%AA%E3%82%B9"
+    },
+    {
+      "code": "LB",
+      "name_ja": "レバノン",
+      "aliases_ja": [
+        "レバノン共和国"
+      ],
+      "aliases_en": [
+        "Lebanon"
+      ],
+      "capital_ja": "ベイルート",
+      "capital_en": "Beirut",
+      "lat": 33.886944444,
+      "lon": 35.513055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AC%E3%83%90%E3%83%8E%E3%83%B3"
+    },
+    {
+      "code": "LC",
+      "name_ja": "セントルシア",
+      "aliases_en": [
+        "Saint Lucia"
+      ],
+      "capital_ja": "カストリーズ",
+      "capital_en": "Castries",
+      "lat": 14.010833333,
+      "lon": -60.989444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%B3%E3%83%88%E3%83%AB%E3%82%B7%E3%82%A2"
+    },
+    {
+      "code": "LI",
+      "name_ja": "リヒテンシュタイン",
+      "aliases_ja": [
+        "リヒテンシュタイン公国"
+      ],
+      "aliases_en": [
+        "Liechtenstein"
+      ],
+      "capital_ja": "ファドゥーツ",
+      "capital_en": "Vaduz",
+      "lat": 47.140555555,
+      "lon": 9.522222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%92%E3%83%86%E3%83%B3%E3%82%B7%E3%83%A5%E3%82%BF%E3%82%A4%E3%83%B3"
+    },
+    {
+      "code": "LK",
+      "name_ja": "スリランカ",
+      "aliases_ja": [
+        "スリランカ民主社会主義共和国",
+        "スリ・ランカ",
+        "スリ・ランカ民主社会主義共和国",
+        "セイロン",
+        "師子国",
+        "錫"
+      ],
+      "aliases_en": [
+        "Sri Lanka"
+      ],
+      "capital_ja": "スリジャヤワルダナプラコッテ",
+      "capital_en": "Sri Jayawardenepura Kotte",
+      "lat": 6.9,
+      "lon": 79.916388888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%AA%E3%83%A9%E3%83%B3%E3%82%AB"
+    },
+    {
+      "code": "LR",
+      "name_ja": "リベリア",
+      "aliases_ja": [
+        "リベリア共和国"
+      ],
+      "aliases_en": [
+        "Liberia"
+      ],
+      "capital_ja": "モンロビア",
+      "capital_en": "Monrovia",
+      "lat": 6.310555555,
+      "lon": -10.804722222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%99%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "LS",
+      "name_ja": "レソト",
+      "aliases_ja": [
+        "レソト王国"
+      ],
+      "aliases_en": [
+        "Lesotho"
+      ],
+      "capital_ja": "マセル",
+      "capital_en": "Maseru",
+      "lat": -29.31,
+      "lon": 27.48,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%BD%E3%83%88"
+    },
+    {
+      "code": "LT",
+      "name_ja": "リトアニア",
+      "aliases_ja": [
+        "リトアニア共和国"
+      ],
+      "aliases_en": [
+        "Lithuania"
+      ],
+      "capital_ja": "ヴィルニュス",
+      "capital_en": "Vilnius",
+      "lat": 54.687222222,
+      "lon": 25.28,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%88%E3%82%A2%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "LU",
+      "name_ja": "ルクセンブルク",
+      "aliases_ja": [
+        "リュクサンブール州",
+        "ルクセンブルク大公国",
+        "ルクセンブルグ",
+        "ルクセンブルグ大公国"
+      ],
+      "aliases_en": [
+        "Luxembourg"
+      ],
+      "capital_ja": "ルクセンブルク",
+      "capital_en": "Luxembourg",
+      "lat": 49.611388888,
+      "lon": 6.13,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AB%E3%82%AF%E3%82%BB%E3%83%B3%E3%83%96%E3%83%AB%E3%82%AF"
+    },
+    {
+      "code": "LV",
+      "name_ja": "ラトビア",
+      "aliases_ja": [
+        "ラトビア共和国"
+      ],
+      "aliases_en": [
+        "Latvia"
+      ],
+      "capital_ja": "リガ",
+      "capital_en": "Riga",
+      "lat": 56.9475,
+      "lon": 24.106944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%88%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "LY",
+      "name_ja": "リビア",
+      "aliases_ja": [
+        "リビア国"
+      ],
+      "aliases_en": [
+        "Libya"
+      ],
+      "capital_ja": "トリポリ",
+      "capital_en": "Tripoli",
+      "lat": 32.8875,
+      "lon": 13.1875,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "MA",
+      "name_ja": "モロッコ",
+      "aliases_ja": [
+        "モロッコ王国",
+        "摩洛哥",
+        "茂禄子",
+        "莫羅哥",
+        "馬羅哥"
+      ],
+      "aliases_en": [
+        "Morocco"
+      ],
+      "capital_ja": "ラバト",
+      "capital_en": "Rabat",
+      "lat": 34.021111111,
+      "lon": -6.841388888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%AD%E3%83%83%E3%82%B3"
+    },
+    {
+      "code": "MC",
+      "name_ja": "モナコ",
+      "aliases_ja": [
+        "モナコ公国"
+      ],
+      "aliases_en": [
+        "Monaco"
+      ],
+      "capital_ja": "モナコ",
+      "capital_en": "Monaco",
+      "lat": 43.731111111,
+      "lon": 7.42,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%8A%E3%82%B3"
+    },
+    {
+      "code": "MD",
+      "name_ja": "モルドバ",
+      "aliases_ja": [
+        "モルドバ共和国"
+      ],
+      "aliases_en": [
+        "Moldova"
+      ],
+      "capital_ja": "キシナウ",
+      "capital_en": "Chișinău",
+      "lat": 47.022777777,
+      "lon": 28.835277777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%AB%E3%83%89%E3%83%90"
+    },
+    {
+      "code": "ME",
+      "name_ja": "モンテネグロ",
+      "aliases_en": [
+        "Montenegro"
+      ],
+      "capital_ja": "ポドゴリツァ",
+      "capital_en": "Podgorica",
+      "lat": 42.441388888,
+      "lon": 19.262777777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%B3%E3%83%86%E3%83%8D%E3%82%B0%E3%83%AD"
+    },
+    {
+      "code": "MG",
+      "name_ja": "マダガスカル",
+      "aliases_ja": [
+        "マダガスカル共和国"
+      ],
+      "aliases_en": [
+        "Madagascar"
+      ],
+      "capital_ja": "アンタナナリボ",
+      "capital_en": "Antananarivo",
+      "lat": -18.91,
+      "lon": 47.525,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%80%E3%82%AC%E3%82%B9%E3%82%AB%E3%83%AB"
+    },
+    {
+      "code": "MH",
+      "name_ja": "マーシャル諸島",
+      "aliases_ja": [
+        "マーシャル諸島共和国"
+      ],
+      "aliases_en": [
+        "Marshall Islands"
+      ],
+      "capital_ja": "マジュロ",
+      "capital_en": "Majuro",
+      "lat": 7.0918,
+      "lon": 171.3802,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%AB%E8%AB%B8%E5%B3%B6"
+    },
+    {
+      "code": "MK",
+      "name_ja": "北マケドニア",
+      "aliases_ja": [
+        "FYROM",
+        "マケドニア共和国",
+        "マケドニア旧ユーゴスラビア共和国",
+        "北マケドニア共和国",
+        "旧ユーゴスラビア・マケドニア共和国",
+        "旧ユーゴスラヴィア・マケドニア共和国"
+      ],
+      "aliases_en": [
+        "North Macedonia"
+      ],
+      "capital_ja": "スコピエ",
+      "capital_en": "Skopje",
+      "lat": 41.996111111,
+      "lon": 21.431666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E5%8C%97%E3%83%9E%E3%82%B1%E3%83%89%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "ML",
+      "name_ja": "マリ共和国",
+      "aliases_ja": [
+        "マリ",
+        "馬里"
+      ],
+      "aliases_en": [
+        "Mali"
+      ],
+      "capital_ja": "バマコ",
+      "capital_en": "Bamako",
+      "lat": 12.645833333,
+      "lon": -7.992222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%AA%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "MM",
+      "name_ja": "ミャンマー",
+      "aliases_ja": [
+        "ビルマ",
+        "ミャンマー連邦共和国"
+      ],
+      "aliases_en": [
+        "Myanmar"
+      ],
+      "capital_ja": "ネピドー",
+      "capital_en": "Naypyidaw",
+      "lat": 19.7475,
+      "lon": 96.115,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9F%E3%83%A3%E3%83%B3%E3%83%9E%E3%83%BC"
+    },
+    {
+      "code": "MN",
+      "name_ja": "モンゴル国",
+      "aliases_ja": [
+        "モンゴル"
+      ],
+      "aliases_en": [
+        "Mongolia"
+      ],
+      "capital_ja": "ウランバートル",
+      "capital_en": "Ulaanbaatar",
+      "lat": 47.921357,
+      "lon": 106.905515,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%B3%E3%82%B4%E3%83%AB%E5%9B%BD"
+    },
+    {
+      "code": "MR",
+      "name_ja": "モーリタニア",
+      "aliases_ja": [
+        "モーリタニア・イスラム共和国"
+      ],
+      "aliases_en": [
+        "Mauritania"
+      ],
+      "capital_ja": "ヌアクショット",
+      "capital_en": "Nouakchott",
+      "lat": 18.08581,
+      "lon": -15.9785,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%BC%E3%83%AA%E3%82%BF%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "MT",
+      "name_ja": "マルタ",
+      "aliases_ja": [
+        "マルタ共和国"
+      ],
+      "aliases_en": [
+        "Malta"
+      ],
+      "capital_ja": "バレッタ",
+      "capital_en": "Valletta",
+      "lat": 35.897777777,
+      "lon": 14.5125,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%AB%E3%82%BF"
+    },
+    {
+      "code": "MU",
+      "name_ja": "モーリシャス",
+      "aliases_ja": [
+        "モーリシャス共和国"
+      ],
+      "aliases_en": [
+        "Mauritius"
+      ],
+      "capital_ja": "ポートルイス",
+      "capital_en": "Port Louis",
+      "lat": -20.161944444,
+      "lon": 57.498888888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%BC%E3%83%AA%E3%82%B7%E3%83%A3%E3%82%B9"
+    },
+    {
+      "code": "MV",
+      "name_ja": "モルディブ",
+      "aliases_ja": [
+        "マルジブ",
+        "マルダイブ",
+        "モルジブ",
+        "モルジヴ",
+        "モルディブ共和国",
+        "モルディヴ",
+        "モルディヴ共和国"
+      ],
+      "aliases_en": [
+        "Maldives"
+      ],
+      "capital_ja": "マレ",
+      "capital_en": "Malé",
+      "lat": 4.175,
+      "lon": 73.508333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%83%AB%E3%83%87%E3%82%A3%E3%83%96"
+    },
+    {
+      "code": "MW",
+      "name_ja": "マラウイ",
+      "aliases_ja": [
+        "マラウイ共和国"
+      ],
+      "aliases_en": [
+        "Malawi"
+      ],
+      "capital_ja": "リロングウェ",
+      "capital_en": "Lilongwe",
+      "lat": -13.986388888,
+      "lon": 33.768055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%A9%E3%82%A6%E3%82%A4"
+    },
+    {
+      "code": "MX",
+      "name_ja": "メキシコ",
+      "aliases_ja": [
+        "メキシコ合衆国",
+        "メヒコ",
+        "墨",
+        "墨西哥"
+      ],
+      "aliases_en": [
+        "Mexico"
+      ],
+      "capital_ja": "メキシコシティ",
+      "capital_en": "Mexico City",
+      "lat": 19.353773,
+      "lon": -99.13589,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A1%E3%82%AD%E3%82%B7%E3%82%B3"
+    },
+    {
+      "code": "MY",
+      "name_ja": "マレーシア",
+      "aliases_en": [
+        "Malaysia"
+      ],
+      "capital_ja": "クアラルンプール",
+      "capital_en": "Kuala Lumpur",
+      "lat": 3.147777777,
+      "lon": 101.695277777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%AC%E3%83%BC%E3%82%B7%E3%82%A2"
+    },
+    {
+      "code": "MZ",
+      "name_ja": "モザンビーク",
+      "aliases_ja": [
+        "モザンビーク共和国"
+      ],
+      "aliases_en": [
+        "Mozambique"
+      ],
+      "capital_ja": "マプト",
+      "capital_en": "Maputo",
+      "lat": -25.968888888,
+      "lon": 32.573333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%82%B6%E3%83%B3%E3%83%93%E3%83%BC%E3%82%AF"
+    },
+    {
+      "code": "NA",
+      "name_ja": "ナミビア",
+      "aliases_ja": [
+        "ナミビア共和国"
+      ],
+      "aliases_en": [
+        "Namibia"
+      ],
+      "capital_ja": "ウィントフック",
+      "capital_en": "Windhoek",
+      "lat": -22.57,
+      "lon": 17.083611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8A%E3%83%9F%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "NE",
+      "name_ja": "ニジェール",
+      "aliases_ja": [
+        "ニジェール共和国"
+      ],
+      "aliases_en": [
+        "Niger"
+      ],
+      "capital_ja": "ニアメ",
+      "capital_en": "Niamey",
+      "lat": 13.515,
+      "lon": 2.1175,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8B%E3%82%B8%E3%82%A7%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "NG",
+      "name_ja": "ナイジェリア",
+      "aliases_ja": [
+        "ナイジェリア連邦共和国"
+      ],
+      "aliases_en": [
+        "Nigeria"
+      ],
+      "capital_ja": "アブジャ",
+      "capital_en": "Abuja",
+      "lat": 9.055555555,
+      "lon": 7.491388888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8A%E3%82%A4%E3%82%B8%E3%82%A7%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "NI",
+      "name_ja": "ニカラグア",
+      "aliases_ja": [
+        "ニカラグァ",
+        "ニカラグア共和国",
+        "ニカラグワ"
+      ],
+      "aliases_en": [
+        "Nicaragua"
+      ],
+      "capital_ja": "マナグア",
+      "capital_en": "Managua",
+      "lat": 12.154680555,
+      "lon": -86.273725,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8B%E3%82%AB%E3%83%A9%E3%82%B0%E3%82%A2"
+    },
+    {
+      "code": "NL",
+      "name_ja": "オランダ",
+      "aliases_ja": [
+        "オランダ王国"
+      ],
+      "aliases_en": [
+        "Kingdom of the Netherlands"
+      ],
+      "capital_ja": "アムステルダム",
+      "capital_en": "Amsterdam",
+      "lat": 52.366666666,
+      "lon": 4.883333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%A9%E3%83%B3%E3%83%80"
+    },
+    {
+      "code": "NO",
+      "name_ja": "ノルウェー",
+      "aliases_ja": [
+        "ノルウェイ",
+        "ノルウェー王国"
+      ],
+      "aliases_en": [
+        "Norway"
+      ],
+      "capital_ja": "オスロ",
+      "capital_en": "Oslo",
+      "lat": 59.913333333,
+      "lon": 10.738888888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8E%E3%83%AB%E3%82%A6%E3%82%A7%E3%83%BC"
+    },
+    {
+      "code": "NP",
+      "name_ja": "ネパール",
+      "aliases_ja": [
+        "ネパール連邦民主共和国",
+        "尼婆羅"
+      ],
+      "aliases_en": [
+        "Nepal"
+      ],
+      "capital_ja": "カトマンズ",
+      "capital_en": "Kathmandu",
+      "lat": 27.71,
+      "lon": 85.32,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8D%E3%83%91%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "NR",
+      "name_ja": "ナウル",
+      "aliases_ja": [
+        "ナウル共和国"
+      ],
+      "aliases_en": [
+        "Nauru"
+      ],
+      "capital_ja": "ヤレン地区",
+      "capital_en": "Yaren District",
+      "lat": -0.5477,
+      "lon": 166.920867,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8A%E3%82%A6%E3%83%AB"
+    },
+    {
+      "code": "NZ",
+      "name_ja": "ニュージーランド",
+      "aliases_ja": [
+        "にゅーじーらんど",
+        "新西蘭"
+      ],
+      "aliases_en": [
+        "New Zealand"
+      ],
+      "capital_ja": "ウェリントン",
+      "capital_en": "Wellington",
+      "lat": -41.288888888,
+      "lon": 174.777222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B8%E3%83%BC%E3%83%A9%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "OM",
+      "name_ja": "オマーン",
+      "aliases_ja": [
+        "オマーン国"
+      ],
+      "aliases_en": [
+        "Oman"
+      ],
+      "capital_ja": "マスカット",
+      "capital_en": "Muscat",
+      "lat": 23.613888888,
+      "lon": 58.592222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%9E%E3%83%BC%E3%83%B3"
+    },
+    {
+      "code": "PA",
+      "name_ja": "パナマ",
+      "aliases_ja": [
+        "パナマ共和国"
+      ],
+      "aliases_en": [
+        "Panama"
+      ],
+      "capital_ja": "パナマ",
+      "capital_en": "Panama City",
+      "lat": 8.971111111,
+      "lon": -79.534722222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%83%8A%E3%83%9E"
+    },
+    {
+      "code": "PE",
+      "name_ja": "ペルー",
+      "aliases_ja": [
+        "ペルー共和国",
+        "秘露國"
+      ],
+      "aliases_en": [
+        "Peru"
+      ],
+      "capital_ja": "リマ",
+      "capital_en": "Lima",
+      "lat": -12.06,
+      "lon": -77.0375,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9A%E3%83%AB%E3%83%BC"
+    },
+    {
+      "code": "PG",
+      "name_ja": "パプアニューギニア",
+      "aliases_ja": [
+        "パプアニューギニア独立国"
+      ],
+      "aliases_en": [
+        "Papua New Guinea"
+      ],
+      "capital_ja": "ポートモレスビー",
+      "capital_en": "Port Moresby",
+      "lat": -9.478888888,
+      "lon": 147.149444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%83%97%E3%82%A2%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%AE%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "PH",
+      "name_ja": "フィリピン",
+      "aliases_ja": [
+        "フィリピン共和国"
+      ],
+      "aliases_en": [
+        "Philippines"
+      ],
+      "capital_ja": "マニラ",
+      "capital_en": "Manila",
+      "lat": 14.595833333,
+      "lon": 120.977222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%AA%E3%83%94%E3%83%B3"
+    },
+    {
+      "code": "PK",
+      "name_ja": "パキスタン",
+      "aliases_ja": [
+        "パキスタン・イスラム共和国"
+      ],
+      "aliases_en": [
+        "Pakistan"
+      ],
+      "capital_ja": "イスラマバード",
+      "capital_en": "Islamabad",
+      "lat": 33.698888888,
+      "lon": 73.036944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%82%AD%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "PL",
+      "name_ja": "ポーランド",
+      "aliases_ja": [
+        "ポーランド共和国",
+        "波",
+        "波蘭"
+      ],
+      "aliases_en": [
+        "Poland"
+      ],
+      "capital_ja": "ワルシャワ",
+      "capital_en": "Warsaw",
+      "lat": 52.23,
+      "lon": 21.011111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9D%E3%83%BC%E3%83%A9%E3%83%B3%E3%83%89"
+    },
+    {
+      "code": "PS",
+      "name_ja": "パレスチナ国",
+      "aliases_ja": [
+        "パレスチナ"
+      ],
+      "aliases_en": [
+        "Palestine"
+      ],
+      "capital_ja": "ラマッラー",
+      "capital_en": "Ramallah",
+      "lat": 31.896944444,
+      "lon": 35.201666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%83%AC%E3%82%B9%E3%83%81%E3%83%8A%E5%9B%BD"
+    },
+    {
+      "code": "PT",
+      "name_ja": "ポルトガル",
+      "aliases_ja": [
+        "ポルトガル共和国"
+      ],
+      "aliases_en": [
+        "Portugal"
+      ],
+      "capital_ja": "リスボン",
+      "capital_en": "Lisbon",
+      "lat": 38.708042,
+      "lon": -9.139016,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%9D%E3%83%AB%E3%83%88%E3%82%AC%E3%83%AB"
+    },
+    {
+      "code": "PW",
+      "name_ja": "パラオ",
+      "aliases_ja": [
+        "パラオ共和国"
+      ],
+      "aliases_en": [
+        "Palau"
+      ],
+      "capital_ja": "ンゲルルムッド",
+      "capital_en": "Ngerulmud",
+      "lat": 7.500556,
+      "lon": 134.624167,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%83%A9%E3%82%AA"
+    },
+    {
+      "code": "PY",
+      "name_ja": "パラグアイ",
+      "aliases_ja": [
+        "パラグアイ共和国"
+      ],
+      "aliases_en": [
+        "Paraguay"
+      ],
+      "capital_ja": "アスンシオン",
+      "capital_en": "Asunción",
+      "lat": -25.28,
+      "lon": -57.634444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%91%E3%83%A9%E3%82%B0%E3%82%A2%E3%82%A4"
+    },
+    {
+      "code": "QA",
+      "name_ja": "カタール",
+      "aliases_ja": [
+        "カタール国"
+      ],
+      "aliases_en": [
+        "Qatar"
+      ],
+      "capital_ja": "ドーハ",
+      "capital_en": "Doha",
+      "lat": 25.286111111,
+      "lon": 51.529444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%BF%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "RO",
+      "name_ja": "ルーマニア",
+      "aliases_en": [
+        "Romania"
+      ],
+      "capital_ja": "ブカレスト",
+      "capital_en": "Bucharest",
+      "lat": 44.413361111,
+      "lon": 26.097777777,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AB%E3%83%BC%E3%83%9E%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "RS",
+      "name_ja": "セルビア",
+      "aliases_ja": [
+        "セルビア共和国",
+        "塞爾維",
+        "塞爾維亜"
+      ],
+      "aliases_en": [
+        "Serbia"
+      ],
+      "capital_ja": "ベオグラード",
+      "capital_en": "Belgrade",
+      "lat": 44.817777777,
+      "lon": 20.456944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%AB%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "RU",
+      "name_ja": "ロシア",
+      "aliases_ja": [
+        "ロシア連邦"
+      ],
+      "aliases_en": [
+        "Russia"
+      ],
+      "capital_ja": "モスクワ",
+      "capital_en": "Moscow",
+      "lat": 55.750555555,
+      "lon": 37.6175,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AD%E3%82%B7%E3%82%A2"
+    },
+    {
+      "code": "RW",
+      "name_ja": "ルワンダ",
+      "aliases_ja": [
+        "ルワンダ共和国"
+      ],
+      "aliases_en": [
+        "Rwanda"
+      ],
+      "capital_ja": "キガリ",
+      "capital_en": "Kigali",
+      "lat": -1.9525,
+      "lon": 30.115,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%AB%E3%83%AF%E3%83%B3%E3%83%80"
+    },
+    {
+      "code": "SA",
+      "name_ja": "サウジアラビア",
+      "aliases_ja": [
+        "サウジ",
+        "サウジアラビア王国"
+      ],
+      "aliases_en": [
+        "Saudi Arabia"
+      ],
+      "capital_ja": "リヤド",
+      "capital_en": "Riyadh",
+      "lat": 24.638333333,
+      "lon": 46.715,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B5%E3%82%A6%E3%82%B8%E3%82%A2%E3%83%A9%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "SB",
+      "name_ja": "ソロモン諸島",
+      "aliases_en": [
+        "Solomon Islands"
+      ],
+      "capital_ja": "ホニアラ",
+      "capital_en": "Honiara",
+      "lat": -9.433333,
+      "lon": 159.95,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BD%E3%83%AD%E3%83%A2%E3%83%B3%E8%AB%B8%E5%B3%B6"
+    },
+    {
+      "code": "SC",
+      "name_ja": "セーシェル",
+      "aliases_ja": [
+        "セイシェル",
+        "セーシェル共和国"
+      ],
+      "aliases_en": [
+        "Seychelles"
+      ],
+      "capital_ja": "ヴィクトリア",
+      "capital_en": "Victoria",
+      "lat": -4.623611111,
+      "lon": 55.454444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%BC%E3%82%B7%E3%82%A7%E3%83%AB"
+    },
+    {
+      "code": "SD",
+      "name_ja": "スーダン",
+      "aliases_ja": [
+        "スーダン共和国"
+      ],
+      "aliases_en": [
+        "Sudan"
+      ],
+      "capital_ja": "ハルツーム",
+      "capital_en": "Khartoum",
+      "lat": 15.60308,
+      "lon": 32.52654,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%BC%E3%83%80%E3%83%B3"
+    },
+    {
+      "code": "SE",
+      "name_ja": "スウェーデン",
+      "aliases_ja": [
+        "スウェーデン王国",
+        "瑞典"
+      ],
+      "aliases_en": [
+        "Sweden"
+      ],
+      "capital_ja": "ストックホルム",
+      "capital_en": "Stockholm",
+      "lat": 59.329444444,
+      "lon": 18.068611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%87%E3%83%B3"
+    },
+    {
+      "code": "SG",
+      "name_ja": "シンガポール",
+      "aliases_ja": [
+        "シンガポール共和国",
+        "新加坡",
+        "新嘉坡",
+        "星",
+        "星加坡",
+        "星洲",
+        "星港",
+        "昭南"
+      ],
+      "aliases_en": [
+        "Singapore"
+      ],
+      "capital_ja": "シンガポール",
+      "capital_en": "Singapore",
+      "lat": 1.3,
+      "lon": 103.8,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%B3%E3%82%AC%E3%83%9D%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "SI",
+      "name_ja": "スロベニア",
+      "aliases_ja": [
+        "スロベニア共和国",
+        "スロヴェニア"
+      ],
+      "aliases_en": [
+        "Slovenia"
+      ],
+      "capital_ja": "リュブリャナ",
+      "capital_en": "Ljubljana",
+      "lat": 46.051388888,
+      "lon": 14.506111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%AD%E3%83%99%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "SK",
+      "name_ja": "スロバキア",
+      "aliases_ja": [
+        "スロバキア共和国",
+        "スロヴァキア"
+      ],
+      "aliases_en": [
+        "Slovakia"
+      ],
+      "capital_ja": "ブラチスラヴァ",
+      "capital_en": "Bratislava",
+      "lat": 48.1516988,
+      "lon": 17.1093063,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%AD%E3%83%90%E3%82%AD%E3%82%A2"
+    },
+    {
+      "code": "SL",
+      "name_ja": "シエラレオネ",
+      "aliases_ja": [
+        "シエラレオネ共和国"
+      ],
+      "aliases_en": [
+        "Sierra Leone"
+      ],
+      "capital_ja": "フリータウン",
+      "capital_en": "Freetown",
+      "lat": 8.487222222,
+      "lon": -13.235555555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B7%E3%82%A8%E3%83%A9%E3%83%AC%E3%82%AA%E3%83%8D"
+    },
+    {
+      "code": "SM",
+      "name_ja": "サンマリノ",
+      "aliases_ja": [
+        "サンマリノ共和国"
+      ],
+      "aliases_en": [
+        "San Marino"
+      ],
+      "capital_ja": "サンマリノ",
+      "capital_en": "San Marino",
+      "lat": 43.932011111,
+      "lon": 12.44845,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%9E%E3%83%AA%E3%83%8E"
+    },
+    {
+      "code": "SN",
+      "name_ja": "セネガル",
+      "aliases_ja": [
+        "セネガル共和国"
+      ],
+      "aliases_en": [
+        "Senegal"
+      ],
+      "capital_ja": "ダカール",
+      "capital_en": "Dakar",
+      "lat": 14.672555555,
+      "lon": -17.432,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%8D%E3%82%AC%E3%83%AB"
+    },
+    {
+      "code": "SO",
+      "name_ja": "ソマリア",
+      "aliases_ja": [
+        "ソマリア民主共和国",
+        "ソマリア連邦共和国"
+      ],
+      "aliases_en": [
+        "Somalia"
+      ],
+      "capital_ja": "モガディシュ",
+      "capital_en": "Mogadishu",
+      "lat": 2.039166666,
+      "lon": 45.341944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BD%E3%83%9E%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "SR",
+      "name_ja": "スリナム",
+      "aliases_ja": [
+        "スリナム共和国"
+      ],
+      "aliases_en": [
+        "Suriname"
+      ],
+      "capital_ja": "パラマリボ",
+      "capital_en": "Paramaribo",
+      "lat": 5.866666666,
+      "lon": -55.166666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%AA%E3%83%8A%E3%83%A0"
+    },
+    {
+      "code": "SS",
+      "name_ja": "南スーダン",
+      "aliases_ja": [
+        "南スーダン共和国"
+      ],
+      "aliases_en": [
+        "South Sudan"
+      ],
+      "capital_ja": "ジュバ",
+      "capital_en": "Juba",
+      "lat": 4.853888888,
+      "lon": 31.5825,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E5%8D%97%E3%82%B9%E3%83%BC%E3%83%80%E3%83%B3"
+    },
+    {
+      "code": "ST",
+      "name_ja": "サントメ・プリンシペ",
+      "aliases_ja": [
+        "サントメ・プリンシペ民主共和国"
+      ],
+      "aliases_en": [
+        "São Tomé and Príncipe"
+      ],
+      "capital_ja": "サントメ",
+      "capital_en": "São Tomé",
+      "lat": 0.3375,
+      "lon": 6.728333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%A1%E3%83%BB%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B7%E3%83%9A"
+    },
+    {
+      "code": "SV",
+      "name_ja": "エルサルバドル",
+      "aliases_ja": [
+        "エルサルバドル共和国"
+      ],
+      "aliases_en": [
+        "El Salvador"
+      ],
+      "capital_ja": "サンサルバドル",
+      "capital_en": "San Salvador",
+      "lat": 13.697597222,
+      "lon": -89.191155555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%83%AB%E3%82%B5%E3%83%AB%E3%83%90%E3%83%89%E3%83%AB"
+    },
+    {
+      "code": "SY",
+      "name_ja": "シリア",
+      "aliases_ja": [
+        "シリア・アラブ共和国"
+      ],
+      "aliases_en": [
+        "Syria"
+      ],
+      "capital_ja": "ダマスカス",
+      "capital_en": "Damascus",
+      "lat": 33.513055555,
+      "lon": 36.291944444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%AA%E3%82%A2"
+    },
+    {
+      "code": "SZ",
+      "name_ja": "エスワティニ",
+      "aliases_ja": [
+        "エスワティニ王国",
+        "スワジランド",
+        "スワジランド王国"
+      ],
+      "aliases_en": [
+        "Eswatini"
+      ],
+      "capital_ja": "ムババーネ",
+      "capital_en": "Mbabane",
+      "lat": -26.316666666,
+      "lon": 31.133333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%B9%E3%83%AF%E3%83%86%E3%82%A3%E3%83%8B"
+    },
+    {
+      "code": "TD",
+      "name_ja": "チャド",
+      "aliases_ja": [
+        "チャド共和国"
+      ],
+      "aliases_en": [
+        "Chad"
+      ],
+      "capital_ja": "ンジャメナ",
+      "capital_en": "N'Djamena",
+      "lat": 12.11,
+      "lon": 15.05,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A3%E3%83%89"
+    },
+    {
+      "code": "TG",
+      "name_ja": "トーゴ",
+      "aliases_ja": [
+        "トーゴ共和国"
+      ],
+      "aliases_en": [
+        "Togo"
+      ],
+      "capital_ja": "ロメ",
+      "capital_en": "Lomé",
+      "lat": 6.13,
+      "lon": 1.215833333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%BC%E3%82%B4"
+    },
+    {
+      "code": "TH",
+      "name_ja": "タイ王国",
+      "aliases_ja": [
+        "タイ",
+        "タイランド"
+      ],
+      "aliases_en": [
+        "Thailand"
+      ],
+      "capital_ja": "バンコク",
+      "capital_en": "Bangkok",
+      "lat": 13.75,
+      "lon": 100.516666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BF%E3%82%A4%E7%8E%8B%E5%9B%BD"
+    },
+    {
+      "code": "TJ",
+      "name_ja": "タジキスタン",
+      "aliases_ja": [
+        "タジキスタン共和国",
+        "タジク"
+      ],
+      "aliases_en": [
+        "Tajikistan"
+      ],
+      "capital_ja": "ドゥシャンベ",
+      "capital_en": "Dushanbe",
+      "lat": 38.573055555,
+      "lon": 68.786388888,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BF%E3%82%B8%E3%82%AD%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "TL",
+      "name_ja": "東ティモール",
+      "aliases_ja": [
+        "チモール",
+        "ティモール・レステ",
+        "ティモール・レステ民主共和国",
+        "東ティモール民主共和国"
+      ],
+      "aliases_en": [
+        "Timor-Leste"
+      ],
+      "capital_ja": "ディリ",
+      "capital_en": "Dili",
+      "lat": -8.553611111,
+      "lon": 125.578333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E6%9D%B1%E3%83%86%E3%82%A3%E3%83%A2%E3%83%BC%E3%83%AB"
+    },
+    {
+      "code": "TM",
+      "name_ja": "トルクメニスタン",
+      "aliases_en": [
+        "Turkmenistan"
+      ],
+      "capital_ja": "アシガバート",
+      "capital_en": "Ashgabat",
+      "lat": 37.95,
+      "lon": 58.383333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AB%E3%82%AF%E3%83%A1%E3%83%8B%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "TN",
+      "name_ja": "チュニジア",
+      "aliases_ja": [
+        "チュニジア共和国"
+      ],
+      "aliases_en": [
+        "Tunisia"
+      ],
+      "capital_ja": "チュニス",
+      "capital_en": "Tunis",
+      "lat": 36.800833333,
+      "lon": 10.18,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A5%E3%83%8B%E3%82%B8%E3%82%A2"
+    },
+    {
+      "code": "TO",
+      "name_ja": "トンガ",
+      "aliases_ja": [
+        "トンガ王国"
+      ],
+      "aliases_en": [
+        "Tonga"
+      ],
+      "capital_ja": "ヌクアロファ",
+      "capital_en": "Nukuʻalofa",
+      "lat": -21.1343401,
+      "lon": -175.201808,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%B3%E3%82%AC"
+    },
+    {
+      "code": "TR",
+      "name_ja": "トルコ",
+      "aliases_ja": [
+        "テュルキエ",
+        "テュルキエ共和国",
+        "トゥルキエ",
+        "トゥルキエ共和国",
+        "トルコ共和国"
+      ],
+      "aliases_en": [
+        "Turkey"
+      ],
+      "capital_ja": "アンカラ",
+      "capital_en": "Ankara",
+      "lat": 39.93576,
+      "lon": 32.83869,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AB%E3%82%B3"
+    },
+    {
+      "code": "TT",
+      "name_ja": "トリニダード・トバゴ",
+      "aliases_ja": [
+        "トリニダード・トバゴ共和国"
+      ],
+      "aliases_en": [
+        "Trinidad and Tobago"
+      ],
+      "capital_ja": "ポートオブスペイン",
+      "capital_en": "Port of Spain",
+      "lat": 10.666666666,
+      "lon": -61.516666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AA%E3%83%8B%E3%83%80%E3%83%BC%E3%83%89%E3%83%BB%E3%83%88%E3%83%90%E3%82%B4"
+    },
+    {
+      "code": "TV",
+      "name_ja": "ツバル",
+      "aliases_en": [
+        "Tuvalu"
+      ],
+      "capital_ja": "フナフティ島",
+      "capital_en": "Funafuti",
+      "lat": -8.504777777,
+      "lon": 179.117361111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%84%E3%83%90%E3%83%AB"
+    },
+    {
+      "code": "TW",
+      "name_ja": "中華民国",
+      "aliases_ja": [
+        "チャイニーズタイペイ",
+        "チャイニーズ・タイペイ",
+        "中華台北",
+        "台",
+        "台湾",
+        "自由中国",
+        "華"
+      ],
+      "aliases_en": [
+        "Taiwan"
+      ],
+      "capital_ja": "台北",
+      "capital_en": "Taipei",
+      "lat": 25.0375,
+      "lon": 121.5625,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9B%BD"
+    },
+    {
+      "code": "TZ",
+      "name_ja": "タンザニア",
+      "aliases_ja": [
+        "タンザニア連合共和国"
+      ],
+      "aliases_en": [
+        "Tanzania"
+      ],
+      "capital_ja": "ドドマ",
+      "capital_en": "Dodoma",
+      "lat": -6.1835,
+      "lon": 35.746,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BF%E3%83%B3%E3%82%B6%E3%83%8B%E3%82%A2"
+    },
+    {
+      "code": "UA",
+      "name_ja": "ウクライナ",
+      "aliases_ja": [
+        "ウクライナ共和国"
+      ],
+      "aliases_en": [
+        "Ukraine"
+      ],
+      "capital_ja": "キーウ",
+      "capital_en": "Kyiv",
+      "lat": 50.45,
+      "lon": 30.523611111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%8A"
+    },
+    {
+      "code": "UG",
+      "name_ja": "ウガンダ",
+      "aliases_ja": [
+        "ウガンダ共和国"
+      ],
+      "aliases_en": [
+        "Uganda"
+      ],
+      "capital_ja": "カンパラ",
+      "capital_en": "Kampala",
+      "lat": 0.313611111,
+      "lon": 32.581111111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%AC%E3%83%B3%E3%83%80"
+    },
+    {
+      "code": "US",
+      "name_ja": "アメリカ合衆国",
+      "aliases_ja": [
+        "アメリカ",
+        "亜墨利加",
+        "亜米利加",
+        "合衆国",
+        "米",
+        "米国",
+        "美国",
+        "🇺🇸"
+      ],
+      "aliases_en": [
+        "United States"
+      ],
+      "capital_ja": "ワシントンD.C.",
+      "capital_en": "Washington, D.C.",
+      "lat": 38.895,
+      "lon": -77.036666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E5%90%88%E8%A1%86%E5%9B%BD"
+    },
+    {
+      "code": "UY",
+      "name_ja": "ウルグアイ",
+      "aliases_ja": [
+        "ウルグァイ",
+        "ウルグアイ東方共和国"
+      ],
+      "aliases_en": [
+        "Uruguay"
+      ],
+      "capital_ja": "モンテビデオ",
+      "capital_en": "Montevideo",
+      "lat": -34.905916666,
+      "lon": -56.191311111,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%83%AB%E3%82%B0%E3%82%A2%E3%82%A4"
+    },
+    {
+      "code": "UZ",
+      "name_ja": "ウズベキスタン",
+      "aliases_ja": [
+        "ウズベキスタン共和国",
+        "ウズベク"
+      ],
+      "aliases_en": [
+        "Uzbekistan"
+      ],
+      "capital_ja": "タシュケント",
+      "capital_en": "Tashkent",
+      "lat": 41.311111111,
+      "lon": 69.279722222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%BA%E3%83%99%E3%82%AD%E3%82%B9%E3%82%BF%E3%83%B3"
+    },
+    {
+      "code": "VA",
+      "name_ja": "バチカン",
+      "aliases_ja": [
+        "バチカン市国",
+        "バティカン",
+        "ヴァチカン",
+        "ヴァティカン",
+        "ヴァティカーノ"
+      ],
+      "aliases_en": [
+        "Vatican City"
+      ],
+      "capital_ja": "バチカン",
+      "capital_en": "Vatican City",
+      "lat": 41.904,
+      "lon": 12.453,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%81%E3%82%AB%E3%83%B3"
+    },
+    {
+      "code": "VC",
+      "name_ja": "セントビンセント・グレナディーン",
+      "aliases_ja": [
+        "SVG",
+        "セントビンセント",
+        "セントビンセントおよびグレナディーン諸島",
+        "セントビンセントグレナディーン",
+        "セントビンセント・グレナディーン諸島",
+        "セントビンセント及びグレナディーン諸島",
+        "セントヴィンセント",
+        "セントヴィンセントおよびグレナディーン諸島",
+        "セントヴィンセントグレナディーン",
+        "セントヴィンセント・グレナディーン",
+        "セントヴィンセント及びグレナディーン諸島"
+      ],
+      "aliases_en": [
+        "Saint Vincent and the Grenadines"
+      ],
+      "capital_ja": "キングスタウン",
+      "capital_en": "Kingstown",
+      "lat": 13.15527,
+      "lon": -61.22742,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%B3%E3%83%88%E3%83%93%E3%83%B3%E3%82%BB%E3%83%B3%E3%83%88%E3%83%BB%E3%82%B0%E3%83%AC%E3%83%8A%E3%83%87%E3%82%A3%E3%83%BC%E3%83%B3"
+    },
+    {
+      "code": "VE",
+      "name_ja": "ベネズエラ",
+      "aliases_ja": [
+        "ベネズエラ・ボリバル共和国",
+        "ヴェネズエラ"
+      ],
+      "aliases_en": [
+        "Venezuela"
+      ],
+      "capital_ja": "カラカス",
+      "capital_en": "Caracas",
+      "lat": 10.506111111,
+      "lon": -66.914444444,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%8D%E3%82%BA%E3%82%A8%E3%83%A9"
+    },
+    {
+      "code": "VN",
+      "name_ja": "ベトナム",
+      "aliases_ja": [
+        "ベトナム社会主義共和国",
+        "ヴェトナム",
+        "越",
+        "越南",
+        "越南社会主義共和国"
+      ],
+      "aliases_en": [
+        "Vietnam"
+      ],
+      "capital_ja": "ハノイ",
+      "capital_en": "Hanoi",
+      "lat": 21.0245,
+      "lon": 105.84117,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%88%E3%83%8A%E3%83%A0"
+    },
+    {
+      "code": "VU",
+      "name_ja": "バヌアツ",
+      "aliases_ja": [
+        "バヌアツ共和国"
+      ],
+      "aliases_en": [
+        "Vanuatu"
+      ],
+      "capital_ja": "ポートビラ",
+      "capital_en": "Port Vila",
+      "lat": -17.73333,
+      "lon": 168.316667,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%8C%E3%82%A2%E3%83%84"
+    },
+    {
+      "code": "WS",
+      "name_ja": "サモア",
+      "aliases_ja": [
+        "サモア独立国"
+      ],
+      "aliases_en": [
+        "Samoa"
+      ],
+      "capital_ja": "アピア",
+      "capital_en": "Apia",
+      "lat": -13.833333333,
+      "lon": -171.833333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%A2%E3%82%A2"
+    },
+    {
+      "code": "XK",
+      "name_ja": "コソボ",
+      "aliases_ja": [
+        "コソボ共和国",
+        "コソヴォ共和国"
+      ],
+      "aliases_en": [
+        "Kosovo"
+      ],
+      "capital_ja": "プリシュティナ",
+      "capital_en": "Pristina",
+      "lat": 42.666666666,
+      "lon": 21.166666666,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%BD%E3%83%9C"
+    },
+    {
+      "code": "YE",
+      "name_ja": "イエメン",
+      "aliases_ja": [
+        "イエメン共和国"
+      ],
+      "aliases_en": [
+        "Yemen"
+      ],
+      "capital_ja": "サヌア",
+      "capital_en": "Sanaa",
+      "lat": 15.35,
+      "lon": 44.2,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%A8%E3%83%A1%E3%83%B3"
+    },
+    {
+      "code": "ZA",
+      "name_ja": "南アフリカ共和国",
+      "aliases_ja": [
+        "南アフリカ"
+      ],
+      "aliases_en": [
+        "South Africa"
+      ],
+      "capital_ja": "プレトリア",
+      "capital_en": "Pretoria",
+      "lat": -25.746388888,
+      "lon": 28.188055555,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E5%8D%97%E3%82%A2%E3%83%95%E3%83%AA%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "ZM",
+      "name_ja": "ザンビア",
+      "aliases_ja": [
+        "ザンビア共和国"
+      ],
+      "aliases_en": [
+        "Zambia"
+      ],
+      "capital_ja": "ルサカ",
+      "capital_en": "Lusaka",
+      "lat": -15.416666666,
+      "lon": 28.283333333,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B6%E3%83%B3%E3%83%93%E3%82%A2"
+    },
+    {
+      "code": "ZW",
+      "name_ja": "ジンバブエ",
+      "aliases_ja": [
+        "ジンバブエ共和国"
+      ],
+      "aliases_en": [
+        "Zimbabwe"
+      ],
+      "capital_ja": "ハラレ",
+      "capital_en": "Harare",
+      "lat": -17.829166666,
+      "lon": 31.052222222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%B3%E3%83%90%E3%83%96%E3%82%A8"
+    }
+  ]
+}

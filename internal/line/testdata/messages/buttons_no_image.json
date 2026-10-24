@@ -1,0 +1,11 @@
+{
+  "type": "template",
+  "altText": "クイズです",
+  "template": {
+    "type": "buttons",
+    "text": "この国はどこでしょうか？",
+    "actions": [
+      {"type": "postback", "label": "日本", "data": "answer=%E6%97%A5%E6%9C%AC&result=1"}
+    ]
+  }
+}

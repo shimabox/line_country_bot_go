@@ -1,0 +1,15 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "message",
+      "mode": "active",
+      "timestamp": 1700000000000,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000001",
+      "deliveryContext": {"isRedelivery": false},
+      "replyToken": "reply-token-text",
+      "message": {"id": "100001", "type": "text", "quoteToken": "quote-token", "text": "日本"}
+    }
+  ]
+}

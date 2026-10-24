@@ -1,0 +1,15 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "message",
+      "mode": "active",
+      "timestamp": 1700000000006,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000007",
+      "deliveryContext": {"isRedelivery": true},
+      "replyToken": "reply-token-redelivery",
+      "message": {"id": "100004", "type": "text", "text": "quiz"}
+    }
+  ]
+}

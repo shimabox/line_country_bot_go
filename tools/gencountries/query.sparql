@@ -1,0 +1,30 @@
+# Sovereign states (Q3624078) with an ISO 3166-1 alpha-2 code (P297) that have
+# not been dissolved (P576). One country can produce several rows (aliases,
+# capitals, coordinates); gencountries aggregates them by code.
+SELECT ?country ?code ?labelJa ?labelEn ?altJa ?officialJa ?article ?articleTitle
+       ?capital ?capitalJa ?capitalEn ?capitalCoord ?countryCoord
+WHERE {
+  ?country wdt:P31 wd:Q3624078 ;
+           wdt:P297 ?code .
+  FILTER NOT EXISTS { ?country wdt:P576 ?dissolved . }
+
+  OPTIONAL { ?country rdfs:label ?labelJa . FILTER(LANG(?labelJa) = "ja") }
+  OPTIONAL { ?country rdfs:label ?labelEn . FILTER(LANG(?labelEn) = "en") }
+  OPTIONAL { ?country skos:altLabel ?altJa . FILTER(LANG(?altJa) = "ja") }
+  OPTIONAL { ?country wdt:P1448 ?officialJa . FILTER(LANG(?officialJa) = "ja") }
+  OPTIONAL {
+    ?article schema:about ?country ;
+             schema:isPartOf <https://ja.wikipedia.org/> ;
+             schema:name ?articleTitle .
+  }
+  OPTIONAL {
+    ?country p:P36 ?capitalStatement .
+    ?capitalStatement ps:P36 ?capital .
+    FILTER NOT EXISTS { ?capitalStatement pq:P582 ?capitalEnd . }
+    FILTER NOT EXISTS { ?capitalStatement wikibase:rank wikibase:DeprecatedRank . }
+    OPTIONAL { ?capital rdfs:label ?capitalJa . FILTER(LANG(?capitalJa) = "ja") }
+    OPTIONAL { ?capital rdfs:label ?capitalEn . FILTER(LANG(?capitalEn) = "en") }
+    OPTIONAL { ?capital wdt:P625 ?capitalCoord . }
+  }
+  OPTIONAL { ?country wdt:P625 ?countryCoord . }
+}

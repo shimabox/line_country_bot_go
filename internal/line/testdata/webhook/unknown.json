@@ -1,0 +1,24 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "somethingNew",
+      "mode": "active",
+      "timestamp": 1700000000004,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000005",
+      "deliveryContext": {"isRedelivery": false},
+      "somethingNew": {"x": 1}
+    },
+    {
+      "type": "message",
+      "mode": "active",
+      "timestamp": 1700000000005,
+      "source": {"type": "user", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000006",
+      "deliveryContext": {"isRedelivery": false},
+      "replyToken": "reply-token-unknown-message",
+      "message": {"id": "100003", "type": "hologram"}
+    }
+  ]
+}

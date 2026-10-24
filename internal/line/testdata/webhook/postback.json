@@ -1,0 +1,15 @@
+{
+  "destination": "Udestination0000000000000000000000",
+  "events": [
+    {
+      "type": "postback",
+      "mode": "active",
+      "timestamp": 1700000000002,
+      "source": {"type": "group", "groupId": "Cgroup0000000000000000000000000000", "userId": "Uuser00000000000000000000000000000"},
+      "webhookEventId": "01TESTEVENT0000000000000003",
+      "deliveryContext": {"isRedelivery": false},
+      "replyToken": "reply-token-postback",
+      "postback": {"data": "answer=%E6%97%A5%E6%9C%AC&result=1"}
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go mod tidy
+        run: go mod tidy -diff
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test -race ./...
+
+      - name: go vet (js/wasm)
+        run: GOOS=js GOARCH=wasm go vet ./...
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          test -f build/app.wasm
+          test -f build/worker.mjs
+
+      # wrangler deploy --dry-run; fails above 2.5MiB gzip (the limit is 3MB).
+      - name: Script size
+        run: bash scripts/check-size.sh

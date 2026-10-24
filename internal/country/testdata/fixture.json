@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-01-01",
+  "source": "test fixture",
+  "countries": [
+    {
+      "code": "CD",
+      "name_ja": "コンゴ民主共和国",
+      "aliases_ja": ["コンゴ民主共和国", "コンゴ"],
+      "aliases_en": ["Democratic Republic of the Congo"],
+      "capital_ja": "キンシャサ",
+      "capital_en": "Kinshasa",
+      "lat": -4.325,
+      "lon": 15.322222,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%B3%E3%82%B4%E6%B0%91%E4%B8%BB%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "CG",
+      "name_ja": "コンゴ共和国",
+      "aliases_ja": ["コンゴ"],
+      "aliases_en": ["Republic of the Congo"],
+      "capital_ja": "ブラザヴィル",
+      "capital_en": "Brazzaville",
+      "lat": -4.267778,
+      "lon": 15.291944,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%B3%E3%82%B4%E5%85%B1%E5%92%8C%E5%9B%BD"
+    },
+    {
+      "code": "FR",
+      "name_ja": "フランス",
+      "aliases_ja": ["フランス共和国"],
+      "aliases_en": ["France"],
+      "capital_ja": "パリ",
+      "capital_en": "Paris",
+      "lat": 48.856944,
+      "lon": 2.351389,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"
+    },
+    {
+      "code": "JP",
+      "name_ja": "日本",
+      "aliases_ja": ["日本国", "にほん"],
+      "aliases_en": ["Japan"],
+      "capital_ja": "東京",
+      "capital_en": "Tokyo",
+      "lat": 35.689,
+      "lon": 139.692,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"
+    },
+    {
+      "code": "NR",
+      "name_ja": "ナウル",
+      "aliases_ja": ["ナウル共和国"],
+      "aliases_en": ["Nauru"],
+      "lat": -0.5228,
+      "lon": 166.9315,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%83%8A%E3%82%A6%E3%83%AB"
+    },
+    {
+      "code": "US",
+      "name_ja": "アメリカ合衆国",
+      "aliases_ja": ["アメリカ", "米国"],
+      "aliases_en": ["United States of America", "USA"],
+      "capital_ja": "ワシントンD.C.",
+      "capital_en": "Washington, D.C.",
+      "lat": 38.895,
+      "lon": -77.036667,
+      "wikipedia_ja_url": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E5%90%88%E8%A1%86%E5%9B%BD"
+    }
+  ]
+}

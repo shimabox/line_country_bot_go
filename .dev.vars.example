@@ -1,0 +1,19 @@
+# Copy to .dev.vars for `npm run dev` (wrangler dev). Never commit .dev.vars.
+# Values here are placeholders, not real credentials.
+CHANNEL_SECRET=dummy-channel-secret
+CHANNEL_ACCESS_TOKEN=dummy-channel-access-token
+
+# Point the reply API at the mock started by scripts/local-smoke.mjs.
+# Never use real credentials with the mock.
+LINE_API_BASE_URL=http://127.0.0.1:8788
+PUBLIC_BASE_URL=http://127.0.0.1:8787
+
+# Optional overrides
+# WEBHOOK_PATH=/webhook
+
+# Self-introduction ("君の名は" / "who"). Leave PROFILE_IMAGE_URL empty to disable.
+# PROFILE_IMAGE_URL=https://example.com/profile.png
+# PROFILE_TITLE=Country bot
+# PROFILE_TEXT=Send me a country name.
+# PROFILE_LINK_TEXT=Source code
+# PROFILE_LINK_URL=https://example.com/
