@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "line-country-bot-go",
+  "main": "./build/worker.mjs",
+  "compatibility_date": "2026-10-19",
+  "build": {
+    "command": "npm run build"
+  },
+  // Flag images under public/ are served as Static Assets before the Worker runs.
+  "assets": {
+    "directory": "./public"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Optional settings. Secrets (CHANNEL_SECRET, CHANNEL_ACCESS_TOKEN) are set with
+  // `npx wrangler secret put` and must not be written here.
+  "vars": {
+    "WEBHOOK_PATH": "/webhook",
+    "PUBLIC_BASE_URL": "",
+    "LINE_API_BASE_URL": "https://api.line.me",
+    "PROFILE_IMAGE_URL": "",
+    "PROFILE_TITLE": "",
+    "PROFILE_TEXT": "",
+    "PROFILE_LINK_TEXT": "",
+    "PROFILE_LINK_URL": ""
+  }
+}
