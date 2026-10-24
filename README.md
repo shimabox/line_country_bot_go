@@ -23,13 +23,14 @@ Go で書かれ、Cloudflare Workers（Go → WebAssembly）の無料プラン�
 ```
 cmd/worker/          Workers のエントリポイント（js/wasm 専用）
 internal/line/       署名検証・Webhook 解析・メッセージ型・返信 API クライアント
-internal/country/    国データ（data/countries.json を埋め込み）・検索・URL 生成
+internal/country/    国データ（data/countries.json から生成した Go の表）・検索・URL 生成
 internal/bot/        入力の正規化・トリガー語・絵文字・返信の組み立て
 internal/app/        http.Handler（ルーティング・署名検証・イベント処理）と設定
 tools/gencountries/  Wikidata から countries.json を生成
+tools/gencountrygo/  countries.json を Go のソース（internal/country/countries_gen.go）に変換
 tools/fetchflags/    flagcdn.com から国旗 PNG を取得し、寸法ファイルを生成
 public/flags/        国旗画像（Workers Static Assets で配信）
-scripts/             ローカル疎通スクリプト
+scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 ```
 
 `cmd/worker` 以外はホストの `go test ./...` でテストできます。
@@ -89,6 +90,25 @@ node scripts/local-smoke.mjs http://127.0.0.1:8787
 
 `local-smoke.mjs` は返信 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、`/flags/jp.png` の配信を確かめます。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
 
+### CPU 時間の計測
+
+```sh
+npm run build
+npm run bench:cpu -- build/app.wasm            # 既定は 12 回
+npm run bench:cpu -- build/app.wasm 60         # 回数を指定する
+npm run bench:cpu -- build/app.wasm --verbose  # 各回の値も標準エラーに出す
+```
+
+`scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」の 3 場面について、CPU 時間（user + system）の中央値を表と JSON で出します。
+
+| 列 | 内容 |
+|---|---|
+| `start` | Go の wasm インスタンスを作り、`main` が準備を終えるまで（workers-go はリクエストごとにこれを行う） |
+| `handle` | リクエストを渡して応答を読み終えるまで |
+| `total` | 同じ回の `start` と `handle` の合計 |
+
+場面は交互に実行し、各回の前に GC を強制します。各場面の先頭 2 回は JIT の準備として中央値から除きます。返信 API はローカルのモックに送り、認証情報はダミーです。Node.js の値は本番（workerd）より小さく出るため、絶対値ではなく、同じマシンで 2 つのビルドを比べる用途に使います。比べるときは、比較元の `build/app.wasm` をリポジトリの外へ退避しておき、2 つのビルドを交互に数回ずつ計測して中央値を比べます。短い計測では JIT の最適化の進み具合で `handle` が偏ることがあるため、`handle` の比較には回数を増やした計測（60 回など）を使います。CI では実行しません。
+
 ## デプロイ
 
 ```sh
@@ -113,10 +133,13 @@ npx wrangler deploy
 国データは Wikidata、国旗は Flagpedia（flagcdn.com）から作ります。どちらもホストで実行します。
 
 ```sh
-go run ./tools/gencountries    # Wikidata に問い合わせて internal/country/data/countries.json を作り直す
-go run ./tools/fetchflags      # 足りない国旗を public/flags に取得（-force で全件取り直し）し、寸法ファイルを生成
-go test ./...                  # データの上限検査、国旗の欠落検査、寸法ファイルの鮮度検査
+go run ./tools/gencountries        # Wikidata に問い合わせて internal/country/data/countries.json を作り直す
+go generate ./internal/country     # countries.json から internal/country/countries_gen.go を作り直す
+go run ./tools/fetchflags          # 足りない国旗を public/flags に取得（-force で全件取り直し）し、寸法ファイルを生成
+go test ./...                      # データの上限検査、生成ファイル（国データの表・寸法ファイル）の鮮度検査、国旗の欠落検査
 ```
+
+Worker は countries.json を読み込まず、`tools/gencountrygo` が countries.json から生成した Go の表（`internal/country/countries_gen.go`）を使います。JSON の解析と検索用の索引の構築を起動時に行わないためです。countries.json を正本とし、更新したら `go generate ./internal/country` で生成ファイルを作り直して、両方を commit します。生成ファイルが countries.json と食い違っていると、`go test ./internal/country` の `TestGeneratedMatchesJSON` が失敗します。`gencountrygo` は書き出す前に countries.json を検査し、不正なら何も書きません。
 
 `fetchflags` は取得と検査のあと、`public/flags` の全国旗の幅と高さを PNG のヘッダから読み、`internal/country/flagsizes_gen.go` に書き出します（出力先は `-sizes` で変更でき、空文字なら生成しません）。既定の出力先と `-dir` はリポジトリ直下からの相対パスなので、リポジトリ直下で実行してください（出力先のディレクトリがなければ失敗します）。国旗が揃っていれば取得は行わないため、ネットワークなしで再生成できます。国旗を差し替えたり国データを更新したりしたら、再実行して生成ファイルも一緒に commit します（古いままだと `go test ./...` が失敗します）。返信では、この寸法から国旗を枠（rectangle、1.51:1）いっぱいに表示したときに幅または高さが切れる割合を求め、10% 以下なら `cover`（左右や上下の細い白い筋が出ない）、それより多く切れる旗（イギリス、スイス、ネパールなど）は `contain`（白背景で全体を表示）にします。閾値は `internal/country/flag.go` の定数です。
 
@@ -158,7 +181,7 @@ Wikidata の更新で首都が複数になったり、表示名が長くなっ�
 
 ## 制限事項と設計上の決まり
 
-- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動し、埋め込みの国データを読み込みます。`wrangler dev` では CPU 時間を正確に測れないため、デプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
+- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（「CPU 時間の計測」）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
 - **返信は reply token だけを使う**: push API は実装しません。返信は課金対象のメッセージ数に数えられないため、無料のメッセージ数を消費しません。これは設計上の不変条件で、push 系の送信を追加しない前提です。
 - **返信は同期送信**: Webhook の処理中に返信 API を呼び、結果をログに残してから 200 を返します。返信 API が失敗しても（使用済みの reply token など）200 を返し、LINE からの再送を起こしません。
 - **1 回の返信は最大 5 件**: クライアントが 6 件以上を拒否します。bot の返信は最大 4 件です。
