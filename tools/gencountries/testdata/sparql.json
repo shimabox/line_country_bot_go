@@ -1,0 +1,128 @@
+{
+  "head": {"vars": ["country", "code", "labelJa", "labelEn", "altJa", "officialJa", "article", "articleTitle", "capital", "capitalJa", "capitalEn", "capitalCoord", "countryCoord"]},
+  "results": {
+    "bindings": [
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q17"},
+        "code": {"type": "literal", "value": "JP"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "日本"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "Japan"},
+        "altJa": {"xml:lang": "ja", "type": "literal", "value": "日本国"},
+        "officialJa": {"xml:lang": "ja", "type": "literal", "value": "日本国"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "日本"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q1490"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "東京都"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Tokyo"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(139.692 35.689)"},
+        "countryCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(136 35)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q17"},
+        "code": {"type": "literal", "value": "JP"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "日本"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "Japan"},
+        "altJa": {"xml:lang": "ja", "type": "literal", "value": "にっぽん"},
+        "officialJa": {"xml:lang": "ja", "type": "literal", "value": "日本国"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "日本"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q1490"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "東京都"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Tokyo"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(139.692 35.689)"},
+        "countryCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(136 35)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q884"},
+        "code": {"type": "literal", "value": "KR"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "大韓民国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "South Korea"},
+        "altJa": {"xml:lang": "ja", "type": "literal", "value": "韓国"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E5%A4%A7%E9%9F%93%E6%B0%91%E5%9B%BD"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "大韓民国"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q8684"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "ソウル特別市"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Seoul"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(126.99 37.56)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q423"},
+        "code": {"type": "literal", "value": "KP"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "朝鮮民主主義人民共和国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "North Korea"},
+        "altJa": {"xml:lang": "ja", "type": "literal", "value": "北朝鮮"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E6%9C%9D%E9%AE%AE%E6%B0%91%E4%B8%BB%E4%B8%BB%E7%BE%A9%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "朝鮮民主主義人民共和国"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q18808"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "平壌市"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Pyongyang"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(125.738 39.019)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q258"},
+        "code": {"type": "literal", "value": "ZA"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "South Africa"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E5%8D%97%E3%82%A2%E3%83%95%E3%83%AA%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q3926"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "プレトリア"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Pretoria"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(28.188 -25.746)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q258"},
+        "code": {"type": "literal", "value": "ZA"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "South Africa"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E5%8D%97%E3%82%A2%E3%83%95%E3%83%AA%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q5465"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "ケープタウン"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Cape Town"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(18.423 -33.925)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q258"},
+        "code": {"type": "literal", "value": "ZA"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "South Africa"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E5%8D%97%E3%82%A2%E3%83%95%E3%83%AA%E3%82%AB%E5%85%B1%E5%92%8C%E5%9B%BD"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "南アフリカ共和国"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q37701"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "ブルームフォンテーン"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Bloemfontein"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(26.214 -29.116)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q697"},
+        "code": {"type": "literal", "value": "NR"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "ナウル"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "Nauru"},
+        "article": {"type": "uri", "value": "https://ja.wikipedia.org/wiki/%E3%83%8A%E3%82%A6%E3%83%AB"},
+        "articleTitle": {"xml:lang": "ja", "type": "literal", "value": "ナウル"},
+        "countryCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(166.9315 -0.5228)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q9999001"},
+        "code": {"type": "literal", "value": "XA"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "架空国"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "Fictionland"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q9999002"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "架空市"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Fiction City"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(10.5 20.25)"}
+      },
+      {
+        "country": {"type": "uri", "value": "http://www.wikidata.org/entity/Q9999003"},
+        "code": {"type": "literal", "value": "XB"},
+        "labelJa": {"xml:lang": "ja", "type": "literal", "value": "とても長い名前を持つ架空の連邦共和国と諸島の連合"},
+        "labelEn": {"xml:lang": "en", "type": "literal", "value": "Very Long Federation"},
+        "capital": {"type": "uri", "value": "http://www.wikidata.org/entity/Q9999004"},
+        "capitalJa": {"xml:lang": "ja", "type": "literal", "value": "長都"},
+        "capitalEn": {"xml:lang": "en", "type": "literal", "value": "Long Capital"},
+        "capitalCoord": {"datatype": "http://www.opengis.net/ont/geosparql#wktLiteral", "type": "literal", "value": "Point(-1 -2)"}
+      }
+    ]
+  }
+}
