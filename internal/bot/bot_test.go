@@ -185,6 +185,12 @@ func TestQuiz(t *testing.T) {
 				if v.Get("answer") != pa.Label {
 					t.Errorf("answer %q != label %q", v.Get("answer"), pa.Label)
 				}
+				if pa.DisplayText != v.Get("answer") {
+					t.Errorf("displayText %q != answer %q", pa.DisplayText, v.Get("answer"))
+				}
+				if line.UTF16Len(pa.DisplayText) > line.MaxPostbackDisplayText {
+					t.Errorf("displayText too long: %#v", pa)
+				}
 				switch v.Get("result") {
 				case "1":
 					if correct != "" {

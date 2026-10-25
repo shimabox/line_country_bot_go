@@ -150,9 +150,12 @@ func (b *Bot) quiz(flagBaseURL string) Reply {
 		if c == answer {
 			result = resultCorrect
 		}
+		// DisplayText shows the full name in the chat so the user can see
+		// which choice they tapped; the label may be truncated.
 		actions[i] = line.PostbackAction{
-			Label: line.TruncateUTF16(c.NameJA, line.MaxActionLabel),
-			Data:  url.Values{postbackAnswer: {c.NameJA}, postbackResult: {result}}.Encode(),
+			Label:       line.TruncateUTF16(c.NameJA, line.MaxActionLabel),
+			Data:        url.Values{postbackAnswer: {c.NameJA}, postbackResult: {result}}.Encode(),
+			DisplayText: c.NameJA,
 		}
 	}
 	return Reply{Kind: KindQuiz, Code: answer.Code, Messages: []line.Message{line.TemplateMessage{

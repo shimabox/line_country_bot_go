@@ -87,6 +87,7 @@ func TestActionGolden(t *testing.T) {
 		PostbackAction{Label: "フランス", Data: "answer=%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9&result=0"},
 		MessageAction{Label: "はい", Text: "クイズ"},
 		URIAction{Label: "Wikipedia", URI: "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"},
+		PostbackAction{Label: "日本", Data: "answer=%E6%97%A5%E6%9C%AC&result=1", DisplayText: "日本"},
 	})
 }
 
