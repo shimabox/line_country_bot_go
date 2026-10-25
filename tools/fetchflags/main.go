@@ -1,14 +1,18 @@
 // Command fetchflags downloads a flag PNG from Flagpedia (flagcdn.com) for
 // every country in the embedded country data into public/flags, where Workers
-// Static Assets serves them. It then writes the pixel size of every flag to
-// internal/country/flagsizes_gen.go, which the bot uses to decide how to fit
-// a flag into the image frame. Run it from the repository root:
+// Static Assets serves them. It then decodes every flag and writes its pixel
+// size and the colour of its top corners to internal/country/flags_gen.go. The
+// bot uses the size to decide how to fit a flag into the image frame and the
+// corner colour as the background of flags that fill the frame. The corner
+// colour is the mean of a 3x3 square 2 pixels inside each top corner of the
+// part shown in the frame (cropped centred), and the mean of the left and
+// right colours when they differ. Run it from the repository root:
 //
 //	go run ./tools/fetchflags          # fetch missing files only
 //	go run ./tools/fetchflags -force   # fetch everything again
 //
 // It exits with a non-zero status and lists the codes when a download fails
-// or a flag's size cannot be read.
+// or a flag cannot be decoded or is too small to sample.
 package main
 
 import (
@@ -40,16 +44,16 @@ func main() {
 	dir := flag.String("dir", "public/flags", "output directory")
 	base := flag.String("base", defaultBase, "flag CDN base URL")
 	force := flag.Bool("force", false, "download files that already exist")
-	sizes := flag.String("sizes", "internal/country/flagsizes_gen.go", "Go file to write the flag sizes to (empty to skip)")
+	gen := flag.String("gen", "internal/country/flags_gen.go", "Go file to write the flag sizes and corner colours to (empty to skip)")
 	flag.Parse()
 
-	if err := run(*dir, *base, *force, *sizes); err != nil {
+	if err := run(*dir, *base, *force, *gen); err != nil {
 		fmt.Fprintln(os.Stderr, "fetchflags:", err)
 		os.Exit(1)
 	}
 }
 
-func run(dir, base string, force bool, sizesPath string) error {
+func run(dir, base string, force bool, genPath string) error {
 	store := country.Default()
 	codes := make([]string, 0, store.Len())
 	for _, c := range store.All() {
@@ -79,32 +83,32 @@ func run(dir, base string, force bool, sizesPath string) error {
 		return fmt.Errorf("missing flags: %s", strings.Join(rep.Missing, ", "))
 	}
 
-	if sizesPath == "" {
+	if genPath == "" {
 		return nil
 	}
-	sizes, err := Sizes(dir, codes)
+	infos, err := Infos(dir, codes)
 	if err != nil {
 		return err
 	}
-	if err := writeSizesFile(sizesPath, sizes); err != nil {
+	if err := writeInfosFile(genPath, infos); err != nil {
 		return err
 	}
-	fmt.Fprintf(os.Stderr, "fetchflags: wrote %d sizes to %s\n", len(sizes), sizesPath)
+	fmt.Fprintf(os.Stderr, "fetchflags: wrote %d flags to %s\n", len(infos), genPath)
 	return nil
 }
 
-// writeSizesFile writes the sizes source to path through a temporary file. The
-// directory must already exist, so running outside the repository root fails
-// instead of creating a stray tree.
-func writeSizesFile(path string, sizes map[string]Size) error {
+// writeInfosFile writes the flag info source to path through a temporary
+// file. The directory must already exist, so running outside the repository
+// root fails instead of creating a stray tree.
+func writeInfosFile(path string, infos map[string]Info) error {
 	dir := filepath.Dir(path)
 	if info, err := os.Stat(dir); err != nil {
-		return fmt.Errorf("sizes output directory: %w", err)
+		return fmt.Errorf("gen output directory: %w", err)
 	} else if !info.IsDir() {
-		return fmt.Errorf("sizes output directory %s is not a directory", dir)
+		return fmt.Errorf("gen output directory %s is not a directory", dir)
 	}
 	var buf bytes.Buffer
-	if err := WriteSizes(&buf, sizes); err != nil {
+	if err := WriteInfos(&buf, infos); err != nil {
 		return err
 	}
 	tmp := path + ".tmp"
