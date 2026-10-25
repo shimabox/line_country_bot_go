@@ -80,6 +80,52 @@ func TestReplySendsRequest(t *testing.T) {
 	}
 }
 
+// TestReplySentBodyMatchesReference checks the body Reply sends byte by byte,
+// including messages with typed nil pointers inside.
+func TestReplySentBodyMatchesReference(t *testing.T) {
+	cases := messageListCases()
+	cases = append(cases, struct {
+		name string
+		msgs []Message
+	}{"typed nil template", []Message{TextMessage{Text: "a"}, TemplateMessage{AltText: "b", Template: (*ButtonsTemplate)(nil)}}})
+	for _, tt := range cases {
+		if len(tt.msgs) == 0 {
+			continue // Reply rejects these before sending.
+		}
+		t.Run(tt.name, func(t *testing.T) {
+			doer := &fakeDoer{}
+			if err := NewClient("", "t", doer).Reply(context.Background(), specialText, tt.msgs); err != nil {
+				t.Fatalf("Reply: %v", err)
+			}
+			if want := refJSON(t, refReply(t, specialText, tt.msgs)); string(doer.body) != string(want) {
+				t.Errorf("body mismatch\n got: %s\nwant: %s", doer.body, want)
+			}
+		})
+	}
+}
+
+func TestAppendReplyBodyMatchesReference(t *testing.T) {
+	for _, tt := range messageListCases() {
+		for _, token := range []string{"", "reply-token", specialText} {
+			got := appendReplyBody([]byte("x"), token, tt.msgs)
+			if want := "x" + string(refJSON(t, refReply(t, token, tt.msgs))); string(got) != want {
+				t.Errorf("%s, token %q: mismatch\n got: %s\nwant: %s", tt.name, token, got, want)
+			}
+		}
+	}
+}
+
+func TestAppendLoadingBodyMatchesReference(t *testing.T) {
+	for _, chatID := range []string{"", "U0123456789abcdef", specialText} {
+		for _, seconds := range []int{-5, 0, MinLoadingSeconds, 30, MaxLoadingSeconds, 1 << 40} {
+			got := appendLoadingBody([]byte("x"), chatID, seconds)
+			if want := "x" + string(refJSON(t, refLoading(chatID, seconds))); string(got) != want {
+				t.Errorf("chatID %q, %d seconds: mismatch\n got: %s\nwant: %s", chatID, seconds, got, want)
+			}
+		}
+	}
+}
+
 func TestReplyBaseURLOverride(t *testing.T) {
 	for _, base := range []string{"http://127.0.0.1:9999", "http://127.0.0.1:9999/"} {
 		doer := &fakeDoer{}
@@ -225,6 +271,20 @@ func TestShowLoadingSendsRequest(t *testing.T) {
 	}
 	if len(body) != 2 || body["chatId"] != "U0123456789abcdef" || body["loadingSeconds"] != float64(5) {
 		t.Errorf("body = %s", doer.body)
+	}
+}
+
+func TestShowLoadingSentBodyMatchesReference(t *testing.T) {
+	for _, chatID := range []string{"U0123456789abcdef", specialText} {
+		for _, seconds := range []int{MinLoadingSeconds, 30, MaxLoadingSeconds} {
+			doer := &fakeDoer{}
+			if err := NewClient("", "t", doer).ShowLoading(context.Background(), chatID, seconds); err != nil {
+				t.Fatalf("ShowLoading: %v", err)
+			}
+			if want := refJSON(t, refLoading(chatID, seconds)); string(doer.body) != string(want) {
+				t.Errorf("body mismatch\n got: %s\nwant: %s", doer.body, want)
+			}
+		}
 	}
 }
 
