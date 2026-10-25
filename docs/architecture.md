@@ -49,7 +49,7 @@ internal/bot/        入力の正規化・トリガー語・絵文字・返信�
 internal/app/        http.Handler（ルーティング・署名検証・イベント処理）と設定
 tools/gencountries/  Wikidata から countries.json を生成
 tools/gencountrygo/  countries.json を Go のソース（internal/country/countries_gen.go）に変換
-tools/fetchflags/    flagcdn.com から国旗 PNG を取得し、寸法ファイルを生成
+tools/fetchflags/    flagcdn.com から国旗 PNG を取得し、寸法と角の色の表を生成
 public/flags/        国旗画像（Workers Static Assets で配信）
 scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 ```
@@ -64,7 +64,7 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 |---|---|
 | `internal/country/data/countries.json` | `go run ./tools/gencountries`（Wikidata の SPARQL と `tools/gencountries/overrides.json`） |
 | `internal/country/countries_gen.go` | `go generate ./internal/country`（countries.json から生成） |
-| `public/flags/*.png`、`internal/country/flagsizes_gen.go` | `go run ./tools/fetchflags`（Flagpedia から取得し、寸法を書き出す） |
+| `public/flags/*.png`、`internal/country/flags_gen.go` | `go run ./tools/fetchflags`（Flagpedia から取得し、寸法と角の色を書き出す） |
 | `build/app.wasm`、`build/worker.mjs`、`build/wasm_exec.js` | `npm run build`（TinyGo） |
 
 国データと国旗の更新の手順と、生成が失敗したときの補正は [data-update.md](data-update.md) にあります。
