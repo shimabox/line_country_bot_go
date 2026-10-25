@@ -189,3 +189,108 @@ func TestReplyRequiresToken(t *testing.T) {
 		t.Errorf("calls = %d, want 0", doer.calls)
 	}
 }
+
+func TestReplyErrorNamesTheAPI(t *testing.T) {
+	err := NewClient("", "t", &fakeDoer{status: 400}).Reply(context.Background(), "rt", []Message{TextMessage{Text: "x"}})
+	if err == nil || !strings.Contains(err.Error(), "reply") {
+		t.Errorf("API error = %v, want it to name the reply API", err)
+	}
+	err = NewClient("", "t", &fakeDoer{err: errors.New("down")}).Reply(context.Background(), "rt", []Message{TextMessage{Text: "x"}})
+	if err == nil || !strings.Contains(err.Error(), "reply") {
+		t.Errorf("send error = %v, want it to name the reply API", err)
+	}
+}
+
+func TestShowLoadingSendsRequest(t *testing.T) {
+	doer := &fakeDoer{status: http.StatusAccepted, resp: `{}`}
+	c := NewClient("", "test-access-token", doer)
+	if err := c.ShowLoading(context.Background(), "U0123456789abcdef", MinLoadingSeconds); err != nil {
+		t.Fatalf("ShowLoading: %v", err)
+	}
+	if doer.req.Method != http.MethodPost {
+		t.Errorf("Method = %s", doer.req.Method)
+	}
+	if got := doer.req.URL.String(); got != "https://api.line.me/v2/bot/chat/loading/start" {
+		t.Errorf("URL = %s", got)
+	}
+	if got := doer.req.Header.Get("Content-Type"); got != "application/json" {
+		t.Errorf("Content-Type = %q", got)
+	}
+	if got := doer.req.Header.Get("Authorization"); got != "Bearer test-access-token" {
+		t.Errorf("Authorization = %q", got)
+	}
+	var body map[string]any
+	if err := json.Unmarshal(doer.body, &body); err != nil {
+		t.Fatalf("body %s: %v", doer.body, err)
+	}
+	if len(body) != 2 || body["chatId"] != "U0123456789abcdef" || body["loadingSeconds"] != float64(5) {
+		t.Errorf("body = %s", doer.body)
+	}
+}
+
+func TestShowLoadingBaseURLOverride(t *testing.T) {
+	doer := &fakeDoer{}
+	if err := NewClient("http://127.0.0.1:9999/", "t", doer).ShowLoading(context.Background(), "U1", 5); err != nil {
+		t.Fatalf("ShowLoading: %v", err)
+	}
+	if got := doer.req.URL.String(); got != "http://127.0.0.1:9999/v2/bot/chat/loading/start" {
+		t.Errorf("URL = %s", got)
+	}
+}
+
+func TestShowLoadingSeconds(t *testing.T) {
+	for _, s := range []int{5, 10, 55, 60} {
+		doer := &fakeDoer{}
+		if err := NewClient("", "t", doer).ShowLoading(context.Background(), "U1", s); err != nil {
+			t.Errorf("%d seconds: err = %v", s, err)
+		}
+	}
+	for _, s := range []int{-5, 0, 1, 4, 6, 59, 65, 120} {
+		doer := &fakeDoer{}
+		if err := NewClient("", "t", doer).ShowLoading(context.Background(), "U1", s); err == nil {
+			t.Errorf("%d seconds: err = nil, want error", s)
+		}
+		if doer.calls != 0 {
+			t.Errorf("%d seconds: calls = %d, want 0", s, doer.calls)
+		}
+	}
+}
+
+func TestShowLoadingRequiresChatAndToken(t *testing.T) {
+	doer := &fakeDoer{}
+	if err := NewClient("", "t", doer).ShowLoading(context.Background(), "", 5); err == nil {
+		t.Error("empty chat ID: err = nil")
+	}
+	if err := NewClient("", "", doer).ShowLoading(context.Background(), "U1", 5); err == nil || errors.Is(err, ErrSend) {
+		t.Errorf("empty access token: err = %v, want an error that is not ErrSend", err)
+	}
+	if doer.calls != 0 {
+		t.Errorf("calls = %d, want 0", doer.calls)
+	}
+}
+
+func TestShowLoadingErrorStatus(t *testing.T) {
+	doer := &fakeDoer{status: 400, resp: `{"message":"The property, 'chatId', in the request body is invalid"}`}
+	err := NewClient("", "t", doer).ShowLoading(context.Background(), "C-group", 5)
+	var apiErr *APIError
+	if !errors.As(err, &apiErr) {
+		t.Fatalf("err = %v, want *APIError", err)
+	}
+	if apiErr.StatusCode != 400 || !strings.HasPrefix(doer.resp, apiErr.Body) || apiErr.Body == "" {
+		t.Errorf("APIError = %+v", apiErr)
+	}
+	if !strings.Contains(err.Error(), "loading") || !strings.Contains(err.Error(), "400") {
+		t.Errorf("Error() = %q, want the API and the status", err.Error())
+	}
+}
+
+func TestShowLoadingTransportError(t *testing.T) {
+	doer := &fakeDoer{err: errors.New("connection refused")}
+	err := NewClient("", "t", doer).ShowLoading(context.Background(), "U1", 5)
+	if !errors.Is(err, ErrSend) {
+		t.Errorf("err = %v, want ErrSend", err)
+	}
+	if err == nil || !strings.Contains(err.Error(), "connection refused") || !strings.Contains(err.Error(), "loading") {
+		t.Errorf("err = %v", err)
+	}
+}
