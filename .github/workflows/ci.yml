@@ -8,8 +8,11 @@ on:
 permissions:
   contents: read
 
+# Three jobs run in parallel with no needs between them, so the wall-clock time
+# is that of the slowest job (usually tinygo-test).
 jobs:
-  test:
+  # Checks with the regular Go toolchain only; TinyGo is not installed here.
+  go:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -18,42 +21,13 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
-      # TinyGo and Binaryen from their official releases, checked against the
-      # SHA-256 in scripts/toolchain.env. The script does nothing when the
-      # cached .tools already has the same versions.
-      - name: Cache TinyGo and Binaryen
-        uses: actions/cache@v5
-        with:
-          path: .tools
-          key: tinygo-${{ runner.os }}-${{ hashFiles('scripts/toolchain.env') }}
-
-      # TinyGo's build cache of the standard library (about 14 seconds to build
-      # from scratch).
-      - name: Cache TinyGo builds
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/tinygo
-          key: tinygo-cache-${{ runner.os }}-0.43.0-${{ hashFiles('go.sum') }}
-
-      - name: Install TinyGo and Binaryen
-        run: |
-          bash scripts/install-tinygo.sh
-          echo "$PWD/.tools/tinygo/bin" >> "$GITHUB_PATH"
-          echo "$PWD/.tools/binaryen/bin" >> "$GITHUB_PATH"
-
-      - name: Tool versions
-        run: |
-          tinygo version
-          wasm-opt --version
-
+      # Only the .go files tracked by git, so that the TinyGo sources in .tools
+      # (and build/, node_modules/) are never scanned. The list is split on
+      # purpose; Go source file names have no spaces.
       - name: gofmt
         run: |
-          unformatted="$(gofmt -l .)"
+          # shellcheck disable=SC2046
+          unformatted="$(gofmt -l $(git ls-files '*.go'))"
           if [ -n "$unformatted" ]; then
             echo "gofmt needed:"
             echo "$unformatted"
@@ -72,22 +46,102 @@ jobs:
       - name: go vet (js/wasm)
         run: GOOS=js GOARCH=wasm go vet ./...
 
-      # TinyGo has no vet; the js/wasm go vet above still type-checks the code.
-      # This runs the tests on the host to catch differences in TinyGo's
-      # reflect and standard library (encoding/json and others).
+  # TinyGo has no vet; the js/wasm go vet in the go job still type-checks the
+  # code. This runs the tests on the host to catch differences in TinyGo's
+  # reflect and standard library (encoding/json and others).
+  tinygo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # TinyGo and Binaryen from their official releases, checked against the
+      # SHA-256 in scripts/toolchain.env. The script does nothing when the
+      # cached .tools already has the same versions.
+      - name: Cache TinyGo and Binaryen
+        uses: actions/cache@v5
+        with:
+          path: .tools
+          key: tinygo-${{ runner.os }}-${{ hashFiles('scripts/toolchain.env') }}
+
+      # TinyGo's build cache of the standard library (about 14 seconds to build
+      # from scratch). The key is separate from the build job's: tinygo test
+      # builds for the host and tinygo build for wasm, so the contents differ.
+      - name: Cache TinyGo builds
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/tinygo
+          key: tinygo-cache-${{ runner.os }}-test-${{ hashFiles('scripts/toolchain.env', 'go.sum') }}
+          restore-keys: tinygo-cache-${{ runner.os }}-test-
+
+      - name: Install TinyGo and Binaryen
+        run: |
+          bash scripts/install-tinygo.sh
+          echo "$PWD/.tools/tinygo/bin" >> "$GITHUB_PATH"
+          echo "$PWD/.tools/binaryen/bin" >> "$GITHUB_PATH"
+
+      - name: Tool versions
+        run: |
+          tinygo version
+          wasm-opt --version
+
       - name: tinygo test
         run: tinygo test ./internal/...
 
-      # npm run build builds with TinyGo (scripts/build.sh).
-      - name: Build
+  # Builds once with TinyGo and checks the script size.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # Same as in the tinygo-test job.
+      - name: Cache TinyGo and Binaryen
+        uses: actions/cache@v5
+        with:
+          path: .tools
+          key: tinygo-${{ runner.os }}-${{ hashFiles('scripts/toolchain.env') }}
+
+      # The wasm build cache, separate from the tinygo-test job's host cache.
+      - name: Cache TinyGo builds
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/tinygo
+          key: tinygo-cache-${{ runner.os }}-build-${{ hashFiles('scripts/toolchain.env', 'go.sum') }}
+          restore-keys: tinygo-cache-${{ runner.os }}-build-
+
+      - name: Install TinyGo and Binaryen
         run: |
-          npm ci
-          npm run build
+          bash scripts/install-tinygo.sh
+          echo "$PWD/.tools/tinygo/bin" >> "$GITHUB_PATH"
+          echo "$PWD/.tools/binaryen/bin" >> "$GITHUB_PATH"
+
+      - name: Tool versions
+        run: |
+          tinygo version
+          wasm-opt --version
+
+      - name: npm ci
+        run: npm ci
+
+      # wrangler deploy --dry-run runs build.command (npm run build, which builds
+      # with TinyGo via scripts/build.sh), so this is the only build. It fails
+      # above 1024 KiB gzip so that a build that falls back to Go (about
+      # 2,000 KiB) is caught. The limit is 3MB.
+      - name: Build and script size
+        run: |
+          bash scripts/check-size.sh 1024
           test -f build/app.wasm
           test -f build/worker.mjs
           test -f build/wasm_exec.js
-
-      # wrangler deploy --dry-run; fails above 1024 KiB gzip so that a build
-      # that falls back to Go (about 2,000 KiB) is caught. The limit is 3MB.
-      - name: Script size
-        run: bash scripts/check-size.sh 1024
