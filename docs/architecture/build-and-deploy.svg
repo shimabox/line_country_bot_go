@@ -30,7 +30,7 @@
 
             
             <rect x="310" y="220" width="216" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
-            <text x="418" y="243" font-family="Menlo, Consolas, monospace">npm run build</text><text x="418" y="260" opacity=".75">TinyGo → wasm（gzip 652 KiB）</text>
+            <text x="418" y="243" font-family="Menlo, Consolas, monospace">npm run build</text><text x="418" y="260" opacity=".75">TinyGo → wasm（gzip 553 KiB）</text>
             <rect x="566" y="220" width="160" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
             <text x="646" y="243" font-family="Menlo, Consolas, monospace">wrangler deploy</text><text x="646" y="260" opacity=".75">wasm と画像を配置</text>
             <rect x="776" y="220" width="168" height="56" rx="8" fill="#dff0e9" stroke="#0f7a5f" stroke-width="1.5"/>

@@ -5,6 +5,13 @@
 # Environment:
 #   WASM_BUILD  tinygo (default) or go. go builds with the standard Go toolchain
 #               (`npm run build:go`, `WASM_BUILD=go npx wrangler deploy`).
+#   TINYGO_GC   passed to TinyGo's -gc as is (default: leaking). leaking only
+#               allocates and never collects, which is safe because workers-go
+#               starts a new wasm instance for every request and drops it
+#               afterwards. precise is TinyGo's default for the wasm target
+#               and the GC used before leaking
+#               (`TINYGO_GC=precise npx wrangler deploy`). Ignored when
+#               WASM_BUILD=go.
 #   TOOLS_DIR   where scripts/install-tinygo.sh unpacked TinyGo and Binaryen
 #               (default: .tools in the repository root). Their bin directories
 #               are put at the front of PATH when they exist; otherwise tinygo
@@ -39,7 +46,7 @@ build_tinygo() {
   fi
 
   go run github.com/syumai/workers-go/cmd/workers-assets-gen -mode=tinygo
-  tinygo build -o ./build/app.wasm -target wasm -no-debug ./cmd/worker
+  tinygo build -o ./build/app.wasm -target wasm -no-debug -gc="${TINYGO_GC:-leaking}" ./cmd/worker
 }
 
 build_go() {

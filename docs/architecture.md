@@ -5,8 +5,8 @@ LINE で国名を送ると国旗と首都を返し、国旗の 4 択クイズも
 | 指標 | 値 | メモ |
 |---|---|---|
 | LINE への応答時間（本番） | 中央値 1.16 秒 | 上限 2 秒（最大 1.32 秒） |
-| CPU 時間（本番） | 中央値 30ms（16〜97ms） | 待ち時間は含まない。立ち上がり直後の重いリクエストは中央値 56ms、それ以外は 18.5ms |
-| wasm サイズ（gzip 後） | 652 KiB | TinyGo でビルド。無料プランの上限 3MB |
+| CPU 時間（本番） | 中央値 30ms（16〜97ms） | `-gc=leaking` 導入前の値。導入後の本番値は計測後に更新。待ち時間は含まない。立ち上がり直後の重いリクエストは中央値 56ms、それ以外は 18.5ms |
+| wasm サイズ（gzip 後） | 553 KiB | TinyGo（`-gc=leaking`）でビルド。導入前は 652 KiB。無料プランの上限 3MB |
 | 国データ / 国旗 | 196 / 196 | Wikidata（CC0）/ Flagpedia（パブリックドメイン） |
 
 数値は 2026-10-25 時点の計測です。本番の値は TinyGo のビルドをデプロイしたあと、実機から送った 31 件の `wrangler tail` の記録から出しています。
@@ -58,7 +58,7 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 
 ![Wikidata から国データ、Flagpedia から国旗画像をツールで取得し、Go のコードと画像としてリポジトリに置く。npm run build で TinyGo により wasm を作り、wrangler deploy で Cloudflare Workers に載せる。PR では GitHub Actions が go・tinygo-test・build の 3 ジョブ（Go のテスト、TinyGo でのテスト、wasm ビルドとサイズ確認）を並列に実行する。](architecture/build-and-deploy.svg)
 
-国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います。CI は go・tinygo-test・build の 3 ジョブを並列に実行して確認するだけで、デプロイはしません。各コマンドの意味や失敗時の振る舞いは [development.md](development.md) にあります。
+国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。GC は回収しない `-gc=leaking` を使います（前提は「制限事項と設計上の決まり」のメモリの項）。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います。CI は go・tinygo-test・build の 3 ジョブを並列に実行して確認するだけで、デプロイはしません。各コマンドの意味や失敗時の振る舞いは [development.md](development.md) にあります。
 
 | 生成物 | 作り方 |
 |---|---|
@@ -75,7 +75,8 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 
 ## 制限事項と設計上の決まり
 
-- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、wasm を小さくして読み込みと初期化を軽くできる TinyGo でビルドし、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。TinyGo は reflect や標準ライブラリの対応範囲が通常の Go と異なるため、依存や `encoding/json` の使い方を変えたら `tinygo test ./internal/...`（CI でも実行）で挙動を確かめます。TinyGo はパニック時に goroutine のスタックトレースを出さず、`-no-debug` でビルドしているため位置情報も少なく、本番のパニックは原因を追いにくくなります。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（[CPU 時間の計測](development.md#cpu-時間の計測)）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
+- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、wasm を小さくして読み込みと初期化を軽くできる TinyGo でビルドし、GC の仕事を省くため `-gc=leaking` を使い、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。TinyGo は reflect や標準ライブラリの対応範囲が通常の Go と異なるため、依存や `encoding/json` の使い方を変えたら `tinygo test ./internal/...`（CI でも実行）で挙動を確かめます。TinyGo はパニック時に goroutine のスタックトレースを出さず、`-no-debug` でビルドしているため位置情報も少なく、本番のパニックは原因を追いにくくなります。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（[CPU 時間の計測](development.md#cpu-時間の計測)）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
+- **メモリと `-gc=leaking`**: TinyGo の GC は、割り当てるだけで回収しない `-gc=leaking` を使っています。これが成り立つ前提は 2 つです。1 つ目は、Go の wasm がリクエストごとに起動して捨てられることです（workers-go が生成する `build/worker.mjs` が、リクエストのたびに `new Go()` と `new WebAssembly.Instance` を行う）。workers-go の版を上げるときはこの振る舞いが変わっていないかを確かめ、インスタンスを再利用する形になっていたら `-gc=leaking` を見直します。2 つ目は、1 リクエストで使うメモリが小さいことです。Workers のメモリの上限は isolate あたり 128MB で、同時に処理中のリクエストの分は合算されます。手元の計測（`npm run bench:cpu` の `mem`）では、wasm のメモリは `GET /` で 1.25 MiB、イベント 1 件の Webhook で 5 MiB、20 件で 40 MiB で、イベント 1 件あたり約 1.8 MiB 増えます（導入前は Webhook 1 件で 1.25 MiB、20 件で 2.5 MiB）。値は wasm の線形メモリの上限値で、JS 側のヒープは含みません（[計測値](development.md#-gcleaking-の計測値)）。1 対 1 のトークでは通常 1 件です。同時に処理中のリクエスト数 × 1 リクエストの値が 128MB に近づく使い方（グループで大量のメッセージが同時に送られるなど）は想定していません。切り戻しの手順は [development.md](development.md#デプロイの仕組みと切り戻し) にあります。
 - **返信は reply token だけを使う**: push API は実装しません。返信は課金対象のメッセージ数に数えられないため、無料のメッセージ数を消費しません。これは設計上の不変条件で、push 系の送信を追加しない前提です。
 - **返信は同期送信**: Webhook の処理中に返信 API を呼び、結果をログに残してから 200 を返します。返信 API が失敗しても（使用済みの reply token など）200 を返し、LINE からの再送を起こしません。
 - **1 回の返信は最大 5 件**: クライアントが 6 件以上を拒否します。bot の返信は最大 4 件です。
@@ -85,7 +86,9 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 
 | 項目 | 状況 |
 |---|---|
-| CPU 時間 | 本番の中央値 30ms。無料プランの目安 10ms は超えているが、打ち切りは出ていない。リクエストの約半分は立ち上がり直後で重い（46〜97ms）。TinyGo の最適化オプション（`-gc=leaking` など）が次の候補 |
+| CPU 時間 | 本番の中央値 30ms（`-gc=leaking` 導入前の値。導入後の本番値は計測後に更新）。無料プランの目安 10ms は超えているが、打ち切りは出ていない。リクエストの約半分は立ち上がり直後で重い（46〜97ms）。`-gc=leaking` を採用し、手元の計測では Webhook の CPU 時間の中央値が約 38% 減った。ほかの TinyGo のオプション（`-panic=trap` など）は別に判断する |
+| イベント件数が多いリクエストの割り当て削減 | `-gc=leaking` では割り当てた分だけ wasm のメモリが増える（イベント 1 件あたり約 1.8 MiB）。返信本文の組み立てと Webhook の解析まわりの割り当てを減らすのが候補 |
+| イベント件数が上限に近づいたときの打ち切り | 1 リクエストのイベント件数が多いときに処理を打ち切り、メモリの上限を守る候補。返信を落とすことになるため、今は入れていない |
 | TinyGo | 採用済み。Go でビルドしていたとき（11 件）と比べて、重いリクエストの中央値は 83 → 56ms、それ以外は 21.5 → 18.5ms |
 | JSON 生成の軽量化 | 返信と入力中表示の本文は手書きのエンコーダで生成済み。Webhook の受信（`json.Unmarshal`）は未対応で、置き換えるなら fuzz テストと一緒に行う |
 | 開発用ツールの脆弱性 | `npm audit` が wrangler の依存（undici）で 3 件。bot 本体には含まれない |

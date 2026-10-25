@@ -38,13 +38,15 @@ bash scripts/check-size.sh 1024  # 上と同じ dry-run を行い、gzip が 102
 
 ## ビルドの仕組み
 
-`npm run build` は `scripts/build.sh` を実行します。workers-go の `workers-assets-gen -mode=tinygo` で JS の足場（TinyGo 用の `wasm_exec.js` を含む）を作り、`tinygo build -target wasm -no-debug ./cmd/worker` で wasm をビルドします。ビルドの前に `tinygo` の版が `scripts/toolchain.env` と一致することと `wasm-opt` があることを確かめ、欠けていれば `scripts/install-tinygo.sh` の実行を促して失敗します。初回のビルドは TinyGo が標準ライブラリをビルドするため約 14 秒かかり、その分 `wrangler deploy`（デプロイ時に `npm run build` を実行する）の所要時間も延びます。2 回目以降はキャッシュが効きます。
+`npm run build` は `scripts/build.sh` を実行します。workers-go の `workers-assets-gen -mode=tinygo` で JS の足場（TinyGo 用の `wasm_exec.js` を含む）を作り、`tinygo build -target wasm -no-debug -gc=leaking ./cmd/worker` で wasm をビルドします。ビルドの前に `tinygo` の版が `scripts/toolchain.env` と一致することと `wasm-opt` があることを確かめ、欠けていれば `scripts/install-tinygo.sh` の実行を促して失敗します。初回のビルドは TinyGo が標準ライブラリをビルドするため約 14 秒かかり、その分 `wrangler deploy`（デプロイ時に `npm run build` を実行する）の所要時間も延びます。2 回目以降はキャッシュが効きます。
+
+`-gc=leaking` は、メモリを割り当てるだけで回収しない TinyGo の GC です。workers-go はリクエストごとに Go の wasm インスタンスを作って捨てるため、回収しなくてもメモリはリクエストをまたいで積み上がりません。GC の仕事がなくなる分だけ CPU 時間が減り、wasm も小さくなります（前提と実測値は [architecture.md の制限事項](architecture.md#制限事項と設計上の決まり)、計測値は [CPU 時間の計測](#cpu-時間の計測) にあります）。GC は環境変数 `TINYGO_GC` で選べ、値はそのまま TinyGo の `-gc` に渡します（既定は `leaking`）。`TINYGO_GC=precise npm run build` で、導入前と同じ TinyGo の既定の GC（wasm では `precise`）のビルドを作れます。不正な値は TinyGo のエラーで失敗します。`tinygo test` には `-gc=leaking` を付けません（ホストのテストは割り当てが多く、回収しないとメモリが増え続けるため）。
 
 `npm run build:go`（`WASM_BUILD=go bash scripts/build.sh`）は、従来どおり `workers-assets-gen -mode=go` と `GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w"` でビルドします。TinyGo のツールは使いません。`WASM_BUILD` は `tinygo`（既定）か `go` で、それ以外はエラーです。`bash scripts/check-toolchain-errors.sh` で、導入スクリプトと `build.sh` の失敗時の振る舞い（hash 不一致、ツールの欠如、不正な `WASM_BUILD`）を確かめられます（TinyGo の配布物を取得するため CI では実行しません）。
 
 ## スクリプトサイズの上限
 
-無料プランのスクリプトサイズ上限は圧縮後 3MB です。`deploy:dry` が表示する gzip サイズで確認します。TinyGo のビルドは gzip で約 650 KiB、Go のビルドは約 2,000 KiB です。CI は 1024 KiB を上限にして、誤って Go のビルドになったときに失敗させます（`check-size.sh` の引数を省くと上限は 2.5MiB）。
+無料プランのスクリプトサイズ上限は圧縮後 3MB です。`deploy:dry` が表示する gzip サイズで確認します。TinyGo のビルドは gzip で約 553 KiB（`-gc=leaking`。導入前の GC では約 652 KiB）、Go のビルドは約 2,000 KiB です。CI は 1024 KiB を上限にして、誤って Go のビルドになったときに失敗させます（`check-size.sh` の引数を省くと上限は 2.5MiB）。
 
 ## ローカル疎通
 
@@ -68,23 +70,59 @@ npm run bench:cpu -- build/app.wasm            # 既定は 12 回
 npm run bench:cpu -- build/app.wasm 60         # 回数を指定する
 npm run bench:cpu -- build/app.wasm --verbose  # 各回の値も標準エラーに出す
 npm run bench:cpu -- /path/to/saved/app.wasm 60 --wasm-exec /path/to/saved/wasm_exec.js  # 退避したビルドを測る
+npm run bench:cpu -- build/app.wasm 12 --events 20  # 1 回の Webhook に同じイベントを 20 件入れる
 ```
 
-`scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」の 3 場面について、CPU 時間（user + system）の中央値を表と JSON で出します。
+`scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」の 3 場面について、CPU 時間（user + system）の中央値と wasm のメモリの最大値を表と JSON で出します。
 
 | 列 | 内容 |
 |---|---|
 | `start` | Go の wasm インスタンスを作り、`main` が準備を終えるまで（workers-go はリクエストごとにこれを行う） |
 | `handle` | リクエストを渡して応答を読み終えるまで |
 | `total` | 同じ回の `start` と `handle` の合計 |
+| `mem` | 各回の `handle` の後に読んだ wasm の線形メモリの大きさ（`memory.buffer.byteLength`）の、全回での最大値（MiB） |
+
+wasm のメモリは段階的に増えて縮まないため、`mem` は 1 リクエストが実際に使った量の上限値です。測れるのは wasm の線形メモリだけで、JS 側のヒープは含みません。`--events N`（既定 1）は、「日本」と「クイズ」の Webhook に同じイベントを N 件（reply token は件ごとに変える）入れて 1 回のリクエストにします。件数が増えたときのメモリと CPU 時間を見るためのもので、`GET /` は変わりません。省くと従来と同じ場面です。
 
 場面は交互に実行し、各回の前に GC を強制します。各場面の先頭 2 回は JIT の準備として中央値から除きます。返信 API はローカルのモックに送り、認証情報はダミーです。Node.js の値は本番（workerd）より小さく出るため、絶対値ではなく、同じマシンで 2 つのビルドを比べる用途に使います。wasm は、ビルドしたツールチェーンの `wasm_exec.js` と組にしないと動きません（TinyGo のビルドには TinyGo 用、Go のビルドには Go 用が要り、取り違えるとインポートの不一致で失敗します）。`--wasm-exec` を省くと `build/wasm_exec.js`、次に Go の `$(go env GOROOT)/lib/wasm/wasm_exec.js` を使います。比べるときは、比較したいビルド（例: `npm run build:go` の結果）の `build/app.wasm` と `build/wasm_exec.js` を一緒にリポジトリの外へ退避し、`--wasm-exec` で対応する `wasm_exec.js` を指定して、2 つのビルドを交互に数回ずつ計測して中央値を比べます。短い計測では JIT の最適化の進み具合で `handle` が偏ることがあるため、`handle` の比較には回数を増やした計測（60 回など）を使います。CI では実行しません。
+
+### `-gc=leaking` の計測値
+
+`-gc=leaking` の導入前（TinyGo の既定の GC、`precise`）と導入後のビルドを、同じマシンで 60 回ずつ交互に 3 巡計測した値です（2026-10-25、Node.js）。値は巡ごとの中央値の中央値で、単位は CPU ms です。
+
+| 場面 | 導入前 `start` / `handle` / `total` | 導入後 `start` / `handle` / `total` | `total` の減少 |
+|---|---|---|---|
+| `GET /` | 4.15 / 3.79 / 8.25 | 3.89 / 1.25 / 5.44 | 34% |
+| Webhook「日本」 | 3.57 / 22.51 / 25.96 | 3.38 / 13.12 / 16.19 | 38% |
+| Webhook「クイズ」 | 3.96 / 23.26 / 26.92 | 3.59 / 13.28 / 16.71 | 38% |
+
+減ったのは主に `handle`（GC の仕事）で、`start` はほぼ変わりません。3 巡のどの巡でも、導入後の Webhook の `total` は導入前の最小値を下回りました。
+
+`mem`（MiB）は次のとおりです。
+
+| 場面 | 導入前 | 導入後 |
+|---|---|---|
+| `GET /` | 1.25 | 1.25 |
+| Webhook「日本」1 件 | 1.25 | 5.00 |
+| Webhook「クイズ」1 件 | 1.25 | 5.00 |
+| Webhook「日本」20 件（`--events 20`） | 2.50 | 40.00 |
+| Webhook「クイズ」20 件（`--events 20`） | 2.50 | 40.00 |
+
+導入後は割り当てた分だけメモリが増え、イベント 1 件あたり約 1.8 MiB（(40 − 5) ÷ 19）増えます。20 件のリクエストでは CPU 時間は減らず、やや増えました（`--events 20` で 12 回計測した `total` の中央値で、「日本」139.5 → 164.2ms、「クイズ」137.8 → 156.2ms）。CPU 時間が減るのはイベントが少ない通常のリクエストです。メモリの上限との関係は [architecture.md の制限事項](architecture.md#制限事項と設計上の決まり) にあります。
 
 ## デプロイの仕組みと切り戻し
 
 `wrangler deploy` は `wrangler.jsonc` の `build.command`（`npm run build`）で手元の TinyGo のビルドを作ってから載せます。そのため、先に `bash scripts/install-tinygo.sh` を実行しておく必要があります。
 
 TinyGo のビルドで問題が出たときは、`WASM_BUILD=go npx wrangler deploy` で通常の Go のビルドをデプロイすれば従来の状態に戻せます。wrangler が環境変数を `npm run build` に引き継ぎ、`scripts/build.sh` が Go のビルドを選びます。デプロイの手順は [README](../README.md) の「デプロイ」にあります。
+
+`-gc=leaking` で問題が出たとき（`npx wrangler tail` の outcome に `exceededMemory` が出るなど）は、次のいずれかで戻します。
+
+- `npx wrangler rollback`: 直前のデプロイに戻します。ビルドし直さないため最も早く戻せます
+- `TINYGO_GC=precise npx wrangler deploy`: 今の commit のまま、導入前と同じ TinyGo の既定の GC でビルドしてデプロイします（`WASM_BUILD` と同じく、wrangler が環境変数を `npm run build` に引き継ぎます）
+- `-gc=leaking` の導入前の commit を checkout して `npx wrangler deploy`
+
+切り戻したまま運用を続けるときは、docs の説明とデプロイしたビルドがずれないよう、`scripts/build.sh` の `TINYGO_GC` の既定を戻します。
 
 ## ログ
 
