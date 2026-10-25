@@ -33,49 +33,60 @@ func assertGolden(t *testing.T, name string, v any) {
 	}
 }
 
+// goldenMessages pairs each message golden file with the message it encodes.
+// The golden actions file is matched by goldenActions.
+var goldenMessages = []struct {
+	golden string
+	msg    Message
+}{
+	{"text.json", TextMessage{Text: "[日本] ですね🤔"}},
+	{"sticker.json", StickerMessage{PackageID: "446", StickerID: "1999"}},
+	{"buttons_image.json", TemplateMessage{
+		AltText: "日本",
+		Template: ButtonsTemplate{
+			ThumbnailImageURL:    "https://example.com/flags/jp.png",
+			ImageAspectRatio:     ImageAspectRatioRectangle,
+			ImageSize:            ImageSizeContain,
+			ImageBackgroundColor: "#FFFFFF",
+			Title:                "日本",
+			Text:                 "東京 / Tokyo",
+			Actions: []Action{
+				URIAction{Label: "Wikipedia", URI: "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},
+				URIAction{Label: "Google Maps", URI: "https://www.google.com/maps/search/?api=1&query=35.68,139.76"},
+			},
+		},
+	}},
+	{"buttons_no_image.json", TemplateMessage{
+		AltText: "クイズです",
+		Template: ButtonsTemplate{
+			Text: "この国はどこでしょうか？",
+			Actions: []Action{
+				PostbackAction{Label: "日本", Data: "answer=%E6%97%A5%E6%9C%AC&result=1"},
+			},
+		},
+	}},
+	{"confirm.json", TemplateMessage{
+		AltText: "もう一度やりますか？",
+		Template: ConfirmTemplate{
+			Text: "もう一度やりますか？",
+			Actions: []Action{
+				MessageAction{Label: "いいえ", Text: "いいえ"},
+				MessageAction{Label: "はい", Text: "クイズ"},
+			},
+		},
+	}},
+}
+
+// goldenActions is the list testdata/messages/actions.json encodes.
+var goldenActions = []Action{
+	PostbackAction{Label: "フランス", Data: "answer=%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9&result=0"},
+	MessageAction{Label: "はい", Text: "クイズ"},
+	URIAction{Label: "Wikipedia", URI: "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"},
+	PostbackAction{Label: "日本", Data: "answer=%E6%97%A5%E6%9C%AC&result=1", DisplayText: "日本"},
+}
+
 func TestMessageGolden(t *testing.T) {
-	tests := []struct {
-		golden string
-		msg    Message
-	}{
-		{"text.json", TextMessage{Text: "[日本] ですね🤔"}},
-		{"sticker.json", StickerMessage{PackageID: "446", StickerID: "1999"}},
-		{"buttons_image.json", TemplateMessage{
-			AltText: "日本",
-			Template: ButtonsTemplate{
-				ThumbnailImageURL:    "https://example.com/flags/jp.png",
-				ImageAspectRatio:     ImageAspectRatioRectangle,
-				ImageSize:            ImageSizeContain,
-				ImageBackgroundColor: "#FFFFFF",
-				Title:                "日本",
-				Text:                 "東京 / Tokyo",
-				Actions: []Action{
-					URIAction{Label: "Wikipedia", URI: "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},
-					URIAction{Label: "Google Maps", URI: "https://www.google.com/maps/search/?api=1&query=35.68,139.76"},
-				},
-			},
-		}},
-		{"buttons_no_image.json", TemplateMessage{
-			AltText: "クイズです",
-			Template: ButtonsTemplate{
-				Text: "この国はどこでしょうか？",
-				Actions: []Action{
-					PostbackAction{Label: "日本", Data: "answer=%E6%97%A5%E6%9C%AC&result=1"},
-				},
-			},
-		}},
-		{"confirm.json", TemplateMessage{
-			AltText: "もう一度やりますか？",
-			Template: ConfirmTemplate{
-				Text: "もう一度やりますか？",
-				Actions: []Action{
-					MessageAction{Label: "いいえ", Text: "いいえ"},
-					MessageAction{Label: "はい", Text: "クイズ"},
-				},
-			},
-		}},
-	}
-	for _, tt := range tests {
+	for _, tt := range goldenMessages {
 		t.Run(tt.golden, func(t *testing.T) {
 			assertGolden(t, tt.golden, tt.msg)
 		})
@@ -83,11 +94,90 @@ func TestMessageGolden(t *testing.T) {
 }
 
 func TestActionGolden(t *testing.T) {
-	assertGolden(t, "actions.json", []Action{
-		PostbackAction{Label: "フランス", Data: "answer=%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9&result=0"},
-		MessageAction{Label: "はい", Text: "クイズ"},
-		URIAction{Label: "Wikipedia", URI: "https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B9"},
-		PostbackAction{Label: "日本", Data: "answer=%E6%97%A5%E6%9C%AC&result=1", DisplayText: "日本"},
+	assertGolden(t, "actions.json", goldenActions)
+}
+
+// The hand-written encoder must give the reference encoder's bytes for every
+// message, and must not panic on typed nil pointers.
+
+func TestAppendMessageMatchesReference(t *testing.T) {
+	for _, tt := range messageCases() {
+		t.Run(tt.name, func(t *testing.T) {
+			got := appendMessage(nil, tt.msg)
+			if want := refJSON(t, refMessage(t, tt.msg)); string(got) != string(want) {
+				t.Errorf("mismatch\n got: %s\nwant: %s", got, want)
+			}
+		})
+	}
+}
+
+func TestAppendMessagesMatchesReference(t *testing.T) {
+	for _, tt := range messageListCases() {
+		t.Run(tt.name, func(t *testing.T) {
+			got := appendArray(nil, tt.msgs, appendMessage)
+			if want := refJSON(t, refMessages(t, tt.msgs)); string(got) != string(want) {
+				t.Errorf("mismatch\n got: %s\nwant: %s", got, want)
+			}
+		})
+	}
+}
+
+func TestAppendActionsMatchesReference(t *testing.T) {
+	got := appendArray(nil, goldenActions, appendAction)
+	if want := refJSON(t, refActions(t, goldenActions)); string(got) != string(want) {
+		t.Errorf("mismatch\n got: %s\nwant: %s", got, want)
+	}
+}
+
+// TestAppendJSONMethods calls each type's appendJSON directly, with a prefix
+// already in the buffer.
+func TestAppendJSONMethods(t *testing.T) {
+	for _, tt := range messageCases() {
+		m, ok := tt.msg.(interface{ appendJSON([]byte) []byte })
+		if !ok || isNilPointer(tt.msg) {
+			continue
+		}
+		got := m.appendJSON([]byte("x"))
+		if want := "x" + string(refJSON(t, refMessage(t, tt.msg))); string(got) != want {
+			t.Errorf("%s: mismatch\n got: %s\nwant: %s", tt.name, got, want)
+		}
+	}
+}
+
+func isNilPointer(m Message) bool {
+	switch v := m.(type) {
+	case nil:
+		return true
+	case *TextMessage:
+		return v == nil
+	case *StickerMessage:
+		return v == nil
+	case *TemplateMessage:
+		return v == nil
+	}
+	return false
+}
+
+// FuzzAppendMessage builds every message type from the fuzzed strings and
+// compares the list with the reference encoder.
+func FuzzAppendMessage(f *testing.F) {
+	f.Add("日本", "https://example.com/?a=1&b=2", "")
+	f.Add(specialText, "\xe2\x80\xa8", "\xff")
+	f.Fuzz(func(t *testing.T, a, b, c string) {
+		msgs := []Message{
+			TextMessage{Text: a},
+			StickerMessage{PackageID: b, StickerID: c},
+			TemplateMessage{AltText: a, Template: ButtonsTemplate{
+				ThumbnailImageURL: b, ImageAspectRatio: c, ImageSize: a, ImageBackgroundColor: b, Title: c, Text: a,
+				Actions: []Action{PostbackAction{Label: a, Data: b, DisplayText: c}, URIAction{Label: b, URI: c}},
+			}},
+			TemplateMessage{AltText: b, Template: &ConfirmTemplate{Text: c, Actions: []Action{MessageAction{Label: a, Text: b}, &PostbackAction{Label: c, Data: a}}}},
+			&TextMessage{Text: c},
+		}
+		got := appendArray(nil, msgs, appendMessage)
+		if want := refJSON(t, refMessages(t, msgs)); string(got) != string(want) {
+			t.Errorf("mismatch\n got: %s\nwant: %s", got, want)
+		}
 	})
 }
 

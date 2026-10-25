@@ -1,9 +1,14 @@
 package line
 
-import (
-	"encoding/json"
-	"unicode/utf8"
-)
+// The message types are encoded by hand (appendJSON) instead of with
+// encoding/json, because the Worker starts a new wasm instance for every
+// request and encoding/json would build its reflection-based encoders for
+// each type on every request. The output is the JSON encoding/json gave: the
+// "type" field first, then the fields in declaration order, without spaces.
+// The tests check it byte for byte against a reference encoder built on
+// encoding/json.
+
+import "unicode/utf8"
 
 // Limits of the Messaging API, counted in UTF-16 code units.
 const (
@@ -30,16 +35,19 @@ const (
 // Message is a message object that can be sent with the reply API.
 type Message interface {
 	isMessage()
+	appendJSON(dst []byte) []byte
 }
 
 // Template is the template of a TemplateMessage.
 type Template interface {
 	isTemplate()
+	appendJSON(dst []byte) []byte
 }
 
 // Action is an action of a template.
 type Action interface {
 	isAction()
+	appendJSON(dst []byte) []byte
 }
 
 // TextMessage is a plain text message.
@@ -107,72 +115,160 @@ func (PostbackAction) isAction()    {}
 func (MessageAction) isAction()     {}
 func (URIAction) isAction()         {}
 
-// Each MarshalJSON adds the "type" field the API requires. Embedding a local
-// alias type flattens the fields and avoids recursing into MarshalJSON.
+// Each appendJSON writes the "type" field the API requires, then the fields.
+// Fields with omitempty are left out when empty.
 
-func (m TextMessage) MarshalJSON() ([]byte, error) {
-	type alias TextMessage
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"text", alias(m)})
+func (m TextMessage) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"text","text":`...)
+	dst = appendJSONString(dst, m.Text)
+	return append(dst, '}')
 }
 
-func (m StickerMessage) MarshalJSON() ([]byte, error) {
-	type alias StickerMessage
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"sticker", alias(m)})
+func (m StickerMessage) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"sticker","packageId":`...)
+	dst = appendJSONString(dst, m.PackageID)
+	dst = append(dst, `,"stickerId":`...)
+	dst = appendJSONString(dst, m.StickerID)
+	return append(dst, '}')
 }
 
-func (m TemplateMessage) MarshalJSON() ([]byte, error) {
-	type alias TemplateMessage
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"template", alias(m)})
+func (m TemplateMessage) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"template","altText":`...)
+	dst = appendJSONString(dst, m.AltText)
+	dst = append(dst, `,"template":`...)
+	dst = appendTemplate(dst, m.Template)
+	return append(dst, '}')
 }
 
-func (t ButtonsTemplate) MarshalJSON() ([]byte, error) {
-	type alias ButtonsTemplate
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"buttons", alias(t)})
+func (t ButtonsTemplate) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"buttons"`...)
+	dst = appendOmitEmpty(dst, `,"thumbnailImageUrl":`, t.ThumbnailImageURL)
+	dst = appendOmitEmpty(dst, `,"imageAspectRatio":`, t.ImageAspectRatio)
+	dst = appendOmitEmpty(dst, `,"imageSize":`, t.ImageSize)
+	dst = appendOmitEmpty(dst, `,"imageBackgroundColor":`, t.ImageBackgroundColor)
+	dst = appendOmitEmpty(dst, `,"title":`, t.Title)
+	dst = append(dst, `,"text":`...)
+	dst = appendJSONString(dst, t.Text)
+	dst = append(dst, `,"actions":`...)
+	dst = appendArray(dst, t.Actions, appendAction)
+	return append(dst, '}')
 }
 
-func (t ConfirmTemplate) MarshalJSON() ([]byte, error) {
-	type alias ConfirmTemplate
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"confirm", alias(t)})
+func (t ConfirmTemplate) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"confirm","text":`...)
+	dst = appendJSONString(dst, t.Text)
+	dst = append(dst, `,"actions":`...)
+	dst = appendArray(dst, t.Actions, appendAction)
+	return append(dst, '}')
 }
 
-func (a PostbackAction) MarshalJSON() ([]byte, error) {
-	type alias PostbackAction
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"postback", alias(a)})
+func (a PostbackAction) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"postback","label":`...)
+	dst = appendJSONString(dst, a.Label)
+	dst = append(dst, `,"data":`...)
+	dst = appendJSONString(dst, a.Data)
+	dst = appendOmitEmpty(dst, `,"displayText":`, a.DisplayText)
+	return append(dst, '}')
 }
 
-func (a MessageAction) MarshalJSON() ([]byte, error) {
-	type alias MessageAction
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"message", alias(a)})
+func (a MessageAction) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"message","label":`...)
+	dst = appendJSONString(dst, a.Label)
+	dst = append(dst, `,"text":`...)
+	dst = appendJSONString(dst, a.Text)
+	return append(dst, '}')
 }
 
-func (a URIAction) MarshalJSON() ([]byte, error) {
-	type alias URIAction
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		alias
-	}{"uri", alias(a)})
+func (a URIAction) appendJSON(dst []byte) []byte {
+	dst = append(dst, `{"type":"uri","label":`...)
+	dst = appendJSONString(dst, a.Label)
+	dst = append(dst, `,"uri":`...)
+	dst = appendJSONString(dst, a.URI)
+	return append(dst, '}')
 }
+
+// appendOmitEmpty appends key (a comma, the quoted name and a colon) and s,
+// unless s is empty.
+func appendOmitEmpty(dst []byte, key, s string) []byte {
+	if s == "" {
+		return dst
+	}
+	dst = append(dst, key...)
+	return appendJSONString(dst, s)
+}
+
+// appendMessage, appendTemplate and appendAction write a nil interface or a
+// nil pointer as null, as encoding/json does. The value receivers of
+// appendJSON make the pointer types satisfy the interfaces too, and calling
+// appendJSON on a nil pointer would panic.
+
+func appendMessage(dst []byte, m Message) []byte {
+	switch v := m.(type) {
+	case nil:
+		return append(dst, "null"...)
+	case *TextMessage:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	case *StickerMessage:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	case *TemplateMessage:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	}
+	return m.appendJSON(dst)
+}
+
+func appendTemplate(dst []byte, t Template) []byte {
+	switch v := t.(type) {
+	case nil:
+		return append(dst, "null"...)
+	case *ButtonsTemplate:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	case *ConfirmTemplate:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	}
+	return t.appendJSON(dst)
+}
+
+func appendAction(dst []byte, a Action) []byte {
+	switch v := a.(type) {
+	case nil:
+		return append(dst, "null"...)
+	case *PostbackAction:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	case *MessageAction:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	case *URIAction:
+		if v == nil {
+			return append(dst, "null"...)
+		}
+	}
+	return a.appendJSON(dst)
+}
+
+// MarshalJSON keeps json.Marshal of a message working; it gives the same
+// bytes as appendJSON.
+
+func (m TextMessage) MarshalJSON() ([]byte, error)     { return m.appendJSON(nil), nil }
+func (m StickerMessage) MarshalJSON() ([]byte, error)  { return m.appendJSON(nil), nil }
+func (m TemplateMessage) MarshalJSON() ([]byte, error) { return m.appendJSON(nil), nil }
+func (t ButtonsTemplate) MarshalJSON() ([]byte, error) { return t.appendJSON(nil), nil }
+func (t ConfirmTemplate) MarshalJSON() ([]byte, error) { return t.appendJSON(nil), nil }
+func (a PostbackAction) MarshalJSON() ([]byte, error)  { return a.appendJSON(nil), nil }
+func (a MessageAction) MarshalJSON() ([]byte, error)   { return a.appendJSON(nil), nil }
+func (a URIAction) MarshalJSON() ([]byte, error)       { return a.appendJSON(nil), nil }
 
 // UTF16Len returns the length of s in UTF-16 code units, which is how the
 // Messaging API counts characters.
