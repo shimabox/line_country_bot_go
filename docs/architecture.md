@@ -5,11 +5,11 @@ LINE で国名を送ると国旗と首都を返し、国旗の 4 択クイズも
 | 指標 | 値 | メモ |
 |---|---|---|
 | LINE への応答時間（本番） | 中央値 1.18 秒 | 上限 2 秒（最大 1.34 秒） |
-| CPU 時間（本番） | 中央値 37ms | 待ち時間は含まない |
-| wasm サイズ（gzip 後） | 2,037 KiB | 無料プランの上限 3MB |
+| CPU 時間（本番） | 中央値 37ms | 待ち時間は含まない。Go でビルドしていたときの値 |
+| wasm サイズ（gzip 後） | 652 KiB | TinyGo でビルド。無料プランの上限 3MB |
 | 国データ / 国旗 | 196 / 196 | Wikidata（CC0）/ Flagpedia（パブリックドメイン） |
 
-数値は 2026-10-25 時点の計測です。
+数値は 2026-10-25 時点の計測です。CPU 時間（本番）は TinyGo のビルドをデプロイしたあとの計測で更新します。
 
 ## 全体の構成：メッセージが返信になるまで
 
@@ -41,14 +41,14 @@ LINE アプリから届いたメッセージは、LINE Platform から Webhook �
 
 ![Wikidata から国データ、Flagpedia から国旗画像をツールで取得し、Go のコードと画像としてリポジトリに置く。npm run build で wasm を作り、wrangler deploy で Cloudflare Workers に載せる。PR では GitHub Actions がテストとサイズを確認する。](architecture/build-and-deploy.svg)
 
-国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。デプロイは手元から `wrangler deploy` で行います（CI は PR での確認だけ）。
+国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います（CI は PR での確認だけ）。
 
 | 生成物 | 作り方 |
 |---|---|
 | `internal/country/data/countries.json` | `go run ./tools/gencountries`（Wikidata の SPARQL と `tools/gencountries/overrides.json`） |
 | `internal/country/countries_gen.go` | `go generate ./internal/country`（countries.json から生成） |
 | `public/flags/*.png`、`internal/country/flagsizes_gen.go` | `go run ./tools/fetchflags`（Flagpedia から取得し、寸法を書き出す） |
-| `build/app.wasm`、`build/worker.mjs` | `npm run build` |
+| `build/app.wasm`、`build/worker.mjs`、`build/wasm_exec.js` | `npm run build`（TinyGo） |
 
 ## 設定
 
@@ -69,6 +69,6 @@ LINE チャネルの「セキュリティ設定」の IP アドレス制限は�
 | 項目 | 状況 |
 |---|---|
 | CPU 時間 | 本番の中央値 37ms。無料プランの目安 10ms は超えているが、打ち切りは出ていない。立ち上がり直後のリクエストが重い（最大約 300ms） |
-| TinyGo | wasm を小さくでき、立ち上がり直後の重さに効く見込み。事前確認はこれから |
+| TinyGo | 採用済み。本番の CPU 時間はデプロイ後に更新 |
 | JSON 生成の軽量化 | 返信処理の約 65% が JSON の生成。温まった状態の処理が数 ms 減る見込み |
 | 開発用ツールの脆弱性 | `npm audit` が wrangler の依存（undici）で 3 件。bot 本体には含まれない |
