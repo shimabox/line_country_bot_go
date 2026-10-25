@@ -82,6 +82,7 @@ secret は `npx wrangler secret put` で登録し、ファイルには書きま�
 ```sh
 npm ci                           # wrangler を入れる
 bash scripts/install-tinygo.sh   # TinyGo と wasm-opt を .tools/ に入れる
+gofmt -l $(git ls-files '*.go')  # 整形の確認（git 管理下の .go だけが対象で .tools/ は含まない。CI と同じ）
 go test -race ./...              # ホストでテスト
 tinygo test ./internal/...       # TinyGo でホストのテスト（.tools/tinygo/bin と .tools/binaryen/bin を PATH に入れて実行）
 npm run build                    # TinyGo で build/app.wasm、build/worker.mjs、build/wasm_exec.js を作る
