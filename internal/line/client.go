@@ -3,11 +3,11 @@ package line
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -76,9 +76,32 @@ func NewClient(baseURL, accessToken string, doer Doer) *Client {
 	}
 }
 
-type replyRequest struct {
-	ReplyToken string    `json:"replyToken"`
-	Messages   []Message `json:"messages"`
+// Initial capacities of the request body buffers. A reply body is a few
+// hundred bytes to about 1KB (a quiz with four choices), so it is usually
+// written without growing the buffer.
+const (
+	replyBodySize   = 2048
+	loadingBodySize = 64
+)
+
+// appendReplyBody appends the reply API request body,
+// {"replyToken":...,"messages":[...]}.
+func appendReplyBody(dst []byte, replyToken string, messages []Message) []byte {
+	dst = append(dst, `{"replyToken":`...)
+	dst = appendJSONString(dst, replyToken)
+	dst = append(dst, `,"messages":`...)
+	dst = appendArray(dst, messages, appendMessage)
+	return append(dst, '}')
+}
+
+// appendLoadingBody appends the loading animation API request body,
+// {"chatId":...,"loadingSeconds":N}.
+func appendLoadingBody(dst []byte, chatID string, seconds int) []byte {
+	dst = append(dst, `{"chatId":`...)
+	dst = appendJSONString(dst, chatID)
+	dst = append(dst, `,"loadingSeconds":`...)
+	dst = strconv.AppendInt(dst, int64(seconds), 10)
+	return append(dst, '}')
 }
 
 // Reply sends between one and five messages using a reply token.
@@ -94,12 +117,7 @@ func (c *Client) Reply(ctx context.Context, replyToken string, messages []Messag
 		return fmt.Errorf("line: %d messages exceed the limit of %d", len(messages), MaxReplyMessages)
 	}
 
-	return c.post(ctx, apiReply, replyPath, replyRequest{ReplyToken: replyToken, Messages: messages})
-}
-
-type loadingRequest struct {
-	ChatID         string `json:"chatId"`
-	LoadingSeconds int    `json:"loadingSeconds"`
+	return c.post(ctx, apiReply, replyPath, appendReplyBody(make([]byte, 0, replyBodySize), replyToken, messages))
 }
 
 // ShowLoading shows the loading animation in a one-on-one chat for the given
@@ -114,15 +132,11 @@ func (c *Client) ShowLoading(ctx context.Context, chatID string, seconds int) er
 	case seconds < MinLoadingSeconds || seconds > MaxLoadingSeconds || seconds%5 != 0:
 		return fmt.Errorf("line: loading seconds %d is not a multiple of 5 between %d and %d", seconds, MinLoadingSeconds, MaxLoadingSeconds)
 	}
-	return c.post(ctx, apiLoading, loadingPath, loadingRequest{ChatID: chatID, LoadingSeconds: seconds})
+	return c.post(ctx, apiLoading, loadingPath, appendLoadingBody(make([]byte, 0, loadingBodySize), chatID, seconds))
 }
 
-// post sends payload as JSON to path. api names the API in errors.
-func (c *Client) post(ctx context.Context, api, path string, payload any) error {
-	body, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("line: encode %s request: %w", api, err)
-	}
+// post sends the JSON body to path. api names the API in errors.
+func (c *Client) post(ctx context.Context, api, path string, body []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+path, bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("line: build %s request: %w", api, err)
