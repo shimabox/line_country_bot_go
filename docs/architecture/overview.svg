@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="960" height="440" role="img" aria-label="LINEアプリからのメッセージはLINE PlatformからWebhookでCloudflare Workersに届き、Workersがリクエストごとに起動するGoのプログラムが、ローディング表示と返信をLINE Messaging APIに送る。国旗画像はWorkersの静的ファイルからLINEアプリが直接取得する。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
+<title>LINEアプリからのメッセージはLINE PlatformからWebhookでCloudflare Workersに届き、Workersがリクエストごとに起動するGoのプログラムが、ローディング表示と返信をLINE Messaging APIに送る。国旗画像はWorkersの静的ファイルからLINEアプリが直接取得する。</title>
+<rect width="960" height="440" fill="#ffffff"/>
+
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1b2420"/></marker>
+            <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f7a5f"/></marker>
+          </defs>
+
+          
+          <rect x="20" y="180" width="130" height="70" rx="10" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+          <text x="85" y="210" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2420">LINEアプリ</text>
+          <text x="85" y="230" text-anchor="middle" font-size="11" fill="#1b2420" opacity=".7">利用者のスマホ</text>
+
+          
+          <rect x="220" y="90" width="190" height="290" rx="10" fill="none" stroke="#1b2420" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="315" y="114" text-anchor="middle" font-size="13" font-weight="700" fill="#1b2420">LINE Platform</text>
+          <rect x="240" y="135" width="150" height="60" rx="8" fill="none" stroke="#1b2420"/>
+          <text x="315" y="160" text-anchor="middle" font-size="12" fill="#1b2420">Webhook 送信</text>
+          <text x="315" y="178" text-anchor="middle" font-size="11" fill="#1b2420" opacity=".7">2秒以内の応答が必要</text>
+          <rect x="240" y="270" width="150" height="80" rx="8" fill="none" stroke="#1b2420"/>
+          <text x="315" y="294" text-anchor="middle" font-size="12" fill="#1b2420">Messaging API</text>
+          <text x="315" y="313" text-anchor="middle" font-size="11" font-family="Menlo, Consolas, monospace" fill="#1b2420" opacity=".8">loading/start</text>
+          <text x="315" y="330" text-anchor="middle" font-size="11" font-family="Menlo, Consolas, monospace" fill="#1b2420" opacity=".8">message/reply</text>
+
+          
+          <rect x="480" y="20" width="460" height="400" rx="12" fill="#dff0e9" stroke="#0f7a5f" stroke-width="1.5"/>
+          <text x="500" y="44" font-size="13" font-weight="700" fill="#0f7a5f">Cloudflare Workers（line-country-bot-go）</text>
+
+          <rect x="500" y="60" width="200" height="56" rx="8" fill="#ffffff" stroke="#1b2420"/>
+          <text x="600" y="83" text-anchor="middle" font-size="12" fill="#1b2420">Static Assets</text>
+          <text x="600" y="101" text-anchor="middle" font-size="11" font-family="Menlo, Consolas, monospace" fill="#1b2420" opacity=".8">/flags/*.png（196枚）</text>
+
+          <rect x="720" y="60" width="200" height="56" rx="8" fill="#ffffff" stroke="#1b2420"/>
+          <text x="820" y="83" text-anchor="middle" font-size="12" fill="#1b2420">設定</text>
+          <text x="820" y="101" text-anchor="middle" font-size="11" fill="#1b2420" opacity=".8">シークレット 2つ・変数</text>
+
+          <rect x="500" y="140" width="420" height="44" rx="8" fill="#ffffff" stroke="#1b2420"/>
+          <text x="710" y="160" text-anchor="middle" font-size="12" fill="#1b2420">worker.mjs（JS の入口）</text>
+          <text x="710" y="176" text-anchor="middle" font-size="11" fill="#1b2420" opacity=".7">リクエストごとに Go の wasm を新しく起動</text>
+
+          <rect x="500" y="200" width="420" height="200" rx="8" fill="#ffffff" stroke="#1b2420"/>
+          <text x="516" y="222" font-size="12" font-weight="700" fill="#1b2420">Go（app.wasm）</text>
+          
+          <g font-size="11" fill="#1b2420" text-anchor="middle">
+            <rect x="516" y="236" width="88" height="50" rx="6" fill="none" stroke="#1b2420"/>
+            <text x="560" y="257">署名を検証</text><text x="560" y="274" opacity=".7">x-line-signature</text>
+            <rect x="618" y="236" width="88" height="50" rx="6" fill="none" stroke="#1b2420"/>
+            <text x="662" y="257">返答を決める</text><text x="662" y="274" opacity=".7">bot / country</text>
+            <rect x="720" y="236" width="88" height="50" rx="6" fill="none" stroke="#0f7a5f" stroke-width="1.5"/>
+            <text x="764" y="257">「…」を出す</text><text x="764" y="274" opacity=".7">1対1のみ</text>
+            <rect x="822" y="236" width="84" height="50" rx="6" fill="none" stroke="#0f7a5f" stroke-width="1.5"/>
+            <text x="864" y="257">1秒待って</text><text x="864" y="274" opacity=".7">返信</text>
+          </g>
+          <line x1="604" y1="261" x2="616" y2="261" stroke="#1b2420" marker-end="url(#ar)"/>
+          <line x1="706" y1="261" x2="718" y2="261" stroke="#1b2420" marker-end="url(#ar)"/>
+          <line x1="808" y1="261" x2="820" y2="261" stroke="#1b2420" marker-end="url(#ar)"/>
+          <text x="516" y="318" font-size="11" fill="#1b2420" opacity=".75">国データ 196件と国旗の寸法は Go のコードとして同梱（起動時の読み込みなし）</text>
+          <text x="516" y="338" font-size="11" fill="#1b2420" opacity=".75">ログは種類・国コード・ステータスだけ（利用者 ID や発言は出さない）</text>
+          <text x="516" y="358" font-size="11" fill="#1b2420" opacity=".75">全イベントを処理してから 200 を返す</text>
+
+          
+          <path d="M150,200 L238,170" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="150" y="146" font-size="11" fill="#1b2420">メッセージ・</text>
+          <text x="150" y="160" font-size="11" fill="#1b2420">選択肢を押す</text>
+
+          <path d="M390,160 L498,160" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="445" y="138" text-anchor="middle" font-size="11" font-family="Menlo, Consolas, monospace" fill="#1b2420">POST</text>
+          <text x="445" y="152" text-anchor="middle" font-size="11" font-family="Menlo, Consolas, monospace" fill="#1b2420">/webhook</text>
+
+          <path d="M500,184 L448,184 L448,300 L392,300" fill="none" stroke="#0f7a5f" stroke-width="1.5" marker-end="url(#ara)"/>
+          <text x="458" y="245" font-size="11" fill="#0f7a5f" transform="rotate(90 458 245)" text-anchor="middle">「…」表示 → 返信</text>
+
+          <path d="M240,320 L152,236" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="140" y="290" font-size="11" fill="#1b2420" text-anchor="end">「…」と</text>
+          <text x="140" y="304" font-size="11" fill="#1b2420" text-anchor="end">返信が届く</text>
+
+          <path d="M60,180 L60,40 L498,40 L498,70 L500,70" fill="none" stroke="#1b2420" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+          <text x="240" y="33" font-size="11" fill="#1b2420">国旗画像を直接取得（返信の thumbnailImageUrl）</text>
+
+          <path d="M820,116 L820,138" fill="none" stroke="#1b2420" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+        </svg>

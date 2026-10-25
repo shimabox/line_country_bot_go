@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-label="cmd/worker が internal/app を起動し、app が line で署名検証と送信を、bot で返答の組み立てを行う。bot は country の国データと line のメッセージ型を使う。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
+<title>cmd/worker が internal/app を起動し、app が line で署名検証と送信を、bot で返答の組み立てを行う。bot は country の国データと line のメッセージ型を使う。</title>
+<rect width="960" height="300" fill="#ffffff"/>
+
+          <defs>
+            <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1b2420"/></marker>
+          </defs>
+          <g fill="#1b2420">
+            <rect x="370" y="16" width="220" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+            <text x="480" y="39" text-anchor="middle" font-size="13" font-weight="700" font-family="Menlo, Consolas, monospace">cmd/worker</text>
+            <text x="480" y="58" text-anchor="middle" font-size="11" opacity=".75">Workers との接続（環境変数・fetch）</text>
+
+            <rect x="370" y="112" width="220" height="56" rx="8" fill="#dff0e9" stroke="#0f7a5f" stroke-width="1.5"/>
+            <text x="480" y="135" text-anchor="middle" font-size="13" font-weight="700" font-family="Menlo, Consolas, monospace">internal/app</text>
+            <text x="480" y="154" text-anchor="middle" font-size="11" opacity=".75">HTTP の受け口・設定・待機・ログ</text>
+
+            <rect x="130" y="212" width="250" height="70" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+            <text x="255" y="235" text-anchor="middle" font-size="13" font-weight="700" font-family="Menlo, Consolas, monospace">internal/bot</text>
+            <text x="255" y="254" text-anchor="middle" font-size="11" opacity=".75">入力の判定と返答の組み立て</text>
+            <text x="255" y="270" text-anchor="middle" font-size="11" opacity=".75">国名・クイズ・回答・自己紹介</text>
+
+            <rect x="580" y="212" width="250" height="70" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+            <text x="705" y="235" text-anchor="middle" font-size="13" font-weight="700" font-family="Menlo, Consolas, monospace">internal/line</text>
+            <text x="705" y="254" text-anchor="middle" font-size="11" opacity=".75">署名検証・Webhook 解析・メッセージ型</text>
+            <text x="705" y="270" text-anchor="middle" font-size="11" opacity=".75">返信とローディング表示の API</text>
+
+            <rect x="20" y="112" width="250" height="70" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+            <text x="145" y="135" text-anchor="middle" font-size="13" font-weight="700" font-family="Menlo, Consolas, monospace">internal/country</text>
+            <text x="145" y="154" text-anchor="middle" font-size="11" opacity=".75">国データ（生成済み Go の表）</text>
+            <text x="145" y="170" text-anchor="middle" font-size="11" opacity=".75">名前の検索・国旗の表示方法</text>
+          </g>
+          <line x1="480" y1="72" x2="480" y2="110" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar3)"/>
+          <text x="488" y="95" font-size="11" fill="#1b2420">起動</text>
+          <path d="M440,168 L300,210" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar3)"/>
+          <text x="345" y="184" font-size="11" fill="#1b2420" text-anchor="end">返答を決める</text>
+          <path d="M520,168 L660,210" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar3)"/>
+          <text x="612" y="184" font-size="11" fill="#1b2420">検証・送信</text>
+          <path d="M200,212 L170,184" fill="none" stroke="#1b2420" stroke-width="1.5" marker-end="url(#ar3)"/>
+          <text x="96" y="204" font-size="11" fill="#1b2420">国を引く</text>
+          <path d="M380,250 L578,250" fill="none" stroke="#1b2420" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ar3)"/>
+          <text x="479" y="243" font-size="11" fill="#1b2420" text-anchor="middle">メッセージ型を使う</text>
+          <path d="M440,72 L270,128" fill="none" stroke="#1b2420" stroke-dasharray="4 3" marker-end="url(#ar3)"/>
+          <text x="300" y="90" font-size="11" fill="#1b2420">国データを渡す</text>
+        </svg>
