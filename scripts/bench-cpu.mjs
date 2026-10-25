@@ -9,6 +9,11 @@
 //   handle  binding.handleRequest until its Response is read
 //   total   start + handle of the same run
 //
+// and the largest wasm linear memory (memory.buffer.byteLength after handle,
+// over all runs) as mem, in MiB. The memory grows in steps and never shrinks,
+// so mem is an upper bound of what the request used. It does not include the
+// JS heap.
+//
 // The module is compiled once, as the Workers runtime does. The scenarios take
 // turns; the first 2 runs of each warm up the JIT and are left out of the
 // median. Node's numbers are smaller
@@ -17,10 +22,14 @@
 //
 // Usage:
 //   npm run build
-//   node scripts/bench-cpu.mjs <path/to/app.wasm> [runs, default 12] [--verbose] [--wasm-exec <path>]
+//   node scripts/bench-cpu.mjs <path/to/app.wasm> [runs, default 12] [--verbose] [--wasm-exec <path>] [--events N]
 //   npm run bench:cpu -- build/app.wasm
 //
 // --verbose also prints every sample (start/handle) to stderr.
+//
+// --events N (default 1) puts N copies of the message event, each with its own
+// reply token, in one webhook request for the 日本 and クイズ scenarios, to see
+// how CPU time and memory grow with the number of events. GET / is unchanged.
 //
 // The wasm needs the wasm_exec.js of the toolchain that built it: a TinyGo
 // build (npm run build) needs TinyGo's, a Go build (npm run build:go) needs
@@ -43,9 +52,10 @@ import { runInNewContext } from "node:vm";
 
 const warmup = 2;
 
-const usage = "usage: node scripts/bench-cpu.mjs <path/to/app.wasm> [runs] [--verbose] [--wasm-exec <path>]";
+const usage = "usage: node scripts/bench-cpu.mjs <path/to/app.wasm> [runs] [--verbose] [--wasm-exec <path>] [--events N]";
 let verbose = false;
 let wasmExecArg;
+let eventsArg = "1";
 const positional = [];
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
@@ -59,9 +69,22 @@ for (let i = 2; i < process.argv.length; i++) {
     }
   } else if (a.startsWith("--wasm-exec=")) {
     wasmExecArg = a.slice("--wasm-exec=".length);
+  } else if (a === "--events") {
+    eventsArg = process.argv[++i];
+    if (!eventsArg) {
+      console.error(usage);
+      process.exit(2);
+    }
+  } else if (a.startsWith("--events=")) {
+    eventsArg = a.slice("--events=".length);
   } else {
     positional.push(a);
   }
+}
+const events = Number(eventsArg);
+if (!Number.isInteger(events) || events < 1) {
+  console.error("--events must be a positive integer");
+  process.exit(2);
 }
 const [wasmPath, runsArg] = positional;
 if (!wasmPath) {
@@ -143,21 +166,21 @@ const env = {
 };
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 
+// The first event is the same as with --events 1; the others only differ in
+// the reply token.
 function webhookRequest(text) {
   const body = JSON.stringify({
     destination: "U00000000000000000000000000000000",
-    events: [
-      {
-        type: "message",
-        mode: "active",
-        timestamp: Date.now(),
-        source: { type: "user", userId: "U00000000000000000000000000000000" },
-        webhookEventId: "01BENCH00000000000000000000",
-        deliveryContext: { isRedelivery: false },
-        replyToken: "bench-reply-token",
-        message: { id: "1", type: "text", text },
-      },
-    ],
+    events: Array.from({ length: events }, (_, k) => ({
+      type: "message",
+      mode: "active",
+      timestamp: Date.now(),
+      source: { type: "user", userId: "U00000000000000000000000000000000" },
+      webhookEventId: "01BENCH00000000000000000000",
+      deliveryContext: { isRedelivery: false },
+      replyToken: k === 0 ? "bench-reply-token" : `bench-reply-token-${k}`,
+      message: { id: "1", type: "text", text },
+    })),
   });
   const signature = createHmac("sha256", secret).update(body).digest("base64");
   return () =>
@@ -200,10 +223,12 @@ async function runOnce(scenario) {
   const res = await binding.handleRequest(req);
   await res.arrayBuffer();
   const handle = cpuMs(t1);
+  // TinyGo exports the linear memory as "memory", Go as "mem".
+  const mem = (instance.exports.memory ?? instance.exports.mem).buffer.byteLength;
   if (res.status !== scenario.status) {
     throw new Error(`${scenario.name}: status ${res.status}, want ${scenario.status}`);
   }
-  return { start, handle };
+  return { start, handle, mem };
 }
 
 function median(xs) {
@@ -240,6 +265,7 @@ const results = scenarios.map((scenario, j) => {
     start: median(kept.map((s) => s.start)),
     handle: median(kept.map((s) => s.handle)),
     total: median(kept.map((s) => s.start + s.handle)),
+    mem: Math.max(...samples[j].map((s) => s.mem)) / (1024 * 1024),
   };
 });
 
@@ -248,7 +274,8 @@ const fmt = (v) => v.toFixed(2);
 out(`wasm: ${wasmPath}`);
 out(`wasm_exec.js: ${wasmExecPath}`);
 out(`runs: ${runs} (median of the last ${runs - warmup}), CPU ms (user+system)`);
-out("scenario\tstart\thandle\ttotal");
-for (const r of results) out(`${r.scenario}\t${fmt(r.start)}\t${fmt(r.handle)}\t${fmt(r.total)}`);
-out(JSON.stringify({ wasm: wasmPath, wasmExec: wasmExecPath, runs, results }));
+out(`events per webhook: ${events}, mem: largest wasm memory in MiB`);
+out("scenario\tstart\thandle\ttotal\tmem");
+for (const r of results) out(`${r.scenario}\t${fmt(r.start)}\t${fmt(r.handle)}\t${fmt(r.total)}\t${fmt(r.mem)}`);
+out(JSON.stringify({ wasm: wasmPath, wasmExec: wasmExecPath, runs, events, results }));
 process.exit(0);
