@@ -6,6 +6,9 @@
 # Dependencies
 /node_modules/
 
+# TinyGo and Binaryen unpacked by scripts/install-tinygo.sh
+/.tools/
+
 # Local secrets for wrangler dev
 .dev.vars
 .dev.vars.*

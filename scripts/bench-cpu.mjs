@@ -17,10 +17,17 @@
 //
 // Usage:
 //   npm run build
-//   node scripts/bench-cpu.mjs <path/to/app.wasm> [runs, default 12] [--verbose]
+//   node scripts/bench-cpu.mjs <path/to/app.wasm> [runs, default 12] [--verbose] [--wasm-exec <path>]
 //   npm run bench:cpu -- build/app.wasm
 //
 // --verbose also prints every sample (start/handle) to stderr.
+//
+// The wasm needs the wasm_exec.js of the toolchain that built it: a TinyGo
+// build (npm run build) needs TinyGo's, a Go build (npm run build:go) needs
+// Go's, and a mismatch fails on the wasm imports. --wasm-exec selects it;
+// without it, build/wasm_exec.js is used, then $(go env GOROOT)/lib/wasm/
+// wasm_exec.js. To compare with another build, keep that build's app.wasm and
+// wasm_exec.js together outside the repository and pass both.
 //
 // Reply API calls go to a local mock server. Only dummy credentials are used.
 
@@ -36,11 +43,29 @@ import { runInNewContext } from "node:vm";
 
 const warmup = 2;
 
-const args = process.argv.slice(2);
-const verbose = args.includes("--verbose");
-const [wasmPath, runsArg] = args.filter((a) => a !== "--verbose");
+const usage = "usage: node scripts/bench-cpu.mjs <path/to/app.wasm> [runs] [--verbose] [--wasm-exec <path>]";
+let verbose = false;
+let wasmExecArg;
+const positional = [];
+for (let i = 2; i < process.argv.length; i++) {
+  const a = process.argv[i];
+  if (a === "--verbose") {
+    verbose = true;
+  } else if (a === "--wasm-exec") {
+    wasmExecArg = process.argv[++i];
+    if (!wasmExecArg) {
+      console.error(usage);
+      process.exit(2);
+    }
+  } else if (a.startsWith("--wasm-exec=")) {
+    wasmExecArg = a.slice("--wasm-exec=".length);
+  } else {
+    positional.push(a);
+  }
+}
+const [wasmPath, runsArg] = positional;
 if (!wasmPath) {
-  console.error("usage: node scripts/bench-cpu.mjs <path/to/app.wasm> [runs] [--verbose]");
+  console.error(usage);
   process.exit(2);
 }
 const runs = Number(runsArg ?? 12);
@@ -49,11 +74,19 @@ if (!Number.isInteger(runs) || runs <= warmup) {
   process.exit(2);
 }
 
-// wasm_exec.js: the one workers-assets-gen writes to build/, or the one that
-// ships with the Go toolchain.
+// wasm_exec.js: the one given with --wasm-exec, the one workers-assets-gen
+// writes to build/, or the one that ships with the Go toolchain.
 function findWasmExec() {
   const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
   const candidates = [join(repoRoot, "build", "wasm_exec.js")];
+  if (wasmExecArg) {
+    // Never fall back to another toolchain's wasm_exec.js when one is given.
+    if (!existsSync(resolve(wasmExecArg))) {
+      console.error(`--wasm-exec: ${wasmExecArg} not found`);
+      process.exit(2);
+    }
+    candidates.unshift(resolve(wasmExecArg));
+  }
   try {
     const goroot = execFileSync("go", ["env", "GOROOT"], { encoding: "utf8" }).trim();
     if (goroot) candidates.push(join(goroot, "lib", "wasm", "wasm_exec.js"));
@@ -69,7 +102,8 @@ function findWasmExec() {
   }
   return found;
 }
-createRequire(import.meta.url)(findWasmExec());
+const wasmExecPath = findWasmExec();
+createRequire(import.meta.url)(wasmExecPath);
 
 // Same helper build/worker.mjs defines for the workers-go JS shim.
 globalThis.tryCatch = (fn) => {
@@ -212,8 +246,9 @@ const results = scenarios.map((scenario, j) => {
 const out = (s) => process.stdout.write(s + "\n");
 const fmt = (v) => v.toFixed(2);
 out(`wasm: ${wasmPath}`);
+out(`wasm_exec.js: ${wasmExecPath}`);
 out(`runs: ${runs} (median of the last ${runs - warmup}), CPU ms (user+system)`);
 out("scenario\tstart\thandle\ttotal");
 for (const r of results) out(`${r.scenario}\t${fmt(r.start)}\t${fmt(r.handle)}\t${fmt(r.total)}`);
-out(JSON.stringify({ wasm: wasmPath, runs, results }));
+out(JSON.stringify({ wasm: wasmPath, wasmExec: wasmExecPath, runs, results }));
 process.exit(0);

@@ -39,6 +39,7 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 
 - Go 1.27.3（`go.mod` の `go` ディレクティブ。手元の Go が古くても `GOTOOLCHAIN=auto` で自動的に取得されます）
 - Node.js と npm（wrangler を devDependencies として入れます）
+- TinyGo 0.43.0 と Binaryen（wasm-opt）version_133（wasm のビルドに使います。下の `scripts/install-tinygo.sh` で入れます）
 - Cloudflare アカウント（Workers 無料プラン）
 - LINE 公式アカウントと Messaging API チャネル
   1. LINE 公式アカウントを作成する
@@ -46,6 +47,14 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
   3. LINE Developers コンソールでチャネルシークレットを確認し、チャネルアクセストークン（長期）を発行する
 
   以前あった「Developer Trial」プランは現存しないため、通常の LINE 公式アカウントから始めます。
+
+TinyGo と wasm-opt は、次のスクリプトで GitHub Releases の公式配布物を取得し、`scripts/toolchain.env` に固定した SHA-256 と照合してから、リポジトリ直下の `.tools/`（git 管理外）に展開します。対応しているのは Linux（x86_64）と macOS（Apple silicon）です。
+
+```sh
+bash scripts/install-tinygo.sh
+```
+
+同じ版が展開済みなら取得しないので、何度実行してもかまいません（CI も同じスクリプトを使います）。hash が一致しなければ展開せずに失敗します。版を上げるときは `scripts/toolchain.env` の版と hash を書き換えます。`npm run build` は `.tools/` のツールを自動で使い、なければ PATH 上の同じ版の `tinygo` と `wasm-opt` を使います。
 
 ## 設定項目
 
@@ -71,15 +80,21 @@ secret は `npx wrangler secret put` で登録し、ファイルには書きま�
 ## ビルドと開発
 
 ```sh
-npm ci                 # wrangler を入れる
-go test -race ./...    # ホストでテスト
-npm run build          # build/app.wasm と build/worker.mjs を作る
-npm run deploy:dry     # wrangler deploy --dry-run --outdir=dist（サイズ確認）
-bash scripts/check-size.sh   # 上と同じ dry-run を行い、gzip が 2.5MiB を超えたら失敗する（CI と同じ）
+npm ci                           # wrangler を入れる
+bash scripts/install-tinygo.sh   # TinyGo と wasm-opt を .tools/ に入れる
+go test -race ./...              # ホストでテスト
+tinygo test ./internal/...       # TinyGo でホストのテスト（.tools/tinygo/bin と .tools/binaryen/bin を PATH に入れて実行）
+npm run build                    # TinyGo で build/app.wasm、build/worker.mjs、build/wasm_exec.js を作る
+npm run build:go                 # 通常の Go でビルドする（比較と退避用）
+npm run deploy:dry               # wrangler deploy --dry-run --outdir=dist（サイズ確認）
+bash scripts/check-size.sh 1024  # 上と同じ dry-run を行い、gzip が 1024 KiB を超えたら失敗する（CI と同じ）
 ```
 
-`npm run build` は workers-go の `workers-assets-gen` で JS の足場を作り、`GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w"` で wasm をビルドします。
-無料プランのスクリプトサイズ上限は圧縮後 3MB です。`deploy:dry` が表示する gzip サイズで確認します（2.5MiB 以下を目安にしています）。
+`npm run build` は `scripts/build.sh` を実行します。workers-go の `workers-assets-gen -mode=tinygo` で JS の足場（TinyGo 用の `wasm_exec.js` を含む）を作り、`tinygo build -target wasm -no-debug ./cmd/worker` で wasm をビルドします。ビルドの前に `tinygo` の版が `scripts/toolchain.env` と一致することと `wasm-opt` があることを確かめ、欠けていれば `scripts/install-tinygo.sh` の実行を促して失敗します。初回のビルドは TinyGo が標準ライブラリをビルドするため約 14 秒かかり、その分 `wrangler deploy`（デプロイ時に `npm run build` を実行する）の所要時間も延びます。2 回目以降はキャッシュが効きます。
+
+`npm run build:go`（`WASM_BUILD=go bash scripts/build.sh`）は、従来どおり `workers-assets-gen -mode=go` と `GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w"` でビルドします。TinyGo のツールは使いません。`WASM_BUILD` は `tinygo`（既定）か `go` で、それ以外はエラーです。`bash scripts/check-toolchain-errors.sh` で、導入スクリプトと `build.sh` の失敗時の振る舞い（hash 不一致、ツールの欠如、不正な `WASM_BUILD`）を確かめられます（TinyGo の配布物を取得するため CI では実行しません）。
+
+無料プランのスクリプトサイズ上限は圧縮後 3MB です。`deploy:dry` が表示する gzip サイズで確認します。TinyGo のビルドは gzip で約 650 KiB、Go のビルドは約 2,000 KiB です。CI は 1024 KiB を上限にして、誤って Go のビルドになったときに失敗させます（`check-size.sh` の引数を省くと上限は 2.5MiB）。
 
 ### ローカル疎通
 
@@ -100,6 +115,7 @@ npm run build
 npm run bench:cpu -- build/app.wasm            # 既定は 12 回
 npm run bench:cpu -- build/app.wasm 60         # 回数を指定する
 npm run bench:cpu -- build/app.wasm --verbose  # 各回の値も標準エラーに出す
+npm run bench:cpu -- /path/to/saved/app.wasm 60 --wasm-exec /path/to/saved/wasm_exec.js  # 退避したビルドを測る
 ```
 
 `scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」の 3 場面について、CPU 時間（user + system）の中央値を表と JSON で出します。
@@ -110,7 +126,7 @@ npm run bench:cpu -- build/app.wasm --verbose  # 各回の値も標準エラー�
 | `handle` | リクエストを渡して応答を読み終えるまで |
 | `total` | 同じ回の `start` と `handle` の合計 |
 
-場面は交互に実行し、各回の前に GC を強制します。各場面の先頭 2 回は JIT の準備として中央値から除きます。返信 API はローカルのモックに送り、認証情報はダミーです。Node.js の値は本番（workerd）より小さく出るため、絶対値ではなく、同じマシンで 2 つのビルドを比べる用途に使います。比べるときは、比較元の `build/app.wasm` をリポジトリの外へ退避しておき、2 つのビルドを交互に数回ずつ計測して中央値を比べます。短い計測では JIT の最適化の進み具合で `handle` が偏ることがあるため、`handle` の比較には回数を増やした計測（60 回など）を使います。CI では実行しません。
+場面は交互に実行し、各回の前に GC を強制します。各場面の先頭 2 回は JIT の準備として中央値から除きます。返信 API はローカルのモックに送り、認証情報はダミーです。Node.js の値は本番（workerd）より小さく出るため、絶対値ではなく、同じマシンで 2 つのビルドを比べる用途に使います。wasm は、ビルドしたツールチェーンの `wasm_exec.js` と組にしないと動きません（TinyGo のビルドには TinyGo 用、Go のビルドには Go 用が要り、取り違えるとインポートの不一致で失敗します）。`--wasm-exec` を省くと `build/wasm_exec.js`、次に Go の `$(go env GOROOT)/lib/wasm/wasm_exec.js` を使います。比べるときは、比較したいビルド（例: `npm run build:go` の結果）の `build/app.wasm` と `build/wasm_exec.js` を一緒にリポジトリの外へ退避し、`--wasm-exec` で対応する `wasm_exec.js` を指定して、2 つのビルドを交互に数回ずつ計測して中央値を比べます。短い計測では JIT の最適化の進み具合で `handle` が偏ることがあるため、`handle` の比較には回数を増やした計測（60 回など）を使います。CI では実行しません。
 
 ## デプロイ
 
@@ -121,6 +137,8 @@ npx wrangler secret put CHANNEL_ACCESS_TOKEN
 # 必要なら wrangler.jsonc の vars（PUBLIC_BASE_URL や PROFILE_*）を編集
 npx wrangler deploy
 ```
+
+`wrangler deploy` は `wrangler.jsonc` の `build.command`（`npm run build`）で手元の TinyGo のビルドを作ってから載せるため、先に `bash scripts/install-tinygo.sh` を実行しておきます。TinyGo のビルドで問題が出たときは、`WASM_BUILD=go npx wrangler deploy` で通常の Go のビルドをデプロイすれば従来の状態に戻せます（wrangler が環境変数を `npm run build` に引き継ぎ、`scripts/build.sh` が Go のビルドを選びます）。
 
 デプロイ後、LINE 側を設定します。
 
@@ -184,7 +202,7 @@ Wikidata の更新で首都が複数になったり、表示名が長くなっ�
 
 ## 制限事項と設計上の決まり
 
-- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（「CPU 時間の計測」）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
+- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、wasm を小さくして読み込みと初期化を軽くできる TinyGo でビルドし、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。TinyGo は reflect や標準ライブラリの対応範囲が通常の Go と異なるため、依存や `encoding/json` の使い方を変えたら `tinygo test ./internal/...`（CI でも実行）で挙動を確かめます。TinyGo はパニック時に goroutine のスタックトレースを出さず、`-no-debug` でビルドしているため位置情報も少なく、本番のパニックは原因を追いにくくなります。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（「CPU 時間の計測」）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
 - **返信は reply token だけを使う**: push API は実装しません。返信は課金対象のメッセージ数に数えられないため、無料のメッセージ数を消費しません。これは設計上の不変条件で、push 系の送信を追加しない前提です。
 - **返信は同期送信**: Webhook の処理中に返信 API を呼び、結果をログに残してから 200 を返します。返信 API が失敗しても（使用済みの reply token など）200 を返し、LINE からの再送を起こしません。
 - **1 回の返信は最大 5 件**: クライアントが 6 件以上を拒否します。bot の返信は最大 4 件です。
