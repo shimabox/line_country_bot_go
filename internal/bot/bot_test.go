@@ -145,8 +145,18 @@ func wantImageSize(c *country.Country) string {
 	return "contain"
 }
 
+// wantBackground is the imageBackgroundColor expected for a country's flag:
+// its corner colour when it fills the frame, otherwise white.
+func wantBackground(c *country.Country) string {
+	if c.FlagFitsFrame() {
+		return c.FlagCornerColor()
+	}
+	return "#FFFFFF"
+}
+
 func TestQuiz(t *testing.T) {
 	imageSizes := map[string]bool{}
+	backgrounds := map[string]bool{}
 	for seed := uint64(0); seed < 30; seed++ {
 		b := newTestBot(t, seed)
 		for _, in := range []string{"クイズ", "quiz", "QUIZ"} {
@@ -158,8 +168,8 @@ func TestQuiz(t *testing.T) {
 			if tm.AltText != "この国はどこでしょうか？" || bt.Title != "クイズです" || bt.Text != "この国はどこでしょうか？" {
 				t.Errorf("texts = %q %q %q", tm.AltText, bt.Title, bt.Text)
 			}
-			if bt.ImageAspectRatio != "rectangle" || bt.ImageBackgroundColor != "#FFFFFF" {
-				t.Errorf("image options = %q %q", bt.ImageAspectRatio, bt.ImageBackgroundColor)
+			if bt.ImageAspectRatio != "rectangle" {
+				t.Errorf("imageAspectRatio = %q", bt.ImageAspectRatio)
 			}
 			if len(bt.Actions) != 4 {
 				t.Fatalf("%d actions", len(bt.Actions))
@@ -221,11 +231,22 @@ func TestQuiz(t *testing.T) {
 			if want := wantImageSize(c); bt.ImageSize != want {
 				t.Errorf("%s: imageSize = %q, want %q", c.Code, bt.ImageSize, want)
 			}
+			if want := wantBackground(c); bt.ImageBackgroundColor != want {
+				t.Errorf("%s: imageBackgroundColor = %q, want %q", c.Code, bt.ImageBackgroundColor, want)
+			}
 			imageSizes[bt.ImageSize] = true
+			if bt.ImageSize == "cover" {
+				backgrounds[bt.ImageBackgroundColor] = true
+			}
 		}
 	}
 	if !imageSizes["cover"] || !imageSizes["contain"] {
 		t.Errorf("quizzes used only imageSize %v", imageSizes)
+	}
+	// Cover flags use their own corner colour, not only white.
+	delete(backgrounds, "#FFFFFF")
+	if len(backgrounds) == 0 {
+		t.Error("cover quizzes used only a white background")
 	}
 }
 
@@ -279,32 +300,40 @@ func TestCountryHit(t *testing.T) {
 
 func TestCountryHitImageSize(t *testing.T) {
 	b := newTestBot(t, 1)
-	for name, want := range map[string]string{
-		"日本":   "cover",   // 3:2
-		"ブラジル": "cover",   // 10:7
-		"ドイツ":  "cover",   // 5:3
-		"イギリス": "contain", // 2:1
-		"スイス":  "contain", // 1:1
-		"ネパール": "contain", // portrait
+	fr := b.countries.Lookup("フランス")
+	for name, want := range map[string]struct{ size, background string }{
+		"日本":   {"cover", "#FFFFFF"},   // 3:2, white field
+		"ブラジル": {"cover", "#009440"},   // 10:7, green field
+		"ドイツ":  {"cover", "#000000"},   // 5:3, black top band
+		"フランス": {"cover", "#671C3D"},   // 3:2, mean of blue and red
+		"イタリア": {"cover", "#675F3F"},   // 3:2, mean of green and red
+		"イギリス": {"contain", "#FFFFFF"}, // 2:1
+		"スイス":  {"contain", "#FFFFFF"}, // 1:1
+		"ネパール": {"contain", "#FFFFFF"}, // portrait
+		"アメリカ": {"contain", "#FFFFFF"}, // 19:10
 	} {
 		got := b.Respond(textEvent(name), opts(Profile{}))
 		if got.Kind != KindCountryHit {
 			t.Fatalf("%s: kind = %s", name, got.Kind)
 		}
 		_, bt := asButtons(t, got.Messages[2])
-		if bt.ImageSize != want {
-			t.Errorf("%s: imageSize = %q, want %q", name, bt.ImageSize, want)
+		if bt.ImageSize != want.size || bt.ImageBackgroundColor != want.background {
+			t.Errorf("%s: imageSize, imageBackgroundColor = %q, %q, want %q, %q",
+				name, bt.ImageSize, bt.ImageBackgroundColor, want.size, want.background)
 		}
 	}
-	// Every country follows FlagFitsFrame, and the frame and the background
-	// for "contain" are always set.
+	if got := fr.FlagCornerColor(); got == "#FFFFFF" || got == "#002654" || got == "#CE1126" {
+		t.Errorf("France corner colour = %q, want the mean of blue and red", got)
+	}
+	// Every country follows FlagFitsFrame: "cover" on its corner colour and
+	// "contain" on white. The frame is always set.
 	for _, c := range b.countries.All() {
 		got := b.Respond(textEvent(c.NameJA), opts(Profile{}))
 		if got.Kind != KindCountryHit || got.Code != c.Code {
 			t.Fatalf("%s: kind = %s code = %s", c.Code, got.Kind, got.Code)
 		}
 		_, bt := asButtons(t, got.Messages[2])
-		if bt.ImageSize != wantImageSize(c) || bt.ImageAspectRatio != "rectangle" || bt.ImageBackgroundColor != "#FFFFFF" {
+		if bt.ImageSize != wantImageSize(c) || bt.ImageAspectRatio != "rectangle" || bt.ImageBackgroundColor != wantBackground(c) {
 			t.Errorf("%s: image options = %q %q %q", c.Code, bt.ImageAspectRatio, bt.ImageSize, bt.ImageBackgroundColor)
 		}
 	}
