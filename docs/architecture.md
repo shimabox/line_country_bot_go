@@ -35,13 +35,30 @@ LINE アプリから届いたメッセージは、LINE Platform から Webhook �
 | `internal/line` | 署名検証、Webhook の解析、メッセージ型、返信とローディング表示の API |
 | `internal/country` | 国データ（生成済みの Go の表）、名前の検索、国旗の表示方法 |
 
-`cmd/worker` 以外は、手元で `go test` できます。外部とのやり取りは「HTTP 送信」と「環境変数の読み取り」の 2 か所に絞り、テストでは差し替えています。
+`cmd/worker` 以外は、手元（ホスト）の `go test ./...` でテストできます。外部とのやり取りは「HTTP 送信」と「環境変数の読み取り」の 2 か所に絞り、テストでは差し替えています。
+
+## リポジトリの構成
+
+パッケージ以外のツールや配信ファイルも含めた、ディレクトリの構成です。
+
+```
+cmd/worker/          Workers のエントリポイント（js/wasm 専用）
+internal/line/       署名検証・Webhook 解析・メッセージ型・返信 API クライアント
+internal/country/    国データ（data/countries.json から生成した Go の表）・検索・URL 生成
+internal/bot/        入力の正規化・トリガー語・絵文字・返信の組み立て
+internal/app/        http.Handler（ルーティング・署名検証・イベント処理）と設定
+tools/gencountries/  Wikidata から countries.json を生成
+tools/gencountrygo/  countries.json を Go のソース（internal/country/countries_gen.go）に変換
+tools/fetchflags/    flagcdn.com から国旗 PNG を取得し、寸法ファイルを生成
+public/flags/        国旗画像（Workers Static Assets で配信）
+scripts/             ローカル疎通と CPU 時間の計測のスクリプト
+```
 
 ## ビルドとデプロイの流れ
 
 ![Wikidata から国データ、Flagpedia から国旗画像をツールで取得し、Go のコードと画像としてリポジトリに置く。npm run build で TinyGo により wasm を作り、wrangler deploy で Cloudflare Workers に載せる。PR では GitHub Actions が go・tinygo-test・build の 3 ジョブ（Go のテスト、TinyGo でのテスト、wasm ビルドとサイズ確認）を並列に実行する。](architecture/build-and-deploy.svg)
 
-国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います。CI は go・tinygo-test・build の 3 ジョブを並列に実行して確認するだけで、デプロイはしません。
+国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います。CI は go・tinygo-test・build の 3 ジョブを並列に実行して確認するだけで、デプロイはしません。各コマンドの意味や失敗時の振る舞いは [development.md](development.md) にあります。
 
 | 生成物 | 作り方 |
 |---|---|
@@ -50,19 +67,19 @@ LINE アプリから届いたメッセージは、LINE Platform から Webhook �
 | `public/flags/*.png`、`internal/country/flagsizes_gen.go` | `go run ./tools/fetchflags`（Flagpedia から取得し、寸法を書き出す） |
 | `build/app.wasm`、`build/worker.mjs`、`build/wasm_exec.js` | `npm run build`（TinyGo） |
 
+国データと国旗の更新の手順と、生成が失敗したときの補正は [data-update.md](data-update.md) にあります。
+
 ## 設定
 
-| 名前 | 種類 | 内容 |
-|---|---|---|
-| `CHANNEL_SECRET` | シークレット | Webhook の署名検証に使う |
-| `CHANNEL_ACCESS_TOKEN` | シークレット | 返信とローディング表示の API に使う（長期トークン） |
-| `WEBHOOK_PATH` | 変数 | 受け口のパス。既定 `/webhook` |
-| `REPLY_DELAY_MS` | 変数（任意） | 返信前の待機。既定 1000、上限 1200、0 で即時 |
-| `PUBLIC_BASE_URL` | 変数（任意） | 国旗画像の URL の基点。未設定ならリクエストのホストから作る |
-| `LINE_API_BASE_URL` | 変数 | 既定 `https://api.line.me`（ローカル確認ではモックに向ける） |
-| `PROFILE_*` | 変数（任意） | 「君の名は / who」で出す自己紹介。空なら無効 |
+設定は、secret の `CHANNEL_SECRET` と `CHANNEL_ACCESS_TOKEN`（必須）と、`wrangler.jsonc` の var（任意）で行い、リクエストごとに読み込みます。項目の一覧と既定値、LINE チャネル側の設定は [configuration.md](configuration.md) にまとめています。
 
-LINE チャネルの「セキュリティ設定」の IP アドレス制限は空にしています。Workers は送信元の IP アドレスが固定されないためです。
+## 制限事項と設計上の決まり
+
+- **CPU 時間**: 無料プランは 1 リクエストあたり CPU 10ms です。Go の wasm はリクエストごとに起動するため、wasm を小さくして読み込みと初期化を軽くできる TinyGo でビルドし、国データは起動時に解析しなくて済む生成済みの Go の表で持っています。TinyGo は reflect や標準ライブラリの対応範囲が通常の Go と異なるため、依存や `encoding/json` の使い方を変えたら `tinygo test ./internal/...`（CI でも実行）で挙動を確かめます。TinyGo はパニック時に goroutine のスタックトレースを出さず、`-no-debug` でビルドしているため位置情報も少なく、本番のパニックは原因を追いにくくなります。`wrangler dev` では CPU 時間を正確に測れないため、ビルド同士の比較は `npm run bench:cpu`（[CPU 時間の計測](development.md#cpu-時間の計測)）で行い、本番の値はデプロイ後に Cloudflare のダッシュボードや `wrangler tail` で確かめてください。
+- **返信は reply token だけを使う**: push API は実装しません。返信は課金対象のメッセージ数に数えられないため、無料のメッセージ数を消費しません。これは設計上の不変条件で、push 系の送信を追加しない前提です。
+- **返信は同期送信**: Webhook の処理中に返信 API を呼び、結果をログに残してから 200 を返します。返信 API が失敗しても（使用済みの reply token など）200 を返し、LINE からの再送を起こしません。
+- **1 回の返信は最大 5 件**: クライアントが 6 件以上を拒否します。bot の返信は最大 4 件です。
+- **状態を持たない**: KV や D1 などのストレージは使いません。クイズの正解は回答ボタンの postback データに入っています。
 
 ## 今後の検討事項
 
