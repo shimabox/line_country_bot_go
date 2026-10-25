@@ -55,12 +55,15 @@ scripts/             ローカル疎通と CPU 時間の計測のスクリプト
 | `CHANNEL_ACCESS_TOKEN` | secret | 必須 | なし | 返信 API に使うチャネルアクセストークン |
 | `WEBHOOK_PATH` | var | 任意 | `/webhook` | Webhook を受けるパス |
 | `PUBLIC_BASE_URL` | var | 任意 | リクエストの `https://{Host}` | 国旗画像の配信元（例: `https://line-country-bot-go.example.workers.dev`） |
-| `LINE_API_BASE_URL` | var | 任意 | `https://api.line.me` | 返信 API の送信先。ローカル疎通でモックに向けるときに使う |
+| `LINE_API_BASE_URL` | var | 任意 | `https://api.line.me` | 返信 API とローディング表示 API の送信先。ローカル疎通でモックに向けるときに使う |
+| `REPLY_DELAY_MS` | var | 任意 | `1000` | 返信の前にローディング表示（入力中の「…」）を出して待つ時間（ミリ秒）。上限 `1200`、`0` で表示も待機もせずすぐ返信する |
 | `PROFILE_IMAGE_URL` | var | 任意 | 空 | 自己紹介の画像。空なら自己紹介は無効 |
 | `PROFILE_TITLE` / `PROFILE_TEXT` | var | 任意 | 空 | 自己紹介のタイトルと本文 |
 | `PROFILE_LINK_TEXT` / `PROFILE_LINK_URL` | var | 任意 | 空 | 自己紹介のボタンのラベルとリンク先 |
 
 自己紹介は `PROFILE_IMAGE_URL` を含む 5 項目がすべて揃ったときだけ有効です。画像だけ設定して他が欠けていると、自己紹介を無効にしてログに警告を出します。
+
+1 対 1 のトークで返答があるときは、ローディング表示 API でトーク画面に入力中の表示を出し、`REPLY_DELAY_MS` だけ待ってから返答をまとめて返信します。返答の内容と通数は変わらず、プッシュ送信は使いません。LINE は Webhook に 2 秒以内に応答しないとタイムアウトとして扱い、待機は Webhook への応答の前に行うため、待機は 1 回の Webhook につき、最初に返信するイベントの前の 1 回だけにし、`REPLY_DELAY_MS` の上限を 1200 にしています。上限を超える値は上限に、整数でない値や負の値は既定値にして、ログに警告を出します。グループトークと複数人トークでは API が使えないため、ローディング表示も待機もせずにすぐ返信します。ローディング表示に失敗したときも、待たずにそのまま返信します。
 
 secret は `npx wrangler secret put` で登録し、ファイルには書きません。var は `wrangler.jsonc` の `vars` で設定します。
 設定はリクエストごとに読み込みます。
@@ -88,7 +91,7 @@ npx wrangler dev --ip 127.0.0.1 --port 8787     # 別のターミナルで
 node scripts/local-smoke.mjs http://127.0.0.1:8787
 ```
 
-`local-smoke.mjs` は返信 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、`/flags/jp.png` の配信を確かめます。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
+`local-smoke.mjs` は返信 API とローディング表示 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、`/flags/jp.png` の配信を確かめます。返信する場面では、モックが「ローディング表示 API → 返信 API」の順に受け取ったことと、Webhook の送信から 200 の受信までが `REPLY_DELAY_MS` 以上かつ 2000ms 未満であることも確かめ、経過時間（`elapsedMs`）を出力します。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
 
 ### CPU 時間の計測
 
@@ -126,7 +129,7 @@ npx wrangler deploy
 3. 「検証」ボタンで成功（200）になることを確かめる
 4. LINE Official Account Manager の応答設定で「応答メッセージ」をオフにする（オンのままだと定型の自動応答が bot の返信と一緒に届きます）
 
-動作は `npx wrangler tail` でログを見ながら確認できます。ログにはイベント種別・返信の種類・国コード・返信 API のステータスだけを出し、発話本文やトークンは出しません。返信に失敗したときは、ステータス（応答がなければ 0）と固定の分類（`reply_api_error`: 返信 API が 2xx 以外を返した、`transport_error`: 送信できなかったか応答がなかった、`request_error`: 送信前に失敗した。アクセストークン未設定など）だけを出し、返信 API の応答ボディやエラーの文字列は出しません。
+動作は `npx wrangler tail` でログを見ながら確認できます。ログにはイベント種別・返信の種類・国コード・ローディング表示の結果・返信 API のステータスだけを出し、発話本文やトークン、利用者 ID は出しません。返信に失敗したときは、ステータス（応答がなければ 0）と固定の分類（`reply_api_error`: 返信 API が 2xx 以外を返した、`transport_error`: 送信できなかったか応答がなかった、`request_error`: 送信前に失敗した。アクセストークン未設定など）だけを出し、返信 API の応答ボディやエラーの文字列は出しません。ローディング表示の結果は `loading=ok`（表示した）、`loading=skipped`（1 対 1 のトークではない）、`loading=off`（`REPLY_DELAY_MS` が 0）、`loading=failed` のいずれかで、失敗したときは `loading_status` と `loading_error`（`loading_api_error`、`transport_error`、`request_error`）だけを出します。トーク画面を開いていない、友だちではない、ブロックされているなどの場合は、API が成功してもローディング表示は出ません。
 
 ## 国データと国旗の更新
 

@@ -3,13 +3,16 @@
 CHANNEL_SECRET=dummy-channel-secret
 CHANNEL_ACCESS_TOKEN=dummy-channel-access-token
 
-# Point the reply API at the mock started by scripts/local-smoke.mjs.
+# Point the reply and loading APIs at the mock started by scripts/local-smoke.mjs.
 # Never use real credentials with the mock.
 LINE_API_BASE_URL=http://127.0.0.1:8788
 PUBLIC_BASE_URL=http://127.0.0.1:8787
 
 # Optional overrides
 # WEBHOOK_PATH=/webhook
+# Wait in milliseconds between the loading animation and the reply (max 1200,
+# 0 replies at once without the animation).
+# REPLY_DELAY_MS=1000
 
 # Self-introduction ("君の名は" / "who"). Leave PROFILE_IMAGE_URL empty to disable.
 # PROFILE_IMAGE_URL=https://example.com/profile.png
