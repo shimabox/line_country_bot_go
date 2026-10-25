@@ -5,7 +5,8 @@
   "description": "LINE bot that answers country names with flags and capitals, running on Cloudflare Workers (Go/WebAssembly).",
   "license": "MIT",
   "scripts": {
-    "build": "go run github.com/syumai/workers-go/cmd/workers-assets-gen -mode=go && GOOS=js GOARCH=wasm go build -trimpath -ldflags=\"-s -w\" -o ./build/app.wasm ./cmd/worker",
+    "build": "bash scripts/build.sh",
+    "build:go": "WASM_BUILD=go bash scripts/build.sh",
     "dev": "wrangler dev",
     "bench:cpu": "node scripts/bench-cpu.mjs",
     "deploy:dry": "wrangler deploy --dry-run --outdir=dist"
