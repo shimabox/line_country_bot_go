@@ -64,7 +64,7 @@ func TestFlagFitsFrame(t *testing.T) {
 			continue
 		}
 		if got := c.FlagFitsFrame(); got != want {
-			t.Errorf("%s: FlagFitsFrame() = %v, want %v (size %+v)", code, got, want, flagSizes[code])
+			t.Errorf("%s: FlagFitsFrame() = %v, want %v (size %+v)", code, got, want, flagInfos[code])
 		}
 	}
 	if (&Country{Code: "XA", NameJA: "未登録"}).FlagFitsFrame() {
@@ -72,22 +72,96 @@ func TestFlagFitsFrame(t *testing.T) {
 	}
 }
 
-// TestFlagSizesMatchData fails when a country has no generated flag size or
-// a size belongs to no country. Run go run ./tools/fetchflags to regenerate.
-func TestFlagSizesMatchData(t *testing.T) {
+// TestFlagInfosMatchData fails when a country has no generated flag info or
+// an entry belongs to no country. Run go run ./tools/fetchflags to regenerate.
+func TestFlagInfosMatchData(t *testing.T) {
 	s := Default()
 	cover := 0
 	for _, c := range s.All() {
-		size, ok := flagSizes[c.Code]
-		if !ok || size.W <= 0 || size.H <= 0 {
-			t.Errorf("%s: flag size = %+v, %v", c.Code, size, ok)
+		info, ok := flagInfos[c.Code]
+		if !ok || info.W <= 0 || info.H <= 0 {
+			t.Errorf("%s: flag info = %+v, %v", c.Code, info, ok)
 		}
 		if c.FlagFitsFrame() {
 			cover++
+			if c.FlagCornerColor() == "" {
+				t.Errorf("%s: cover flag without a corner colour", c.Code)
+			}
 		}
 	}
-	if len(flagSizes) != s.Len() {
-		t.Errorf("%d flag sizes for %d countries", len(flagSizes), s.Len())
+	if len(flagInfos) != s.Len() {
+		t.Errorf("%d flag infos for %d countries", len(flagInfos), s.Len())
 	}
 	t.Logf("cover %d, contain %d", cover, s.Len()-cover)
+}
+
+func TestFlagCornerColor(t *testing.T) {
+	byCode := map[string]*Country{}
+	for _, c := range Default().All() {
+		byCode[c.Code] = c
+	}
+	tests := map[string]string{
+		"JP": "#FFFFFF", // white field
+		"DE": "#000000", // black top band
+		"BR": "#009440", // green field
+		// Left and right differ: the mean of the two.
+		"FR": "#671C3D", // #002654 and #CE1126
+		"IT": "#675F3F", // #009246 and #CE2B37
+	}
+	for code, want := range tests {
+		c := byCode[code]
+		if c == nil {
+			t.Errorf("%s not in the data", code)
+			continue
+		}
+		if got := c.FlagCornerColor(); got != want {
+			t.Errorf("%s: FlagCornerColor() = %q, want %q", code, got, want)
+		}
+	}
+	if got := (&Country{Code: "XA", NameJA: "未登録"}).FlagCornerColor(); got != "" {
+		t.Errorf("code without a flag: FlagCornerColor() = %q, want \"\"", got)
+	}
+}
+
+func TestFrameCrop(t *testing.T) {
+	tests := []struct {
+		name           string
+		w, h           int
+		wantDX, wantDY int
+	}{
+		{"same as frame", 151, 100, 0, 0},
+		{"same as frame x2", 302, 200, 0, 0},
+		{"wider (8:5)", 320, 200, 9, 0},
+		{"slightly narrower", 320, 213, 0, 1},
+		{"narrower", 1359, 1000, 0, 50},
+		{"zero width", 0, 100, 0, 0},
+		{"zero height", 100, 0, 0, 0},
+		{"negative", -300, -200, 0, 0},
+	}
+	for _, tt := range tests {
+		dx, dy := FrameCrop(tt.w, tt.h)
+		if dx != tt.wantDX || dy != tt.wantDY {
+			t.Errorf("%s: FrameCrop(%d, %d) = %d, %d, want %d, %d", tt.name, tt.w, tt.h, dx, dy, tt.wantDX, tt.wantDY)
+		}
+	}
+}
+
+func TestHexColor(t *testing.T) {
+	tests := []struct {
+		rgb  uint32
+		want string
+	}{
+		{0x000000, "#000000"},
+		{0xFFFFFF, "#FFFFFF"},
+		{0x002654, "#002654"},
+		{0x000001, "#000001"},
+		{0x0A0B0C, "#0A0B0C"},
+		{0xABCDEF, "#ABCDEF"},
+		{0x6E3368, "#6E3368"},
+	}
+	for _, tt := range tests {
+		if got := hexColor(tt.rgb); got != tt.want {
+			t.Errorf("hexColor(%#06x) = %q, want %q", tt.rgb, got, tt.want)
+		}
+	}
 }

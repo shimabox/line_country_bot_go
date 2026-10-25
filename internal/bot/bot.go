@@ -31,12 +31,13 @@ const (
 	stickerPackageID = "446"
 	stickerID        = "1999"
 
-	quizChoices    = 4
-	flagBackground = "#FFFFFF"
-	postbackAnswer = "answer"
-	postbackResult = "result"
-	resultCorrect  = "1"
-	resultWrong    = "0"
+	quizChoices = 4
+	// flagBackgroundContain fills the frame around a flag shown whole.
+	flagBackgroundContain = "#FFFFFF"
+	postbackAnswer        = "answer"
+	postbackResult        = "result"
+	resultCorrect         = "1"
+	resultWrong           = "0"
 )
 
 // Kind says which reply was chosen. It is meant for logs, which must not
@@ -158,13 +159,14 @@ func (b *Bot) quiz(flagBaseURL string) Reply {
 			DisplayText: c.NameJA,
 		}
 	}
+	size, background := flagImage(answer)
 	return Reply{Kind: KindQuiz, Code: answer.Code, Messages: []line.Message{line.TemplateMessage{
 		AltText: textQuizQuestion,
 		Template: line.ButtonsTemplate{
 			ThumbnailImageURL:    answer.FlagURL(flagBaseURL),
 			ImageAspectRatio:     line.ImageAspectRatioRectangle,
-			ImageSize:            flagImageSize(answer),
-			ImageBackgroundColor: flagBackground,
+			ImageSize:            size,
+			ImageBackgroundColor: background,
 			Title:                textQuizTitle,
 			Text:                 textQuizQuestion,
 			Actions:              actions,
@@ -214,20 +216,24 @@ func detailMessage(c *country.Country, title, imageURL string) line.Message {
 	if imageURL != "" {
 		bt.ThumbnailImageURL = imageURL
 		bt.ImageAspectRatio = line.ImageAspectRatioRectangle
-		bt.ImageSize = flagImageSize(c)
-		bt.ImageBackgroundColor = flagBackground
+		bt.ImageSize, bt.ImageBackgroundColor = flagImage(c)
 	}
 	return line.TemplateMessage{AltText: line.TruncateUTF16(title, line.MaxAltText), Template: bt}
 }
 
-// flagImageSize fills the image frame with flags close to its shape, so no
-// thin white bars appear beside them, and shows other flags whole on the
-// white background.
-func flagImageSize(c *country.Country) string {
+// flagImage decides how a flag is shown. Flags close to the frame's shape
+// fill it ("cover"), so no thin white bars appear beside them, on a
+// background of their own corner colour, so the rounded corners do not show
+// a light rim; other flags are shown whole on white, which joins the white
+// body below.
+func flagImage(c *country.Country) (size, background string) {
 	if c.FlagFitsFrame() {
-		return line.ImageSizeCover
+		if col := c.FlagCornerColor(); col != "" {
+			return line.ImageSizeCover, col
+		}
+		return line.ImageSizeCover, flagBackgroundContain
 	}
-	return line.ImageSizeContain
+	return line.ImageSizeContain, flagBackgroundContain
 }
 
 func retryMessage() line.Message {
