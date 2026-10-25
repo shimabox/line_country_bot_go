@@ -19,10 +19,10 @@
     "WEBHOOK_PATH": "/webhook",
     "PUBLIC_BASE_URL": "",
     "LINE_API_BASE_URL": "https://api.line.me",
-    "PROFILE_IMAGE_URL": "",
-    "PROFILE_TITLE": "",
-    "PROFILE_TEXT": "",
-    "PROFILE_LINK_TEXT": "",
-    "PROFILE_LINK_URL": ""
+    "PROFILE_IMAGE_URL": "https://line-country-bot-go.orukubamish.workers.dev/profile.png",
+    "PROFILE_TITLE": "しまぶ",
+    "PROFILE_TEXT": "はいさい。しまぶだよ。",
+    "PROFILE_LINK_TEXT": "X を見る",
+    "PROFILE_LINK_URL": "https://x.com/shimabox"
   }
 }
