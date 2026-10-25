@@ -1,18 +1,20 @@
 package app
 
 import (
+	"context"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/shimabox/line_country_bot_go/internal/country"
 )
 
-// discardDoer answers every reply API call with 200 after reading the body,
-// so the benchmarks measure the handler and not the fake.
+// discardDoer answers every API call with 200 after reading the body, so the
+// benchmarks measure the handler and not the fake.
 type discardDoer struct{}
 
 func (discardDoer) Do(req *http.Request) (*http.Response, error) {
@@ -21,7 +23,8 @@ func (discardDoer) Do(req *http.Request) (*http.Response, error) {
 }
 
 // benchmarkWebhook measures one signed webhook request with a text message,
-// from signature verification to sending the reply. Profile it with
+// from signature verification to sending the reply. The wait before the
+// reply is skipped. Profile it with
 //
 //	go test -run '^$' -bench Webhook -cpuprofile cpu.out ./internal/app
 func benchmarkWebhook(b *testing.B, text string) {
@@ -31,6 +34,7 @@ func benchmarkWebhook(b *testing.B, text string) {
 		Doer:      discardDoer{},
 		Countries: country.Default(),
 		Logf:      log.New(io.Discard, "", log.LstdFlags).Printf,
+		Sleep:     func(context.Context, time.Duration) {},
 	})
 	body := eventsJSON(textEventJSON("bench-token", text))
 	signature := sign(testSecret, body)
