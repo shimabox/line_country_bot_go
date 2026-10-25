@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 230" width="960" height="230" role="img" aria-label="Webhookを受けてから200を返すまで約1.18秒。そのうち約1秒は待機で、CPU時間に数えられるのは最初の処理の数十ミリ秒だけ。LINEのタイムアウト2秒まで余裕がある。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
-<title>Webhookを受けてから200を返すまで約1.18秒。そのうち約1秒は待機で、CPU時間に数えられるのは最初の処理の数十ミリ秒だけ。LINEのタイムアウト2秒まで余裕がある。</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 230" width="960" height="230" role="img" aria-label="Webhookを受けてから200を返すまで約1.16秒。そのうち約1秒は待機で、CPU時間に数えられるのは最初の処理の数十ミリ秒だけ。LINEのタイムアウト2秒まで余裕がある。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
+<title>Webhookを受けてから200を返すまで約1.16秒。そのうち約1秒は待機で、CPU時間に数えられるのは最初の処理の数十ミリ秒だけ。LINEのタイムアウト2秒まで余裕がある。</title>
 <rect width="960" height="230" fill="#ffffff"/>
 
           <defs>
@@ -32,7 +32,7 @@
           <text x="372" y="117" text-anchor="middle" font-size="11" fill="#1b2420">1000ms（REPLY_DELAY_MS、上限 1200ms）</text>
           
           <rect x="562" y="138" width="26" height="20" rx="3" fill="none" stroke="#1b2420" stroke-width="1.5"/>
-          <text x="595" y="153" font-size="11" fill="#1b2420">通信 → 200 を返す（実測 中央値 1.18秒）</text>
+          <text x="595" y="153" font-size="11" fill="#1b2420">通信 → 200 を返す（実測 中央値 1.16秒）</text>
           
           <line x1="900" y1="20" x2="900" y2="170" stroke="#b4441d" stroke-width="2" stroke-dasharray="6 4"/>
           <text x="892" y="30" text-anchor="end" font-size="11" fill="#b4441d">LINE のタイムアウト（2秒）</text>

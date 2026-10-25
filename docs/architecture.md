@@ -13,13 +13,13 @@ LINE で国名を送ると国旗と首都を返し、国旗の 4 択クイズも
 
 ## 全体の構成：メッセージが返信になるまで
 
-![LINE アプリからのメッセージは LINE Platform から Webhook で Cloudflare Workers に届き、Workers がリクエストごとに起動する Go のプログラムが、ローディング表示と返信を LINE Messaging API に送る。国旗画像は Workers の静的ファイルから LINE アプリが直接取得する。](architecture/overview.svg)
+![LINE アプリからのメッセージは LINE Platform から Webhook で Cloudflare Workers に届き、Workers がリクエストごとに起動する Go で書いたプログラム（TinyGo で wasm にビルド）が、ローディング表示と返信を LINE Messaging API に送る。国旗画像は Workers の静的ファイルから LINE アプリが直接取得する。](architecture/overview.svg)
 
-LINE アプリから届いたメッセージは、LINE Platform から Webhook で Workers に渡ります。Workers はリクエストのたびに Go の wasm を起動し、返答を決めてから、Messaging API に「…」の表示と返信を送ります。国旗画像は、返信に含めた URL を使って LINE アプリが Workers の静的ファイルから直接取得します（破線）。
+LINE アプリから届いたメッセージは、LINE Platform から Webhook で Workers に渡ります。Workers はリクエストのたびに Go の wasm（TinyGo でビルド）を起動し、返答を決めてから、Messaging API に「…」の表示と返信を送ります。国旗画像は、返信に含めた URL を使って LINE アプリが Workers の静的ファイルから直接取得します（破線）。
 
 ## 1 回のリクエストの時間配分
 
-![Webhook を受けてから 200 を返すまで約 1.18 秒。そのうち約 1 秒は待機で、CPU 時間に数えられるのは最初の処理の数十ミリ秒だけ。LINE のタイムアウト 2 秒まで余裕がある。](architecture/request-timing.svg)
+![Webhook を受けてから 200 を返すまで約 1.16 秒。そのうち約 1 秒は待機で、CPU 時間に数えられるのは最初の処理の数十ミリ秒だけ。LINE のタイムアウト 2 秒まで余裕がある。](architecture/request-timing.svg)
 
 待機は Webhook への応答を返す前に行います。使っているライブラリ workers-go v0.36 では、応答を返したあとに待つ処理が不安定なためです。待っている時間は CPU 時間に数えられません。待機の上限を 1.2 秒にして、通信と処理を足しても LINE の 2 秒の制限に収めています。グループや複数人のトークでは「…」を出せないので、待たずに返信します。
 
@@ -39,9 +39,9 @@ LINE アプリから届いたメッセージは、LINE Platform から Webhook �
 
 ## ビルドとデプロイの流れ
 
-![Wikidata から国データ、Flagpedia から国旗画像をツールで取得し、Go のコードと画像としてリポジトリに置く。npm run build で wasm を作り、wrangler deploy で Cloudflare Workers に載せる。PR では GitHub Actions がテストとサイズを確認する。](architecture/build-and-deploy.svg)
+![Wikidata から国データ、Flagpedia から国旗画像をツールで取得し、Go のコードと画像としてリポジトリに置く。npm run build で TinyGo により wasm を作り、wrangler deploy で Cloudflare Workers に載せる。PR では GitHub Actions が go・tinygo-test・build の 3 ジョブ（Go のテスト、TinyGo でのテスト、wasm ビルドとサイズ確認）を並列に実行する。](architecture/build-and-deploy.svg)
 
-国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います（CI は PR での確認だけ）。
+国データと国旗は、ツールを手元で実行して作り、生成物をリポジトリに置きます。Wikidata への問い合わせはビルドのたびには行いません。生成物がずれたらテストが失敗し、再生成のコマンドを示します。wasm は TinyGo でビルドします（`npm run build`）。通常の Go よりファイルが小さく、リクエストごとの読み込みと初期化が軽いためです。TinyGo と wasm-opt は `scripts/install-tinygo.sh` が公式配布物を hash 検証して入れ、手元と CI で同じ版を使います。通常の Go のビルド（`npm run build:go`）も比較と退避用に残しています。デプロイは手元から `wrangler deploy` で行います。CI は go・tinygo-test・build の 3 ジョブを並列に実行して確認するだけで、デプロイはしません。
 
 | 生成物 | 作り方 |
 |---|---|

@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-label="Wikidataから国データ、Flagpediaから国旗画像をツールで取得し、Goのコードと画像としてリポジトリに置く。npm run buildでwasmを作り、wrangler deployでCloudflare Workersに載せる。PRではGitHub Actionsがテストとサイズを確認する。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
-<title>Wikidataから国データ、Flagpediaから国旗画像をツールで取得し、Goのコードと画像としてリポジトリに置く。npm run buildでwasmを作り、wrangler deployでCloudflare Workersに載せる。PRではGitHub Actionsがテストとサイズを確認する。</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-label="Wikidataから国データ、Flagpediaから国旗画像をツールで取得し、Goのコードと画像としてリポジトリに置く。npm run buildでTinyGoによりwasmを作り、wrangler deployでCloudflare Workersに載せる。PRではGitHub Actionsがgo・tinygo-test・buildの3ジョブ（Goのテスト、TinyGoでのテスト、wasmビルドとサイズ確認）を並列に実行する。" font-family="Hiragino Sans, Noto Sans JP, Yu Gothic, sans-serif" color="#1b2420">
+<title>Wikidataから国データ、Flagpediaから国旗画像をツールで取得し、Goのコードと画像としてリポジトリに置く。npm run buildでTinyGoによりwasmを作り、wrangler deployでCloudflare Workersに載せる。PRではGitHub Actionsがgo・tinygo-test・buildの3ジョブ（Goのテスト、TinyGoでのテスト、wasmビルドとサイズ確認）を並列に実行する。</title>
 <rect width="960" height="300" fill="#ffffff"/>
 
           <defs>
@@ -29,15 +29,15 @@
             <text x="776" y="142" font-family="Menlo, Consolas, monospace">flagsizes_gen.go</text><text x="776" y="158" opacity=".75">国旗の寸法</text>
 
             
-            <rect x="330" y="220" width="196" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
-            <text x="428" y="243" font-family="Menlo, Consolas, monospace">npm run build</text><text x="428" y="260" opacity=".75">Go → app.wasm（2,037 KiB）</text>
+            <rect x="310" y="220" width="216" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
+            <text x="418" y="243" font-family="Menlo, Consolas, monospace">npm run build</text><text x="418" y="260" opacity=".75">TinyGo → wasm（gzip 652 KiB）</text>
             <rect x="566" y="220" width="160" height="56" rx="8" fill="none" stroke="#1b2420" stroke-width="1.5"/>
             <text x="646" y="243" font-family="Menlo, Consolas, monospace">wrangler deploy</text><text x="646" y="260" opacity=".75">wasm と画像を配置</text>
             <rect x="776" y="220" width="168" height="56" rx="8" fill="#dff0e9" stroke="#0f7a5f" stroke-width="1.5"/>
             <text x="860" y="243" font-size="12" font-weight="700" fill="#0f7a5f">Cloudflare Workers</text><text x="860" y="260" opacity=".75">本番</text>
 
             <rect x="16" y="220" width="250" height="56" rx="8" fill="none" stroke="#1b2420" stroke-dasharray="5 4"/>
-            <text x="141" y="243" font-size="12" font-weight="700">GitHub Actions（PR）</text><text x="141" y="260" opacity=".75">テスト・wasm ビルド・サイズ確認</text>
+            <text x="141" y="243" font-size="12" font-weight="700">GitHub Actions（PR）</text><text x="141" y="260" opacity=".75">go・tinygo-test・build の 3 ジョブ並列</text>
           </g>
           <g stroke="#1b2420" stroke-width="1.5" fill="none">
             <line x1="136" y1="55" x2="174" y2="55" marker-end="url(#ar4)"/>
