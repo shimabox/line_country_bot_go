@@ -28,7 +28,7 @@
 // --verbose also prints every sample (start/handle) to stderr.
 //
 // --events N (default 1) puts N copies of the message event, each with its own
-// reply token, in one webhook request for the 日本 and クイズ scenarios, to see
+// reply token, in one webhook request for the 日本, クイズ and 東京 scenarios, to see
 // how CPU time and memory grow with the number of events. GET / is unchanged.
 //
 // The wasm needs the wasm_exec.js of the toolchain that built it: a TinyGo
@@ -195,6 +195,8 @@ const scenarios = [
   { name: "GET /", request: () => new Request("https://bot.example.com/"), status: 200 },
   { name: "webhook 日本", request: webhookRequest("日本"), status: 200 },
   { name: "webhook クイズ", request: webhookRequest("クイズ"), status: 200 },
+  // Found by its capital (a miss for builds before capitals were indexed).
+  { name: "webhook 東京", request: webhookRequest("東京"), status: 200 },
 ];
 
 const mod = await WebAssembly.compile(readFileSync(wasmPath));

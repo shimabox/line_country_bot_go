@@ -184,6 +184,35 @@ function record(name, r, ok) {
 
 const messagesOf = (replies) => replies[0]?.json?.messages ?? [];
 
+// The quiz questions, by the q value of the postback data ("" for the flag
+// quiz, which has no q).
+const quizQuestions = { "": "この国はどこでしょうか？", capital: "この国の首都はどこでしょうか？" };
+// How many times, at most, scenario 10 sends クイズ to see both quizzes. Each
+// is a flag or a capital quiz half of the time, so 10 tries miss one of them
+// with a probability of about 0.2% (less with scenario 4's quiz counted); run
+// the test again before suspecting the Worker.
+const quizKindAttempts = 10;
+
+// Checks a quiz reply and returns its kind ("flag" or "capital") and the data
+// of the correct button, or null when the reply is not a well-formed quiz:
+// 4 postback buttons with answer, a two-letter code and result, the same q on
+// every button, one correct answer, displayText equal to answer and the
+// question matching q.
+function parseQuiz(m) {
+  const t = m.length === 1 ? m[0].template : undefined;
+  const actions = t?.actions ?? [];
+  if (t?.type !== "buttons" || actions.length !== 4 || !actions.every((a) => a.type === "postback")) return null;
+  const params = actions.map((a) => new URLSearchParams(a.data));
+  const q = params[0].get("q") ?? "";
+  const ok = params.every((p, i) =>
+    p.get("answer") && /^[A-Z]{2}$/.test(p.get("code") ?? "") && (p.get("q") ?? "") === q &&
+      ["0", "1"].includes(p.get("result")) && actions[i].displayText === p.get("answer"));
+  const correct = actions.filter((_, i) => params[i].get("result") === "1");
+  if (!ok || correct.length !== 1 || !(q in quizQuestions)) return null;
+  if (t.text !== quizQuestions[q] || m[0].altText !== quizQuestions[q] || !t.thumbnailImageUrl?.includes("/flags/")) return null;
+  return { kind: q === "capital" ? "capital" : "flag", correctData: correct[0].data };
+}
+
 // 1. Health check
 {
   const res = await fetch(workerURL + "/");
@@ -209,17 +238,15 @@ const messagesOf = (replies) => replies[0]?.json?.messages ?? [];
       m[1].text?.startsWith("む、むむっ、、わかりませんでした"));
 }
 
-// 4. Quiz
+// 4. Quiz: a flag quiz or a capital quiz
 let correctData = null;
+const quizCorrectData = {}; // kind -> data of the correct button
 {
   const r = await postWebhook([event("message", { message: { id: "3", type: "text", text: "クイズ" } })]);
-  const m = messagesOf(r.replies);
-  const actions = m[0]?.template?.actions ?? [];
-  correctData = actions.find((a) => a.data?.endsWith("result=1"))?.data ?? null;
-  record("4 quiz (クイズ)", r,
-    r.status === 200 && rhythmOK(r) && m.length === 1 && actions.length === 4 && actions.every((a) => a.type === "postback") &&
-      actions.filter((a) => a.data.endsWith("result=1")).length === 1 &&
-      actions.every((a) => a.displayText && a.displayText === new URLSearchParams(a.data).get("answer")));
+  const quiz = parseQuiz(messagesOf(r.replies));
+  correctData = quiz?.correctData ?? null;
+  if (quiz) quizCorrectData[quiz.kind] = quiz.correctData;
+  record(`4 quiz (クイズ, ${quiz?.kind ?? "invalid"})`, r, r.status === 200 && rhythmOK(r) && quiz !== null);
 }
 
 // 5. Correct quiz answer
@@ -254,6 +281,66 @@ let correctData = null;
   record("8 text hit (イギリス)", r,
     r.status === 200 && rhythmOK(r) && m.length === 3 && m[2].template?.thumbnailImageUrl?.endsWith("/flags/gb.png") &&
       m[2].template?.imageSize === "contain");
+}
+
+// 9. Country found by its capital: the card is titled with the country.
+{
+  const r = await postWebhook([event("message", { message: { id: "7", type: "text", text: "東京" } })]);
+  const m = messagesOf(r.replies);
+  record("9 capital hit (東京)", r,
+    r.status === 200 && rhythmOK(r) && m.length === 3 && m[0].text === "[東京] ですね🤔" &&
+      m[1].text?.startsWith("わかります") && m[2].template?.title === "日本" && m[2].altText === "日本" &&
+      m[2].template?.text === "東京 / Tokyo" && m[2].template?.thumbnailImageUrl?.endsWith("/flags/jp.png"));
+}
+
+// 10. Both quizzes: send クイズ until a flag quiz and a capital quiz have
+// both been seen, at most quizKindAttempts times (scenario 4 counts too).
+{
+  const attempts = [];
+  let ok = true;
+  while (!(quizCorrectData.flag && quizCorrectData.capital) && attempts.length < quizKindAttempts) {
+    const r = await postWebhook([event("message", { message: { id: `10-${attempts.length}`, type: "text", text: "クイズ" } })]);
+    const quiz = parseQuiz(messagesOf(r.replies));
+    if (quiz && !quizCorrectData[quiz.kind]) quizCorrectData[quiz.kind] = quiz.correctData;
+    const attemptOK = r.status === 200 && rhythmOK(r) && quiz !== null;
+    if (!attemptOK) ok = false;
+    attempts.push({ status: r.status, kind: quiz?.kind ?? "invalid", ok: attemptOK, elapsedMs: Math.round(r.elapsedMs) });
+  }
+  const both = Boolean(quizCorrectData.flag && quizCorrectData.capital);
+  results.push({ scenario: "10 both quizzes (クイズ)", ok: ok && both, maxAttempts: quizKindAttempts, seen: Object.keys(quizCorrectData), attempts });
+  if (!(ok && both)) failed = true;
+}
+
+// 11. Correct and wrong answers to a capital quiz
+{
+  const data = quizCorrectData.capital ?? "";
+  const params = new URLSearchParams(data);
+  const answer = params.get("answer");
+  const r = await postWebhook([event("postback", { postback: { data } })]);
+  const m = messagesOf(r.replies);
+  record("11 capital quiz postback correct", r,
+    r.status === 200 && rhythmOK(r) && params.get("q") === "capital" && m.length === 4 && answer &&
+      m[0].text === `[${answer}] ですね?` && m[1].text?.startsWith("む、むむっ、、\n正解です") &&
+      m[2].template?.text?.startsWith(answer) && !m[2].template?.thumbnailImageUrl && m[3].template?.type === "confirm");
+
+  params.set("result", "0");
+  const w = await postWebhook([event("postback", { postback: { data: params.toString() } })]);
+  const wm = messagesOf(w.replies);
+  record("11 capital quiz postback wrong", w,
+    w.status === 200 && rhythmOK(w) && wm.length === 2 && answer && wm[0].text === `[${answer}] ですね?` &&
+      wm[1].text?.startsWith("む、むむっ、、\n残念！はずれです"));
+}
+
+// 12. A button sent before the code was added (answer and result only) gets
+// the same reply as before.
+{
+  const data = new URLSearchParams({ answer: "日本", result: "1" }).toString();
+  const r = await postWebhook([event("postback", { postback: { data } })]);
+  const m = messagesOf(r.replies);
+  record("12 old postback without code (日本)", r,
+    r.status === 200 && rhythmOK(r) && m.length === 4 && m[0].text === "[日本] ですね?" &&
+      m[1].text?.startsWith("む、むむっ、、\n正解です") && m[2].template?.title === "日本" &&
+      m[2].template?.text === "東京 / Tokyo" && m[3].template?.type === "confirm");
 }
 
 // Static asset

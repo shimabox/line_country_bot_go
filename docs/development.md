@@ -58,7 +58,7 @@ npx wrangler dev --ip 127.0.0.1 --port 8787     # 別のターミナルで
 node scripts/local-smoke.mjs http://127.0.0.1:8787
 ```
 
-`local-smoke.mjs` は返信 API とローディング表示 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、`/flags/jp.png` の配信を確かめます。返信する場面では、モックが「ローディング表示 API → 返信 API」の順に受け取ったことと、Webhook の送信から 200 の受信までが `REPLY_DELAY_MS` 以上かつ 2000ms 未満であることも確かめ、経過時間（`elapsedMs`）を出力します。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
+`local-smoke.mjs` は返信 API とローディング表示 API のモックを `LINE_API_BASE_URL` のポートで立て、署名付きの Webhook を送って、疎通・国名の一致と不一致・クイズ（国旗クイズか首都クイズ）・正解の回答・非テキスト・署名不正の 7 場面と、国旗の表示方法（日本は `cover`、イギリスは `contain`）、首都名での検索（「東京」で日本の詳細、カードのタイトルは「日本」）、「クイズ」を最大 10 回送って国旗クイズと首都クイズの両方が出ること、首都クイズの正解と不正解、`code` のない変更前の形の postback（`answer=日本&result=1`）が従来どおり返ること、`/flags/jp.png` の配信を確かめます。両方のクイズが出ることの確認は、10 回送っても片方しか出ない確率が約 0.2% あるため、失敗したらまず再実行して切り分けます（回数はスクリプトの定数）。返信する場面では、モックが「ローディング表示 API → 返信 API」の順に受け取ったことと、Webhook の送信から 200 の受信までが `REPLY_DELAY_MS` 以上かつ 2000ms 未満であることも確かめ、経過時間（`elapsedMs`）を出力します。`.dev.vars` は git 管理外で、実際の認証情報は書きません。
 
 設定項目の意味と既定値は [configuration.md](configuration.md) にあります。
 
@@ -73,7 +73,7 @@ npm run bench:cpu -- /path/to/saved/app.wasm 60 --wasm-exec /path/to/saved/wasm_
 npm run bench:cpu -- build/app.wasm 12 --events 20  # 1 回の Webhook に同じイベントを 20 件入れる
 ```
 
-`scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」の 3 場面について、CPU 時間（user + system）の中央値と wasm のメモリの最大値を表と JSON で出します。
+`scripts/bench-cpu.mjs` は、`build/worker.mjs` と同じ手順で wasm を Node.js 上で動かし、`GET /`、署名付き Webhook の「日本」「クイズ」「東京」（首都名での検索）の 4 場面について、CPU 時間（user + system）の中央値と wasm のメモリの最大値を表と JSON で出します。
 
 | 列 | 内容 |
 |---|---|
@@ -82,7 +82,7 @@ npm run bench:cpu -- build/app.wasm 12 --events 20  # 1 回の Webhook に同じ
 | `total` | 同じ回の `start` と `handle` の合計 |
 | `mem` | 各回の `handle` の後に読んだ wasm の線形メモリの大きさ（`memory.buffer.byteLength`）の、全回での最大値（MiB） |
 
-wasm のメモリは段階的に増えて縮まないため、`mem` は 1 リクエストが実際に使った量の上限値です。測れるのは wasm の線形メモリだけで、JS 側のヒープは含みません。`--events N`（既定 1）は、「日本」と「クイズ」の Webhook に同じイベントを N 件（reply token は件ごとに変える）入れて 1 回のリクエストにします。件数が増えたときのメモリと CPU 時間を見るためのもので、`GET /` は変わりません。省くと従来と同じ場面です。
+wasm のメモリは段階的に増えて縮まないため、`mem` は 1 リクエストが実際に使った量の上限値です。測れるのは wasm の線形メモリだけで、JS 側のヒープは含みません。`--events N`（既定 1）は、「日本」「クイズ」「東京」の Webhook に同じイベントを N 件（reply token は件ごとに変える）入れて 1 回のリクエストにします。件数が増えたときのメモリと CPU 時間を見るためのもので、`GET /` は変わりません。省くと従来と同じ場面です。
 
 場面は交互に実行し、各回の前に GC を強制します。各場面の先頭 2 回は JIT の準備として中央値から除きます。返信 API はローカルのモックに送り、認証情報はダミーです。Node.js の値は本番（workerd）より小さく出るため、絶対値ではなく、同じマシンで 2 つのビルドを比べる用途に使います。wasm は、ビルドしたツールチェーンの `wasm_exec.js` と組にしないと動きません（TinyGo のビルドには TinyGo 用、Go のビルドには Go 用が要り、取り違えるとインポートの不一致で失敗します）。`--wasm-exec` を省くと `build/wasm_exec.js`、次に Go の `$(go env GOROOT)/lib/wasm/wasm_exec.js` を使います。比べるときは、比較したいビルド（例: `npm run build:go` の結果）の `build/app.wasm` と `build/wasm_exec.js` を一緒にリポジトリの外へ退避し、`--wasm-exec` で対応する `wasm_exec.js` を指定して、2 つのビルドを交互に数回ずつ計測して中央値を比べます。短い計測では JIT の最適化の進み具合で `handle` が偏ることがあるため、`handle` の比較には回数を増やした計測（60 回など）を使います。CI では実行しません。
 

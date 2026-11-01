@@ -61,6 +61,26 @@ func (c *Country) CapitalText() string {
 	}
 }
 
+// NamedBy reports whether key, a key already normalized with NormalizeKey,
+// is the country's display name or one of its aliases. A key that is only
+// its capital gives false.
+func (c *Country) NamedBy(key string) bool {
+	if key == "" {
+		return false
+	}
+	if NormalizeKey(c.NameJA) == key {
+		return true
+	}
+	for _, names := range [][]string{c.AliasesJA, c.AliasesEN} {
+		for _, n := range names {
+			if NormalizeKey(n) == key {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // FlagURL returns the URL of the flag image served from baseURL.
 func (c *Country) FlagURL(baseURL string) string {
 	return strings.TrimRight(baseURL, "/") + "/flags/" + strings.ToLower(c.Code) + ".png"
@@ -139,12 +159,15 @@ func validate(countries []*Country) error {
 }
 
 // BuildIndex returns the lookup index of countries, sorted by Key in byte
-// order (strings.Compare) without duplicates. The normalized display name
-// always finds its country. Aliases never override a display name, and an
-// alias shared by different countries is ambiguous and is left out.
+// order (strings.Compare) without duplicates. Keys come from display names,
+// then aliases, then capitals (capital_ja and capital_en), and an earlier
+// kind always wins: the normalized display name always finds its country, an
+// alias never overrides a display name, and a capital never overrides a
+// display name or an alias (even one that is ambiguous). An alias or capital
+// shared by different countries is ambiguous and is left out.
 //
 // It fails when a display name normalizes to nothing or to the same key as
-// another display name.
+// another display name. Clashing aliases and capitals are never an error.
 func BuildIndex(countries []*Country) ([]IndexEntry, error) {
 	byKey := make(map[string]int, len(countries)*4)
 	for i, c := range countries {
@@ -161,15 +184,35 @@ func BuildIndex(countries []*Country) ([]IndexEntry, error) {
 		byKey[key] = i
 	}
 
+	aliases := addUnambiguous(byKey, nil, countries, func(c *Country) []string {
+		return slices.Concat(c.AliasesJA, c.AliasesEN)
+	})
+	addUnambiguous(byKey, aliases, countries, func(c *Country) []string {
+		return []string{c.CapitalJA, c.CapitalEN}
+	})
+
+	index := make([]IndexEntry, 0, len(byKey))
+	for key, i := range byKey {
+		index = append(index, IndexEntry{Key: key, Index: i})
+	}
+	slices.SortFunc(index, func(a, b IndexEntry) int { return strings.Compare(a.Key, b.Key) })
+	return index, nil
+}
+
+// addUnambiguous adds to byKey the normalized names(c) of every country that
+// are not already in byKey or in taken, and that only one country has. It
+// returns every candidate key it saw, including the ambiguous ones, so a
+// later, weaker kind of name can be kept from taking them.
+func addUnambiguous(byKey map[string]int, taken map[string]bool, countries []*Country, names func(c *Country) []string) map[string]bool {
 	owners := map[string]int{}
 	ambiguous := map[string]bool{}
 	for i, c := range countries {
-		for _, alias := range slices.Concat(c.AliasesJA, c.AliasesEN) {
-			key := NormalizeKey(alias)
+		for _, name := range names(c) {
+			key := NormalizeKey(name)
 			if key == "" {
 				continue
 			}
-			if _, isName := byKey[key]; isName {
+			if _, ok := byKey[key]; ok || taken[key] {
 				continue
 			}
 			if prev, ok := owners[key]; ok && prev != i {
@@ -179,18 +222,14 @@ func BuildIndex(countries []*Country) ([]IndexEntry, error) {
 			owners[key] = i
 		}
 	}
+	seen := make(map[string]bool, len(owners))
 	for key, i := range owners {
+		seen[key] = true
 		if !ambiguous[key] {
 			byKey[key] = i
 		}
 	}
-
-	index := make([]IndexEntry, 0, len(byKey))
-	for key, i := range byKey {
-		index = append(index, IndexEntry{Key: key, Index: i})
-	}
-	slices.SortFunc(index, func(a, b IndexEntry) int { return strings.Compare(a.Key, b.Key) })
-	return index, nil
+	return seen
 }
 
 func validCode(code string) bool {
@@ -247,6 +286,20 @@ func (s *Store) Lookup(name string) *Country {
 func (s *Store) ByName(name string) *Country {
 	if c := s.Lookup(name); c != nil && c.NameJA == name {
 		return c
+	}
+	return nil
+}
+
+// ByCode finds a country by its ISO 3166-1 alpha-2 code as stored in the
+// data (two uppercase letters). Other forms, such as lowercase, find nothing.
+func (s *Store) ByCode(code string) *Country {
+	if !validCode(code) {
+		return nil
+	}
+	for _, c := range s.countries {
+		if c.Code == code {
+			return c
+		}
 	}
 	return nil
 }
