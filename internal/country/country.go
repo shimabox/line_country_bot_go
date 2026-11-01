@@ -61,6 +61,26 @@ func (c *Country) CapitalText() string {
 	}
 }
 
+// NamedBy reports whether key, a key already normalized with NormalizeKey,
+// is the country's display name or one of its aliases. A key that is only
+// its capital gives false.
+func (c *Country) NamedBy(key string) bool {
+	if key == "" {
+		return false
+	}
+	if NormalizeKey(c.NameJA) == key {
+		return true
+	}
+	for _, names := range [][]string{c.AliasesJA, c.AliasesEN} {
+		for _, n := range names {
+			if NormalizeKey(n) == key {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // FlagURL returns the URL of the flag image served from baseURL.
 func (c *Country) FlagURL(baseURL string) string {
 	return strings.TrimRight(baseURL, "/") + "/flags/" + strings.ToLower(c.Code) + ".png"
@@ -266,6 +286,20 @@ func (s *Store) Lookup(name string) *Country {
 func (s *Store) ByName(name string) *Country {
 	if c := s.Lookup(name); c != nil && c.NameJA == name {
 		return c
+	}
+	return nil
+}
+
+// ByCode finds a country by its ISO 3166-1 alpha-2 code as stored in the
+// data (two uppercase letters). Other forms, such as lowercase, find nothing.
+func (s *Store) ByCode(code string) *Country {
+	if !validCode(code) {
+		return nil
+	}
+	for _, c := range s.countries {
+		if c.Code == code {
+			return c
+		}
 	}
 	return nil
 }

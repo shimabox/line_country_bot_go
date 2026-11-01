@@ -90,6 +90,66 @@ func TestByName(t *testing.T) {
 	}
 }
 
+func TestByCode(t *testing.T) {
+	s := loadFixture(t)
+	for _, c := range s.All() {
+		if got := s.ByCode(c.Code); got != c {
+			t.Errorf("ByCode(%s) = %v, want %s", c.Code, got, c.Code)
+		}
+	}
+	// Unknown codes, lowercase codes and other forms are not found.
+	for _, code := range []string{"", "ZZ", "jp", "Jp", "JPN", "J", " JP", "日本"} {
+		if got := s.ByCode(code); got != nil {
+			t.Errorf("ByCode(%q) = %s, want nil", code, got.Code)
+		}
+	}
+	for _, c := range Default().All() {
+		if got := Default().ByCode(c.Code); got != c {
+			t.Errorf("Default().ByCode(%s) = %v", c.Code, got)
+		}
+	}
+}
+
+func TestNamedBy(t *testing.T) {
+	s := loadFixture(t)
+	jp := s.ByCode("JP")
+	for key, want := range map[string]bool{
+		"日本":    true, // display name
+		"日本国":   true, // Japanese alias
+		"にほん":   true,
+		"japan": true,  // English alias, normalized
+		"東京":    false, // capital only
+		"tokyo": false,
+		"フランス":  false, // another country's name
+		"":      false,
+	} {
+		if got := jp.NamedBy(key); got != want {
+			t.Errorf("JP.NamedBy(%q) = %v, want %v", key, got, want)
+		}
+	}
+	// The key is compared with normalized names and aliases.
+	us := s.ByCode("US")
+	if !us.NamedBy(NormalizeKey("United States of America")) {
+		t.Error("US.NamedBy(unitedstatesofamerica) = false")
+	}
+	if us.NamedBy("United States of America") {
+		t.Error("US.NamedBy is given a key that is not normalized but matched")
+	}
+	if us.NamedBy(NormalizeKey("ワシントンD.C.")) || us.NamedBy(NormalizeKey("Washington, D.C.")) {
+		t.Error("US.NamedBy matched its capital")
+	}
+
+	// A capital that is also the country's name or alias counts as a name.
+	sg := Default().ByCode("SG")
+	if sg == nil || !sg.NamedBy(NormalizeKey(sg.CapitalJA)) || !sg.NamedBy(NormalizeKey(sg.CapitalEN)) {
+		t.Errorf("SG.NamedBy(capital) = false, want true (%+v)", sg)
+	}
+	tokyo := Default().Lookup("東京")
+	if tokyo == nil || tokyo.NamedBy(NormalizeKey("東京")) {
+		t.Errorf("Lookup(東京) = %v, want JP not named 東京", tokyo)
+	}
+}
+
 func TestNormalizeKey(t *testing.T) {
 	tests := []struct{ in, want string }{
 		{"Japan", "japan"},
