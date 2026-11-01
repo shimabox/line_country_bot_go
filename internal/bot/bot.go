@@ -10,22 +10,23 @@ import (
 
 // Reply texts.
 const (
-	textNonText      = "テキストメッセージ以外わからないです"
-	echoOpen         = "["
-	echoClose        = "]"
-	suffixEcho       = " ですね" + EmojiThinking
-	suffixAnswerEcho = " ですね?"
-	textFound        = "わかります"
-	textNotFound     = "む、むむっ、、わかりませんでした"
-	textCorrect      = "む、むむっ、、\n正解です"
-	textWrong        = "む、むむっ、、\n残念！はずれです"
-	textQuizTitle    = "クイズです"
-	textQuizQuestion = "この国はどこでしょうか？"
-	textRetry        = "もう一度やりますか？"
-	labelNo          = "いいえ"
-	labelYes         = "はい"
-	labelWikipedia   = "Wikipedia"
-	labelMaps        = "Google Maps"
+	textNonText         = "テキストメッセージ以外わからないです"
+	echoOpen            = "["
+	echoClose           = "]"
+	suffixEcho          = " ですね" + EmojiThinking
+	suffixAnswerEcho    = " ですね?"
+	textFound           = "わかります"
+	textNotFound        = "む、むむっ、、わかりませんでした"
+	textCorrect         = "む、むむっ、、\n正解です"
+	textWrong           = "む、むむっ、、\n残念！はずれです"
+	textQuizTitle       = "クイズです"
+	textQuizQuestion    = "この国はどこでしょうか？"
+	textCapitalQuestion = "この国の首都はどこでしょうか？"
+	textRetry           = "もう一度やりますか？"
+	labelNo             = "いいえ"
+	labelYes            = "はい"
+	labelWikipedia      = "Wikipedia"
+	labelMaps           = "Google Maps"
 
 	// Sticker sent with textNonText.
 	stickerPackageID = "446"
@@ -36,16 +37,18 @@ const (
 	flagBackgroundContain = "#FFFFFF"
 
 	// Postback data of a quiz button, encoded with url.Values (keys sorted):
-	// answer=<label>&code=<ISO code>[&q=capital]&result=<0|1>. answer is
-	// echoed back, code finds the country of the button and q tells the
-	// quiz. Buttons sent before code existed have only answer and result;
-	// their country is found by answer, the display name.
-	postbackAnswer = "answer"
-	postbackCode   = "code"
-	postbackQuiz   = "q"
-	postbackResult = "result"
-	resultCorrect  = "1"
-	resultWrong    = "0"
+	// answer=<choice>&code=<ISO code>[&q=capital]&result=<0|1>. answer (the
+	// country name or capital as displayed) is echoed back, code finds the
+	// country of the button and q=capital marks the capital quiz. Buttons
+	// sent before code existed have only answer and result and are all from
+	// the flag quiz; their country is found by answer, the display name.
+	postbackAnswer      = "answer"
+	postbackCode        = "code"
+	postbackQuiz        = "q"
+	postbackResult      = "result"
+	postbackQuizCapital = "capital"
+	resultCorrect       = "1"
+	resultWrong         = "0"
 )
 
 // Kind says which reply was chosen. It is meant for logs, which must not
@@ -162,8 +165,12 @@ func (b *Bot) respondText(in Input, opts Options) Reply {
 	}}
 }
 
+// quiz asks a flag quiz or a capital quiz, each half of the time.
 func (b *Bot) quiz(flagBaseURL string) Reply {
-	return b.quizFlag(flagBaseURL)
+	if b.rand.IntN(2) == 0 {
+		return b.quizFlag(flagBaseURL)
+	}
+	return b.quizCapital(flagBaseURL)
 }
 
 // quizFlag asks for the country of a flag, with four country names to
@@ -174,6 +181,39 @@ func (b *Bot) quizFlag(flagBaseURL string) Reply {
 		return Reply{Kind: KindQuiz}
 	}
 	return flagQuizReply(choices, answer, flagBaseURL)
+}
+
+// quizCapital asks for the capital of a flag's country, with four capitals
+// (capital_ja) to choose from. When a chosen country has no capital_ja or two
+// buttons would read the same, it asks a flag quiz on the same countries.
+func (b *Bot) quizCapital(flagBaseURL string) Reply {
+	choices, answer := b.pickQuiz()
+	if answer == nil {
+		return Reply{Kind: KindCapitalQuiz}
+	}
+	if !capitalChoicesOK(choices) {
+		return flagQuizReply(choices, answer, flagBaseURL)
+	}
+	return capitalQuizReply(choices, answer, flagBaseURL)
+}
+
+// capitalChoicesOK reports whether every choice has a capital_ja and the
+// button labels made from them all differ.
+func capitalChoicesOK(choices []*country.Country) bool {
+	labels := make(map[string]bool, len(choices))
+	for _, c := range choices {
+		label := line.TruncateUTF16(c.CapitalJA, line.MaxActionLabel)
+		if c.CapitalJA == "" || labels[label] {
+			return false
+		}
+		labels[label] = true
+	}
+	return true
+}
+
+func capitalQuizReply(choices []*country.Country, answer *country.Country, flagBaseURL string) Reply {
+	return quizReply(KindCapitalQuiz, textCapitalQuestion, postbackQuizCapital, choices, answer, flagBaseURL,
+		func(c *country.Country) string { return c.CapitalJA })
 }
 
 // pickQuiz picks the choices of a quiz in random order and the answer among
@@ -238,7 +278,11 @@ func (b *Bot) respondAnswer(data string) Reply {
 	if err != nil || name == "" || (result != resultCorrect && result != resultWrong) {
 		return Reply{Kind: KindInvalidPostback}
 	}
+	// Old buttons have no q; they are all from the flag quiz.
 	kindCorrect, kindWrong := KindAnswerCorrect, KindAnswerWrong
+	if v.Get(postbackQuiz) == postbackQuizCapital {
+		kindCorrect, kindWrong = KindCapitalAnswerCorrect, KindCapitalAnswerWrong
+	}
 
 	echo := textMessage(name, suffixAnswerEcho)
 	if result == resultWrong {

@@ -38,7 +38,7 @@ const (
 	TriggerCountry Trigger = iota
 	// TriggerProfile shows the self-introduction.
 	TriggerProfile
-	// TriggerQuiz starts a flag quiz.
+	// TriggerQuiz starts a quiz: a flag quiz or a capital quiz, at random.
 	TriggerQuiz
 	// TriggerCancel ends the conversation without a reply.
 	TriggerCancel

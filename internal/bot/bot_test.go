@@ -279,6 +279,216 @@ func TestQuizShufflesCorrectPosition(t *testing.T) {
 	}
 }
 
+// capitalQuizButtons checks the shape of a capital quiz reply and returns the
+// country of the correct button and its position.
+func capitalQuizButtons(t *testing.T, b *Bot, got Reply) (*country.Country, int) {
+	t.Helper()
+	if got.Kind != KindCapitalQuiz || len(got.Messages) != 1 {
+		t.Fatalf("kind = %s, %d messages", got.Kind, len(got.Messages))
+	}
+	tm, bt := asButtons(t, got.Messages[0])
+	if tm.AltText != "この国の首都はどこでしょうか？" || bt.Title != "クイズです" || bt.Text != "この国の首都はどこでしょうか？" {
+		t.Errorf("texts = %q %q %q", tm.AltText, bt.Title, bt.Text)
+	}
+	if bt.ImageAspectRatio != "rectangle" {
+		t.Errorf("imageAspectRatio = %q", bt.ImageAspectRatio)
+	}
+	if len(bt.Actions) != 4 {
+		t.Fatalf("%d actions", len(bt.Actions))
+	}
+	labels := map[string]bool{}
+	var correct *country.Country
+	position := -1
+	for i, a := range bt.Actions {
+		pa, ok := a.(line.PostbackAction)
+		if !ok {
+			t.Fatalf("action %#v is not postback", a)
+		}
+		if line.UTF16Len(pa.Label) > line.MaxActionLabel || line.UTF16Len(pa.Data) > line.MaxPostbackData ||
+			line.UTF16Len(pa.DisplayText) > line.MaxPostbackDisplayText {
+			t.Errorf("action too long: %#v", pa)
+		}
+		labels[pa.Label] = true
+		v, err := url.ParseQuery(pa.Data)
+		if err != nil {
+			t.Fatalf("data %q: %v", pa.Data, err)
+		}
+		want := url.Values{"answer": {v.Get("answer")}, "code": {v.Get("code")}, "q": {"capital"}, "result": {v.Get("result")}}.Encode()
+		if pa.Data != want {
+			t.Errorf("data = %q, want form %q", pa.Data, want)
+		}
+		c := b.countries.ByCode(v.Get("code"))
+		if c == nil {
+			t.Fatalf("data %q: unknown code", pa.Data)
+		}
+		if pa.Label != c.CapitalJA || pa.DisplayText != c.CapitalJA || v.Get("answer") != c.CapitalJA {
+			t.Errorf("%s: label %q, displayText %q, answer %q, want capital_ja %q", c.Code, pa.Label, pa.DisplayText, v.Get("answer"), c.CapitalJA)
+		}
+		switch v.Get("result") {
+		case "1":
+			if correct != nil {
+				t.Errorf("two correct answers: %s and %s", correct.Code, c.Code)
+			}
+			correct, position = c, i
+		case "0":
+		default:
+			t.Errorf("result = %q", v.Get("result"))
+		}
+	}
+	if len(labels) != 4 {
+		t.Errorf("duplicate choices: %v", labels)
+	}
+	if correct == nil {
+		t.Fatal("no correct answer")
+	}
+	if bt.ThumbnailImageURL != correct.FlagURL(baseURL) {
+		t.Errorf("image = %s, want flag of %s", bt.ThumbnailImageURL, correct.Code)
+	}
+	if bt.ImageSize != wantImageSize(correct) || bt.ImageBackgroundColor != wantBackground(correct) {
+		t.Errorf("%s: imageSize, imageBackgroundColor = %q, %q", correct.Code, bt.ImageSize, bt.ImageBackgroundColor)
+	}
+	if got.Code != correct.Code {
+		t.Errorf("Code = %s, want %s", got.Code, correct.Code)
+	}
+	return correct, position
+}
+
+func TestCapitalQuiz(t *testing.T) {
+	positions := map[int]bool{}
+	answers := map[string]bool{}
+	for seed := uint64(0); seed < 40; seed++ {
+		b := newTestBot(t, seed)
+		for i := 0; i < 3; i++ {
+			c, pos := capitalQuizButtons(t, b, b.quizCapital(baseURL))
+			positions[pos] = true
+			answers[c.Code] = true
+		}
+	}
+	if len(positions) != 4 {
+		t.Errorf("correct answer appeared only at positions %v", positions)
+	}
+	if len(answers) < 20 {
+		t.Errorf("only %d different answers", len(answers))
+	}
+}
+
+// TestCapitalQuizFitsEveryCountry builds capital quizzes over all the
+// countries, so every capital is checked against the label and data limits.
+func TestCapitalQuizFitsEveryCountry(t *testing.T) {
+	b := newTestBot(t, 1)
+	all := b.countries.All()
+	for i := 0; i < len(all); i += 4 {
+		choices := make([]*country.Country, 0, 4)
+		for j := 0; j < 4; j++ {
+			choices = append(choices, all[(i+j)%len(all)])
+		}
+		if !capitalChoicesOK(choices) {
+			t.Fatalf("choices %s %s %s %s cannot make a capital quiz", choices[0].Code, choices[1].Code, choices[2].Code, choices[3].Code)
+		}
+		capitalQuizButtons(t, b, capitalQuizReply(choices, choices[i%4], baseURL))
+	}
+}
+
+// fallbackStore is a store of four countries, so every quiz uses all of them.
+func fallbackStore(t *testing.T, capitals [4]string) *country.Store {
+	t.Helper()
+	var sb strings.Builder
+	sb.WriteString(`{"countries":[`)
+	for i, capital := range capitals {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		code := string(rune('A'+i)) + "A"
+		sb.WriteString(`{"code":"` + code + `","name_ja":"国` + code + `","capital_ja":"` + capital + `","capital_en":"City ` + code + `",` +
+			`"lat":1,"lon":2,"wikipedia_ja_url":"https://ja.wikipedia.org/wiki/x"}`)
+	}
+	sb.WriteString(`]}`)
+	s, err := country.Load([]byte(sb.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
+}
+
+func TestCapitalQuizFallsBackToFlagQuiz(t *testing.T) {
+	long := strings.Repeat("あ", line.MaxActionLabel)
+	for name, tt := range map[string]struct {
+		capitals [4]string
+		want     Kind
+	}{
+		"distinct capitals":     {[4]string{"一の市", "二の市", "三の市", "四の市"}, KindCapitalQuiz},
+		"missing capital_ja":    {[4]string{"一の市", "", "三の市", "四の市"}, KindQuiz},
+		"same capital_ja":       {[4]string{"一の市", "同じ市", "同じ市", "四の市"}, KindQuiz},
+		"same truncated labels": {[4]string{"一の市", long + "い", long + "う", "四の市"}, KindQuiz},
+	} {
+		for seed := uint64(0); seed < 10; seed++ {
+			b := New(fallbackStore(t, tt.capitals), rand.New(rand.NewPCG(seed, seed)))
+			got := b.quizCapital(baseURL)
+			if got.Kind != tt.want || len(got.Messages) != 1 {
+				t.Fatalf("%s: kind = %s, %d messages, want %s", name, got.Kind, len(got.Messages), tt.want)
+			}
+			tm, bt := asButtons(t, got.Messages[0])
+			wantText := "この国はどこでしょうか？"
+			if tt.want == KindCapitalQuiz {
+				wantText = "この国の首都はどこでしょうか？"
+			}
+			if tm.AltText != wantText || bt.Text != wantText || len(bt.Actions) != 4 {
+				t.Errorf("%s: alt %q text %q, %d actions", name, tm.AltText, bt.Text, len(bt.Actions))
+			}
+			for _, a := range bt.Actions {
+				pa := a.(line.PostbackAction)
+				v, _ := url.ParseQuery(pa.Data)
+				c := b.countries.ByCode(v.Get("code"))
+				if c == nil {
+					t.Fatalf("%s: data %q has no known code", name, pa.Data)
+				}
+				wantLabel, wantQ := c.NameJA, ""
+				if tt.want == KindCapitalQuiz {
+					wantLabel, wantQ = c.CapitalJA, "capital"
+				}
+				if pa.Label != wantLabel || v.Get("q") != wantQ {
+					t.Errorf("%s: label %q q %q, want %q %q", name, pa.Label, v.Get("q"), wantLabel, wantQ)
+				}
+			}
+			// Respond falls back the same way, so it only asks flag quizzes.
+			if tt.want == KindQuiz {
+				if got := b.Respond(textEvent("クイズ"), opts(Profile{})); got.Kind != KindQuiz {
+					t.Errorf("%s: Respond kind = %s, want %s", name, got.Kind, KindQuiz)
+				}
+			}
+		}
+	}
+}
+
+func TestQuizPicksBothKinds(t *testing.T) {
+	for _, in := range []string{"クイズ", "quiz", "QUIZ"} {
+		kinds := map[Kind]int{}
+		for seed := uint64(0); seed < 30; seed++ {
+			b := newTestBot(t, seed)
+			got := b.Respond(textEvent(in), opts(Profile{}))
+			kinds[got.Kind]++
+			if len(got.Messages) != 1 {
+				t.Fatalf("%q seed %d: %d messages", in, seed, len(got.Messages))
+			}
+			tm, _ := asButtons(t, got.Messages[0])
+			switch got.Kind {
+			case KindQuiz:
+				if tm.AltText != "この国はどこでしょうか？" {
+					t.Errorf("%q seed %d: flag quiz alt = %q", in, seed, tm.AltText)
+				}
+			case KindCapitalQuiz:
+				capitalQuizButtons(t, b, got)
+			default:
+				t.Errorf("%q seed %d: kind = %s", in, seed, got.Kind)
+			}
+		}
+		if kinds[KindQuiz] == 0 || kinds[KindCapitalQuiz] == 0 {
+			t.Errorf("%q: kinds over 30 seeds = %v, want both quizzes", in, kinds)
+		}
+		t.Logf("%q: %v", in, kinds)
+	}
+}
+
 func TestCountryHit(t *testing.T) {
 	b := newTestBot(t, 1)
 	got := b.Respond(textEvent(" 日本\n"), opts(Profile{}))
@@ -627,14 +837,96 @@ func TestAnswerMalformedCodeFallsBackToName(t *testing.T) {
 	}
 }
 
+func TestCapitalAnswerCorrect(t *testing.T) {
+	b := newTestBot(t, 1)
+	got := b.Respond(postbackEvent(codeData("東京", "JP", "capital", "1")), opts(Profile{}))
+	if got.Kind != KindCapitalAnswerCorrect || got.Code != "JP" || len(got.Messages) != 4 {
+		t.Fatalf("kind = %s code = %s, %d messages", got.Kind, got.Code, len(got.Messages))
+	}
+	if s := asText(t, got.Messages[0]); s != "[東京] ですね?" {
+		t.Errorf("first = %q", s)
+	}
+	if s := asText(t, got.Messages[1]); !hasEmojiSuffix(s, "む、むむっ、、\n正解です", EmojiCelebrate) {
+		t.Errorf("second = %q", s)
+	}
+	// The details are titled with the country, without the flag, as after a
+	// flag quiz; the confirm is the same too.
+	flag := b.Respond(postbackEvent(answerData("日本", "1")), opts(Profile{}))
+	if !reflect.DeepEqual(got.Messages[2:], flag.Messages[2:]) {
+		t.Errorf("details and confirm = %#v, want %#v", got.Messages[2:], flag.Messages[2:])
+	}
+	_, bt := asButtons(t, got.Messages[2])
+	if bt.Title != "日本" || bt.Text != "東京 / Tokyo" || bt.ThumbnailImageURL != "" {
+		t.Errorf("details = %q %q %q", bt.Title, bt.Text, bt.ThumbnailImageURL)
+	}
+}
+
+func TestCapitalAnswerWrong(t *testing.T) {
+	for seed := uint64(0); seed < 20; seed++ {
+		got := newTestBot(t, seed).Respond(postbackEvent(codeData("パリ", "FR", "capital", "0")), opts(Profile{}))
+		if got.Kind != KindCapitalAnswerWrong || len(got.Messages) != 2 {
+			t.Fatalf("kind = %s, %d messages", got.Kind, len(got.Messages))
+		}
+		if s := asText(t, got.Messages[0]); s != "[パリ] ですね?" {
+			t.Errorf("first = %q", s)
+		}
+		if s := asText(t, got.Messages[1]); !hasEmojiSuffix(s, "む、むむっ、、\n残念！はずれです", EmojiRegret) {
+			t.Errorf("second = %q", s)
+		}
+	}
+}
+
+func TestCapitalAnswerKinds(t *testing.T) {
+	b := newTestBot(t, 1)
+	for data, want := range map[string]Kind{
+		codeData("東京", "ZZ", "capital", "1"): KindCapitalAnswerCorrect, // unknown code
+		codeData("東京", "ZZ", "capital", "0"): KindCapitalAnswerWrong,
+		codeData("日本", "JP", "flag", "1"):    KindAnswerCorrect, // only "capital" is the capital quiz
+		codeData("日本", "JP", "", "0"):        KindAnswerWrong,
+		answerData("日本", "1"):                KindAnswerCorrect,
+	} {
+		if got := b.Respond(postbackEvent(data), opts(Profile{})); got.Kind != want {
+			t.Errorf("%q: kind = %s, want %s", data, got.Kind, want)
+		}
+	}
+}
+
+// TestCapitalQuizButtonsAnswer taps every button of capital quizzes.
+func TestCapitalQuizButtonsAnswer(t *testing.T) {
+	for seed := uint64(0); seed < 10; seed++ {
+		b := newTestBot(t, seed)
+		quiz := b.quizCapital(baseURL)
+		_, bt := asButtons(t, quiz.Messages[0])
+		for _, a := range bt.Actions {
+			pa := a.(line.PostbackAction)
+			got := b.Respond(postbackEvent(pa.Data), opts(Profile{}))
+			if s := asText(t, got.Messages[0]); s != "["+pa.DisplayText+"] ですね?" {
+				t.Errorf("echo = %q, want %q", s, pa.DisplayText)
+			}
+			if strings.HasSuffix(pa.Data, "result=1") {
+				if got.Kind != KindCapitalAnswerCorrect || got.Code != quiz.Code || len(got.Messages) != 4 {
+					t.Errorf("correct %q: kind = %s code = %s, %d messages", pa.Data, got.Kind, got.Code, len(got.Messages))
+				}
+			} else if got.Kind != KindCapitalAnswerWrong || len(got.Messages) != 2 {
+				t.Errorf("wrong %q: kind = %s, %d messages", pa.Data, got.Kind, len(got.Messages))
+			}
+		}
+	}
+}
+
 func TestReplyCountNeverExceedsLimit(t *testing.T) {
 	events := []line.Event{
 		textEvent("日本"), textEvent("アトランティス"), textEvent("クイズ"), textEvent("who"),
+		textEvent("東京"), textEvent("Tokyo"), textEvent("シンガポール"),
 		{Type: line.EventTypeMessage, ReplyToken: "rt", Message: &line.EventMessage{Type: "image"}},
 	}
 	b := newTestBot(t, 1)
 	for _, c := range b.countries.All() {
 		events = append(events, postbackEvent(answerData(c.NameJA, "1")), postbackEvent(answerData(c.NameJA, "0")))
+		events = append(events, postbackEvent(codeData(c.NameJA, c.Code, "", "1")), postbackEvent(codeData(c.NameJA, c.Code, "", "0")))
+		events = append(events,
+			postbackEvent(codeData(c.CapitalJA, c.Code, "capital", "1")), postbackEvent(codeData(c.CapitalJA, c.Code, "capital", "0")))
+		events = append(events, textEvent(c.CapitalJA), textEvent(c.CapitalEN))
 	}
 	for _, ev := range events {
 		got := b.Respond(ev, opts(testProfile))
