@@ -154,15 +154,17 @@ func wantBackground(c *country.Country) string {
 	return "#FFFFFF"
 }
 
+// TestQuiz checks the flag quiz built by quizFlag; which kind of quiz
+// Respond asks is tested in TestQuizPicksBothKinds.
 func TestQuiz(t *testing.T) {
 	imageSizes := map[string]bool{}
 	backgrounds := map[string]bool{}
 	for seed := uint64(0); seed < 30; seed++ {
 		b := newTestBot(t, seed)
-		for _, in := range []string{"クイズ", "quiz", "QUIZ"} {
-			got := b.Respond(textEvent(in), opts(Profile{}))
+		for i := 0; i < 3; i++ {
+			got := b.quizFlag(baseURL)
 			if got.Kind != KindQuiz || len(got.Messages) != 1 {
-				t.Fatalf("%q: kind = %s, %d messages", in, got.Kind, len(got.Messages))
+				t.Fatalf("seed %d #%d: kind = %s, %d messages", seed, i, got.Kind, len(got.Messages))
 			}
 			tm, bt := asButtons(t, got.Messages[0])
 			if tm.AltText != "この国はどこでしょうか？" || bt.Title != "クイズです" || bt.Text != "この国はどこでしょうか？" {
@@ -176,6 +178,7 @@ func TestQuiz(t *testing.T) {
 			}
 			labels := map[string]bool{}
 			correct := ""
+			correctCode := ""
 			for _, a := range bt.Actions {
 				pa, ok := a.(line.PostbackAction)
 				if !ok {
@@ -189,11 +192,18 @@ func TestQuiz(t *testing.T) {
 				if err != nil {
 					t.Fatalf("data %q: %v", pa.Data, err)
 				}
-				if want := (url.Values{"answer": {v.Get("answer")}, "result": {v.Get("result")}}).Encode(); pa.Data != want {
+				if want := (url.Values{"answer": {v.Get("answer")}, "code": {v.Get("code")}, "result": {v.Get("result")}}).Encode(); pa.Data != want {
 					t.Errorf("data = %q, want form %q", pa.Data, want)
 				}
 				if v.Get("answer") != pa.Label {
 					t.Errorf("answer %q != label %q", v.Get("answer"), pa.Label)
+				}
+				// code is the country of the button.
+				if c := b.countries.ByCode(v.Get("code")); c == nil || c.NameJA != v.Get("answer") {
+					t.Errorf("code %q is not the country of answer %q", v.Get("code"), v.Get("answer"))
+				}
+				if v.Get("result") == "1" {
+					correctCode = v.Get("code")
 				}
 				if pa.DisplayText != v.Get("answer") {
 					t.Errorf("displayText %q != answer %q", pa.DisplayText, v.Get("answer"))
@@ -228,6 +238,9 @@ func TestQuiz(t *testing.T) {
 			if got.Code != c.Code {
 				t.Errorf("Code = %s, want %s", got.Code, c.Code)
 			}
+			if correctCode != c.Code {
+				t.Errorf("code of the correct button = %s, want %s", correctCode, c.Code)
+			}
 			if want := wantImageSize(c); bt.ImageSize != want {
 				t.Errorf("%s: imageSize = %q, want %q", c.Code, bt.ImageSize, want)
 			}
@@ -253,7 +266,7 @@ func TestQuiz(t *testing.T) {
 func TestQuizShufflesCorrectPosition(t *testing.T) {
 	positions := map[int]bool{}
 	for seed := uint64(0); seed < 40; seed++ {
-		got := newTestBot(t, seed).Respond(textEvent("クイズ"), opts(Profile{}))
+		got := newTestBot(t, seed).quizFlag(baseURL)
 		_, bt := asButtons(t, got.Messages[0])
 		for i, a := range bt.Actions {
 			if strings.HasSuffix(a.(line.PostbackAction).Data, "result=1") {
@@ -543,6 +556,73 @@ func TestAnswerInvalidData(t *testing.T) {
 		got := b.Respond(postbackEvent(data), opts(Profile{}))
 		if got.Messages != nil || got.Kind != KindInvalidPostback {
 			t.Errorf("%q: kind = %s messages = %#v", data, got.Kind, got.Messages)
+		}
+	}
+}
+
+// codeData is the postback data of a quiz button with a country code; q is
+// "" for the flag quiz.
+func codeData(answer, code, q, result string) string {
+	v := url.Values{"answer": {answer}, "code": {code}, "result": {result}}
+	if q != "" {
+		v.Set("q", q)
+	}
+	return v.Encode()
+}
+
+func TestAnswerWithCodeFindsCountryByCode(t *testing.T) {
+	b := newTestBot(t, 1)
+	old := b.Respond(postbackEvent(answerData("日本", "1")), opts(Profile{}))
+	// The code decides the country; the answer is only echoed.
+	for _, data := range []string{codeData("日本", "JP", "", "1"), codeData("ニッポン", "JP", "", "1")} {
+		got := b.Respond(postbackEvent(data), opts(Profile{}))
+		if got.Kind != KindAnswerCorrect || got.Code != "JP" || len(got.Messages) != 4 {
+			t.Fatalf("%q: kind = %s code = %s, %d messages", data, got.Kind, got.Code, len(got.Messages))
+		}
+		answer, _ := url.ParseQuery(data)
+		if s := asText(t, got.Messages[0]); s != "["+answer.Get("answer")+"] ですね?" {
+			t.Errorf("%q: first = %q", data, s)
+		}
+		// Same details and confirm as the old form without code.
+		if !reflect.DeepEqual(got.Messages[2:], old.Messages[2:]) {
+			t.Errorf("%q: messages = %#v, want %#v", data, got.Messages[2:], old.Messages[2:])
+		}
+	}
+}
+
+func TestAnswerUnknownCodeStillConfirms(t *testing.T) {
+	// A well-formed code that is not in the data skips the details, even when
+	// the answer is a known name.
+	for _, data := range []string{codeData("日本", "ZZ", "", "1"), codeData("東京", "ZZ", "capital", "1")} {
+		got := newTestBot(t, 1).Respond(postbackEvent(data), opts(Profile{}))
+		if len(got.Messages) != 3 || got.Code != "" {
+			t.Fatalf("%q: kind = %s code = %s, %d messages", data, got.Kind, got.Code, len(got.Messages))
+		}
+		if s := asText(t, got.Messages[1]); !hasEmojiSuffix(s, "む、むむっ、、\n正解です", EmojiCelebrate) {
+			t.Errorf("%q: second = %q", data, s)
+		}
+		tm, ok := got.Messages[2].(line.TemplateMessage)
+		if !ok {
+			t.Fatalf("%q: third = %#v", data, got.Messages[2])
+		}
+		if _, ok := tm.Template.(line.ConfirmTemplate); !ok {
+			t.Errorf("%q: third template = %#v, want confirm", data, tm.Template)
+		}
+	}
+}
+
+func TestAnswerMalformedCodeFallsBackToName(t *testing.T) {
+	b := newTestBot(t, 1)
+	want := b.Respond(postbackEvent(answerData("日本", "1")), opts(Profile{}))
+	// A code that is not two uppercase letters counts as no code, so the
+	// answer is looked up by name as in the old form.
+	for _, code := range []string{"", "jp", "Jp", "JPN", "J", "日本", "J1"} {
+		got := b.Respond(postbackEvent(codeData("日本", code, "", "1")), opts(Profile{}))
+		if got.Kind != KindAnswerCorrect || got.Code != "JP" || len(got.Messages) != 4 {
+			t.Fatalf("code %q: kind = %s code = %s, %d messages", code, got.Kind, got.Code, len(got.Messages))
+		}
+		if !reflect.DeepEqual(got.Messages[2:], want.Messages[2:]) {
+			t.Errorf("code %q: messages differ from the old form", code)
 		}
 	}
 }

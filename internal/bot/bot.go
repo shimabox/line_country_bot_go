@@ -34,10 +34,18 @@ const (
 	quizChoices = 4
 	// flagBackgroundContain fills the frame around a flag shown whole.
 	flagBackgroundContain = "#FFFFFF"
-	postbackAnswer        = "answer"
-	postbackResult        = "result"
-	resultCorrect         = "1"
-	resultWrong           = "0"
+
+	// Postback data of a quiz button, encoded with url.Values (keys sorted):
+	// answer=<label>&code=<ISO code>[&q=capital]&result=<0|1>. answer is
+	// echoed back, code finds the country of the button and q tells the
+	// quiz. Buttons sent before code existed have only answer and result;
+	// their country is found by answer, the display name.
+	postbackAnswer = "answer"
+	postbackCode   = "code"
+	postbackQuiz   = "q"
+	postbackResult = "result"
+	resultCorrect  = "1"
+	resultWrong    = "0"
 )
 
 // Kind says which reply was chosen. It is meant for logs, which must not
@@ -155,37 +163,68 @@ func (b *Bot) respondText(in Input, opts Options) Reply {
 }
 
 func (b *Bot) quiz(flagBaseURL string) Reply {
-	choices := b.countries.PickN(b.rand, quizChoices)
-	if len(choices) == 0 {
+	return b.quizFlag(flagBaseURL)
+}
+
+// quizFlag asks for the country of a flag, with four country names to
+// choose from.
+func (b *Bot) quizFlag(flagBaseURL string) Reply {
+	choices, answer := b.pickQuiz()
+	if answer == nil {
 		return Reply{Kind: KindQuiz}
 	}
-	answer := choices[b.rand.IntN(len(choices))]
-	b.rand.Shuffle(len(choices), func(i, j int) { choices[i], choices[j] = choices[j], choices[i] })
+	return flagQuizReply(choices, answer, flagBaseURL)
+}
 
+// pickQuiz picks the choices of a quiz in random order and the answer among
+// them. answer is nil when there is no country.
+func (b *Bot) pickQuiz() (choices []*country.Country, answer *country.Country) {
+	choices = b.countries.PickN(b.rand, quizChoices)
+	if len(choices) == 0 {
+		return nil, nil
+	}
+	answer = choices[b.rand.IntN(len(choices))]
+	b.rand.Shuffle(len(choices), func(i, j int) { choices[i], choices[j] = choices[j], choices[i] })
+	return choices, answer
+}
+
+func flagQuizReply(choices []*country.Country, answer *country.Country, flagBaseURL string) Reply {
+	return quizReply(KindQuiz, textQuizQuestion, "", choices, answer, flagBaseURL,
+		func(c *country.Country) string { return c.NameJA })
+}
+
+// quizReply shows the answer's flag with a button per choice, labelled with
+// name(choice). q is the postback's quiz value, "" for the flag quiz.
+func quizReply(kind Kind, question, q string, choices []*country.Country, answer *country.Country,
+	flagBaseURL string, name func(*country.Country) string) Reply {
 	actions := make([]line.Action, len(choices))
 	for i, c := range choices {
 		result := resultWrong
 		if c == answer {
 			result = resultCorrect
 		}
+		data := url.Values{postbackAnswer: {name(c)}, postbackCode: {c.Code}, postbackResult: {result}}
+		if q != "" {
+			data.Set(postbackQuiz, q)
+		}
 		// DisplayText shows the full name in the chat so the user can see
 		// which choice they tapped; the label may be truncated.
 		actions[i] = line.PostbackAction{
-			Label:       line.TruncateUTF16(c.NameJA, line.MaxActionLabel),
-			Data:        url.Values{postbackAnswer: {c.NameJA}, postbackResult: {result}}.Encode(),
-			DisplayText: c.NameJA,
+			Label:       line.TruncateUTF16(name(c), line.MaxActionLabel),
+			Data:        data.Encode(),
+			DisplayText: name(c),
 		}
 	}
 	size, background := flagImage(answer)
-	return Reply{Kind: KindQuiz, Code: answer.Code, Messages: []line.Message{line.TemplateMessage{
-		AltText: textQuizQuestion,
+	return Reply{Kind: kind, Code: answer.Code, Messages: []line.Message{line.TemplateMessage{
+		AltText: question,
 		Template: line.ButtonsTemplate{
 			ThumbnailImageURL:    answer.FlagURL(flagBaseURL),
 			ImageAspectRatio:     line.ImageAspectRatioRectangle,
 			ImageSize:            size,
 			ImageBackgroundColor: background,
 			Title:                textQuizTitle,
-			Text:                 textQuizQuestion,
+			Text:                 question,
 			Actions:              actions,
 		},
 	}}}
@@ -199,24 +238,41 @@ func (b *Bot) respondAnswer(data string) Reply {
 	if err != nil || name == "" || (result != resultCorrect && result != resultWrong) {
 		return Reply{Kind: KindInvalidPostback}
 	}
+	kindCorrect, kindWrong := KindAnswerCorrect, KindAnswerWrong
 
 	echo := textMessage(name, suffixAnswerEcho)
 	if result == resultWrong {
-		return Reply{Kind: KindAnswerWrong, Messages: []line.Message{
+		return Reply{Kind: kindWrong, Messages: []line.Message{
 			echo,
 			line.TextMessage{Text: textWrong + b.pick(EmojiRegret)},
 		}}
 	}
 
 	msgs := []line.Message{echo, line.TextMessage{Text: textCorrect + b.pick(EmojiCelebrate)}}
-	r := Reply{Kind: KindAnswerCorrect}
-	// The name may be missing after a data update; skip the details then.
-	if c := b.countries.ByName(name); c != nil {
+	r := Reply{Kind: kindCorrect}
+	// The country may be missing after a data update; skip the details then.
+	if c := b.answerCountry(v.Get(postbackCode), name); c != nil {
 		r.Code = c.Code
 		msgs = append(msgs, detailMessage(c, c.NameJA, ""))
 	}
 	r.Messages = append(msgs, retryMessage())
 	return r
+}
+
+// answerCountry finds the country of a quiz button: by its code, or by the
+// display name in answer for buttons without a well-formed code (sent before
+// the code was added).
+func (b *Bot) answerCountry(code, answer string) *country.Country {
+	if isCountryCode(code) {
+		return b.countries.ByCode(code)
+	}
+	return b.countries.ByName(answer)
+}
+
+// isCountryCode reports whether code has the form of the data's codes: two
+// uppercase ASCII letters.
+func isCountryCode(code string) bool {
+	return len(code) == 2 && 'A' <= code[0] && code[0] <= 'Z' && 'A' <= code[1] && code[1] <= 'Z'
 }
 
 // detailMessage shows the capital and links for a country. imageURL may be
