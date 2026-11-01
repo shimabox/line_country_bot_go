@@ -353,6 +353,85 @@ func TestCountryHitEnglishUsesInputAsTitle(t *testing.T) {
 	}
 }
 
+func TestCapitalHitUsesCountryNameAsTitle(t *testing.T) {
+	b := newTestBot(t, 1)
+	jp := b.countries.ByCode("JP")
+	for _, in := range []string{"東京", "Tokyo", " tokyo ", "TOKYO"} {
+		got := b.Respond(textEvent(in), opts(Profile{}))
+		if got.Kind != KindCapitalHit || got.Code != "JP" || len(got.Messages) != 3 {
+			t.Fatalf("%q: kind = %s code = %s, %d messages", in, got.Kind, got.Code, len(got.Messages))
+		}
+		echo := Normalize(in).Text
+		if s := asText(t, got.Messages[0]); s != "["+echo+"] ですね🤔" {
+			t.Errorf("%q: first = %q", in, s)
+		}
+		if s := asText(t, got.Messages[1]); !hasEmojiSuffix(s, "わかります", EmojiSmile) {
+			t.Errorf("%q: second = %q", in, s)
+		}
+		want := line.TemplateMessage{
+			AltText: "日本",
+			Template: line.ButtonsTemplate{
+				ThumbnailImageURL:    "https://bot.example.com/flags/jp.png",
+				ImageAspectRatio:     "rectangle",
+				ImageSize:            "cover",
+				ImageBackgroundColor: "#FFFFFF",
+				Title:                "日本",
+				Text:                 "東京 / Tokyo",
+				Actions: []line.Action{
+					line.URIAction{Label: "Wikipedia", URI: jp.WikipediaURL()},
+					line.URIAction{Label: "Google Maps", URI: jp.MapURL()},
+				},
+			},
+		}
+		if !reflect.DeepEqual(got.Messages[2], want) {
+			t.Errorf("%q: third =\n %#v\nwant\n %#v", in, got.Messages[2], want)
+		}
+	}
+}
+
+// TestCapitalHitEveryCountry: every capital finds its country with the
+// country's name as the title, unless the capital is also the country's name
+// or alias, which is a country hit titled with the input.
+func TestCapitalHitEveryCountry(t *testing.T) {
+	b := newTestBot(t, 1)
+	capitalHits := 0
+	for _, c := range b.countries.All() {
+		for _, capital := range []string{c.CapitalJA, c.CapitalEN} {
+			got := b.Respond(textEvent(capital), opts(Profile{}))
+			if got.Code != c.Code || len(got.Messages) != 3 {
+				t.Fatalf("%s %q: kind = %s code = %s", c.Code, capital, got.Kind, got.Code)
+			}
+			_, bt := asButtons(t, got.Messages[2])
+			in := Normalize(capital)
+			wantKind, wantTitle := KindCapitalHit, line.TruncateUTF16(c.NameJA, line.MaxButtonsTitle)
+			if c.NamedBy(in.Lower) {
+				wantKind, wantTitle = KindCountryHit, line.TruncateUTF16(in.Text, line.MaxButtonsTitle)
+			} else {
+				capitalHits++
+			}
+			if got.Kind != wantKind || bt.Title != wantTitle || bt.ThumbnailImageURL != c.FlagURL(baseURL) {
+				t.Errorf("%s %q: kind = %s title = %q image = %q, want %s %q", c.Code, capital, got.Kind, bt.Title, bt.ThumbnailImageURL, wantKind, wantTitle)
+			}
+		}
+	}
+	if capitalHits == 0 {
+		t.Error("no capital hit")
+	}
+}
+
+func TestCapitalSameAsCountryNameIsCountryHit(t *testing.T) {
+	for _, in := range []string{"シンガポール", "Singapore"} {
+		got := newTestBot(t, 1).Respond(textEvent(in), opts(Profile{}))
+		if got.Kind != KindCountryHit || got.Code != "SG" {
+			t.Fatalf("%q: kind = %s code = %s", in, got.Kind, got.Code)
+		}
+		tm, bt := asButtons(t, got.Messages[2])
+		if bt.Title != in || tm.AltText != in {
+			t.Errorf("%q: title = %q alt = %q, want the input", in, bt.Title, tm.AltText)
+		}
+	}
+}
+
 func TestCountryMiss(t *testing.T) {
 	for seed := uint64(0); seed < 20; seed++ {
 		got := newTestBot(t, seed).Respond(textEvent("アトランティス"), opts(Profile{}))

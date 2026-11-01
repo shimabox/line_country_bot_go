@@ -45,16 +45,26 @@ const (
 type Kind string
 
 const (
-	KindIgnored         Kind = "ignored"
-	KindNonText         Kind = "non-text"
-	KindProfile         Kind = "profile"
-	KindQuiz            Kind = "quiz"
-	KindCancel          Kind = "cancel"
-	KindCountryHit      Kind = "country-hit"
-	KindCountryMiss     Kind = "country-miss"
-	KindAnswerCorrect   Kind = "answer-correct"
-	KindAnswerWrong     Kind = "answer-wrong"
-	KindInvalidPostback Kind = "invalid-postback"
+	KindIgnored Kind = "ignored"
+	KindNonText Kind = "non-text"
+	KindProfile Kind = "profile"
+	KindCancel  Kind = "cancel"
+
+	// Searches: KindCountryHit is found by a display name or alias,
+	// KindCapitalHit by a capital only.
+	KindCountryHit  Kind = "country-hit"
+	KindCapitalHit  Kind = "capital-hit"
+	KindCountryMiss Kind = "country-miss"
+
+	// Quizzes: KindQuiz asks for the country of a flag, KindCapitalQuiz for
+	// its capital. The answers to each have their own kinds.
+	KindQuiz                 Kind = "quiz"
+	KindCapitalQuiz          Kind = "capital-quiz"
+	KindAnswerCorrect        Kind = "answer-correct"
+	KindAnswerWrong          Kind = "answer-wrong"
+	KindCapitalAnswerCorrect Kind = "capital-answer-correct"
+	KindCapitalAnswerWrong   Kind = "capital-answer-wrong"
+	KindInvalidPostback      Kind = "invalid-postback"
 )
 
 // Options are per-request settings.
@@ -130,10 +140,17 @@ func (b *Bot) respondText(in Input, opts Options) Reply {
 			line.TextMessage{Text: textNotFound + b.pick(EmojiSad)},
 		}}
 	}
-	return Reply{Kind: KindCountryHit, Code: c.Code, Messages: []line.Message{
+	// A name or alias is shown as typed. A capital alone would put the
+	// capital above "capital / capital_en" without the country, so the card
+	// is titled with the country's name instead.
+	kind, title := KindCountryHit, in.Text
+	if !c.NamedBy(in.Lower) {
+		kind, title = KindCapitalHit, c.NameJA
+	}
+	return Reply{Kind: kind, Code: c.Code, Messages: []line.Message{
 		echo,
 		line.TextMessage{Text: textFound + b.pick(EmojiSmile)},
-		detailMessage(c, in.Text, c.FlagURL(opts.FlagBaseURL)),
+		detailMessage(c, title, c.FlagURL(opts.FlagBaseURL)),
 	}}
 }
 
