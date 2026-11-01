@@ -90,7 +90,8 @@ func Generate(data []byte) ([]byte, error) {
 	}
 	b.WriteString("}\n\n")
 
-	b.WriteString("// countryIndex maps a normalized name or alias to an index into countryTable.\n")
+	b.WriteString("// countryIndex maps a normalized name, alias or capital to an index into\n")
+	b.WriteString("// countryTable.\n")
 	b.WriteString("// It is sorted by Key and has no duplicates.\n")
 	b.WriteString("var countryIndex = [...]IndexEntry{\n")
 	for _, e := range index {

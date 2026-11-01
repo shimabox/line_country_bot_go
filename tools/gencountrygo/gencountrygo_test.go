@@ -97,6 +97,10 @@ func TestGenerateFixture(t *testing.T) {
 		`source      = "test fixture"`,
 		`{Code: "JP", NameJA: "日本", AliasesJA: []string{"日本国", "にほん"}, AliasesEN: []string{"Japan"}, CapitalJA: "東京", CapitalEN: "Tokyo", Lat: 35.689, Lon: 139.692, WikipediaJAURL: "https://ja.wikipedia.org/wiki/%E6%97%A5%E6%9C%AC"},`,
 		`{Key: "japan", Index: 3},`,
+		// Capitals are indexed too, in Japanese and English.
+		`{Key: "東京", Index: 3},`,
+		`{Key: "tokyo", Index: 3},`,
+		`{Key: "washington,d.c.", Index: 5},`,
 		"Lon: -77.036667",
 	} {
 		if !bytes.Contains(src, []byte(want)) {
